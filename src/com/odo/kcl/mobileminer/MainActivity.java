@@ -38,7 +38,7 @@ public class MainActivity extends Activity {
     	socketChild = new HashMap<String, List<String>>();
     	  
         socketView = (ExpandableListView) findViewById(R.id.socketView);
-        socketAdapter = new SocketAdapter(this,processHeader,socketChild);
+        socketAdapter = new SocketAdapter(this,processHeader,socketChild,null);
         socketView.setAdapter(socketAdapter);
         cellText = (TextView) findViewById(R.id.cellLocation);
         networkText = (TextView) findViewById(R.id.networkName);
@@ -115,14 +115,15 @@ public class MainActivity extends Activity {
     private BroadcastReceiver socketReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-        	HashMap<String, List<String>> socketMap = (HashMap<String, List<String>>)intent.getSerializableExtra("socketmap");
+        	HashMap<String, List<String>> socketMap = (HashMap<String, List<String>>) intent.getSerializableExtra("socketmap");
         	processHeader = new ArrayList<String>();
         	socketChild = new HashMap<String, List<String>>();
+        	ArrayList<Boolean> processStatus = (ArrayList<Boolean>)  intent.getSerializableExtra("processstatus");
         	for (String key: socketMap.keySet()) {
         		processHeader.add(key);
         		socketChild.put(key, socketMap.get(key));
         	}
-        	socketAdapter = new SocketAdapter(context,processHeader,socketChild);
+        	socketAdapter = new SocketAdapter(context,processHeader,socketChild,processStatus);
             socketView.setAdapter(socketAdapter);
         }
     }; 

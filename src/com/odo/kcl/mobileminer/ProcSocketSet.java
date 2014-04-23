@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import android.app.ActivityManager;
@@ -112,20 +113,25 @@ public class ProcSocketSet {
 	public void broadcast() {
 		HashMap<String, List<String>> socketMap = new HashMap<String, List<String>>();
 		Intent intent = new Intent("com.odo.kcl.mobileminer.socketupdate");
-		
+		ArrayList<Boolean> processStatus = new ArrayList<Boolean>();
 		for (String name: processes.keySet()) {
 			List<String> socketList = processes.get(name).dump();
 			if (socketList.size() > 0) 
 			{
 				socketMap.put(name,socketList);
 				lastOpenSockets.put(name,socketList);
+				processStatus.add(true);
 			}
 			else {
-				if (lastOpenSockets.get(name) != null) socketMap.put(name,lastOpenSockets.get(name));
+				if (lastOpenSockets.get(name) != null) {
+					socketMap.put(name,lastOpenSockets.get(name));
+					processStatus.add(false);
+				}
 			}
 		}
 		
 		intent.putExtra("socketmap", socketMap);
+		intent.putExtra("processstatus", processStatus);
 		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 		//Log.i("MinerService","Socket Broadcast");
 	}
