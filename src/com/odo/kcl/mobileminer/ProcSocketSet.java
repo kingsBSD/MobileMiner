@@ -16,6 +16,9 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 //import android.util.Log;
 
+/**
+ * Maintains a list of which active processes have opened or closed network sockets.
+*/
 public class ProcSocketSet {
 
 	private String[] protocols = new String[]{"tcp","tcp6","udp","udp6"};

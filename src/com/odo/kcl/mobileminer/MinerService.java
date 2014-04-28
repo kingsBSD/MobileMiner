@@ -3,7 +3,6 @@ package com.odo.kcl.mobileminer;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -24,6 +23,10 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
+/**
+ * An Android service that logs connections to mobile and wireless networks, changes in cell location,
+ * and the opening and closing of network sockets.
+*/
 public class MinerService extends Service {
 
 	private ProcSocketSet socketSet;

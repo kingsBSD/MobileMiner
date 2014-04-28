@@ -21,18 +21,21 @@ public class MinerLocation {
 		signalStrength = 0;
 		manager = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE));
 		mccmnc = manager.getNetworkOperator();
-		if (mccmnc != null) {
-			isNone = false;
-			Mcc = mccmnc.substring(0,3);
-			Mnc = mccmnc.substring(3);
+		if (mccmnc != null) {			
 			if (location instanceof GsmCellLocation) {
-				Lac = Integer.toString(((GsmCellLocation) location).getLac());
-				Id = Integer.toString(((GsmCellLocation) location).getCid());
+				try {
+					Mcc = mccmnc.substring(0,3);
+					Mnc = mccmnc.substring(3);
+					Lac = Integer.toString(((GsmCellLocation) location).getLac());
+					Id = Integer.toString(((GsmCellLocation) location).getCid());
+					isNone = false;
+				}
+				catch(Exception e) {
+					isNone = true;
+				}
 			}
-			else {
-				isNone = true;
-			}
-		}
+		}		
+
 		//Log.i("MinerService",Mcc+" "+Mnc+" "+Lac+" "+Id);
 	}
 	
