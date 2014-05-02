@@ -2,7 +2,11 @@
 package com.odo.kcl.mobileminer;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import com.odo.kcl.mobileminer.MinerData.WifiData;
+
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -29,6 +33,7 @@ import android.widget.Toast;
 */
 public class MinerService extends Service {
 
+	private Date startTime;
 	private ProcSocketSet socketSet;
 	private IntentFilter filter;
 	private Handler scanHandle;
@@ -36,7 +41,10 @@ public class MinerService extends Service {
 	private Runnable mineWorker;
 	private Context context;
 	private String networkName;
+	private String cellLocation;
 	private ArrayList<MinerLocation> cells;
+	private Boolean mobileData, wifiData;
+	private WifiData wirelessData;
 	
 	private final BroadcastReceiver receiver = new BroadcastReceiver() {
 		@Override
@@ -91,8 +99,11 @@ public class MinerService extends Service {
 	
 	@Override
 	public void onCreate() {
-		networkName = "None";
+		networkName = "null";
+		mobileData = false;
+		wifiData = false;
 		context = this;
+		wirelessData = new WifiData();
 		cells = new ArrayList<MinerLocation>();
 		socketSet = new ProcSocketSet(this);
 		scanHandle = new Handler();
@@ -123,6 +134,7 @@ public class MinerService extends Service {
 	 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		startTime = new Date();
 		Log.i("MinerService","started mining");
 		int phoneFlags;
 		 
@@ -145,6 +157,10 @@ public class MinerService extends Service {
 	
 	@Override
 	public void onDestroy() {
+		MinerData helper = new MinerData(context);
+		helper.putMinerLog(helper.getWritableDatabase(), startTime, new Date());
+		helper.close();
+		socketSet.closeAll();
 		Log.i("MinerService","stopped mining");
 		unregisterReceiver(receiver);
 		scanning = false;
@@ -159,13 +175,23 @@ public class MinerService extends Service {
 			if (netInfo.getState() ==  NetworkInfo.State.CONNECTED ) {
 				switch (netInfo.getType()) {
 					case ConnectivityManager.TYPE_WIFI:
+						wifiData = true;
+						mobileData = false;
 						WifiManager wifiMgr = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
 				 		WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
 				 		name = wifiInfo.getSSID();
+				 		if (!networkName.equals(name)) {
+				 			wirelessData = new WifiData(wifiInfo);
+				 			MinerData helper = new MinerData(context);
+				 			helper.putWifiNetwork(helper.getWritableDatabase(), wirelessData, new Date());
+				 			helper.close();
+				 		}
 				 		startScan();
 				 		//Log.i("MinerService","CONNECTED: WIFI");
 				 		break;
 				 	case ConnectivityManager.TYPE_MOBILE:
+						wifiData = false;
+						mobileData = true;
 				 		// https://code.google.com/p/android/issues/detail?id=24227
 				 		//String name; Cursor c;
 				 		//c = this.getContentResolver().query(Uri.parse("content://telephony/carriers/preferapn"), null, null, null, null);
@@ -183,12 +209,16 @@ public class MinerService extends Service {
 			 else {
 				 scanning = false;
 			 }	 
-		 }
-		 else {
+		}
+		else {
 			 scanning = false;
-		 }	 
-		networkName = name;
-		networkBroadcast(); 
+			 networkName = "null";
+		}
+		
+		if (!networkName.equals(name)) {
+			networkName = name;
+			networkBroadcast();
+		}
 	}
 	
 	private void startScan() {
@@ -216,7 +246,12 @@ public class MinerService extends Service {
 	
     private void networkBroadcast() {
     	Intent intent = new Intent("com.odo.kcl.mobileminer.networkupdate");
-    	intent.putExtra("networktext",networkName);
+    	if (!networkName.equals("null")) {
+    		intent.putExtra("networktext",networkName);
+    	}
+    	else {
+    		intent.putExtra("networktext","None");
+    	}
     	LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 

@@ -5,16 +5,18 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
-//import android.util.Log;
+import android.util.Log;
 
 /**
  * Maintains a list of which active processes have opened or closed network sockets.
@@ -31,6 +33,7 @@ public class ProcSocketSet {
 	private class Process {
 		private String name,id;
 		private HashMap<String, ArrayList<String>> sockets;
+		private HashMap<String, Date> openingTimes;
 		
 		public Process(String procName, String pid) {
 			name = procName;
@@ -39,6 +42,7 @@ public class ProcSocketSet {
 			for (String protocol: protocols) {
 				sockets.put(protocol, new ArrayList<String>());
 			}
+			openingTimes = new HashMap<String, Date>();
 		}
 		
 		public boolean addSocket(String protocol,String addr) {
@@ -46,43 +50,38 @@ public class ProcSocketSet {
 				return false;
 			}
 			sockets.get(protocol).add(addr);
-			//Log.i("MinerService","New socket: "+protocol+" "+name+" "+id+" "+addr);
+			openingTimes.put(addr,new Date());
+			Log.i("MinerService","New socket: "+protocol+" "+name+" "+id+" "+addr);
 			return true;
 		}
 		
-		private void closeSocket(String protocol, int index) {
-			if (sockets.get(protocol).size() > index) {
-				//Log.i("MinerService","Closed socket: "+protocol+" "+name+" "+sockets.get(protocol).get(index));
-				sockets.get(protocol).remove(index);
-				updated = true;
-			}
+		private void closeSocket(String protocol, String addr) {
+			MinerData helper = new MinerData(context);
+			helper.putSocket(helper.getWritableDatabase(),name,protocol,addr,openingTimes.get(addr),new Date());
+			helper.close();
+			sockets.get(protocol).remove(addr);
+			openingTimes.remove(addr);
+			updated = true;
+			Log.i("MinerService","Closed socket: "+protocol+" "+name+" "+addr);
 		}
 		
 		public void closeAll() {
-			int i,j;
 			for (String protocol: protocols) {
-				i = sockets.get(protocol).size();
-				if (i>0) {
-					for (j=0;j<i;j++) {
-						closeSocket(protocol,j);
-					}
-				}
+				for (String addr: sockets.get(protocol)) closeSocket(protocol,addr);
 			}
+			
 		}
 		
 		public void closeAll(String protocol) {
-			int i;
-			for (i=0;i<sockets.get(protocol).size();i++) closeSocket(protocol,i);	
+			for (String addr: sockets.get(protocol)) closeSocket(protocol,addr);
 		}
 		
 		public boolean checkSockets(String protocol, ArrayList<String> discovered) {
 			boolean changed = false;
-			int i=0;
 			for (String addr: sockets.get(protocol)) {
 				if (!discovered.contains(addr)) {
 					changed = true;
-					closeSocket(protocol,i);
-					i += 1;
+					closeSocket(protocol,addr);
 				}
 			}
 			return changed;
@@ -241,6 +240,13 @@ public class ProcSocketSet {
     	}
     		
     	if (updated) broadcast();
-  
-	}	
+	}
+	
+	public void closeAll() {
+		for (Entry<String, Process> entry: processes.entrySet()) {
+			entry.getValue().closeAll();
+		}
+		processes = new HashMap<String, Process>();
+		broadcast();
+	}
 }

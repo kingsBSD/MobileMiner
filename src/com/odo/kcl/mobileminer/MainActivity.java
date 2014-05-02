@@ -81,6 +81,16 @@ public class MainActivity extends Activity {
     	miningActive();
     }
     
+    @Override public void onResume() {
+    	super.onResume();
+    	enableMiningButton(miningActive());
+    }
+    
+    @Override public void onRestart() {
+    	super.onRestart();
+    	enableMiningButton(miningActive());
+    }
+    
     public void startMining(View buttonView) {
     	miningIntent = new Intent(this, MinerService.class);
     	startService(miningIntent);
