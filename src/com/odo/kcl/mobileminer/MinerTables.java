@@ -44,6 +44,19 @@ public final class MinerTables {
 		GSMCellTable.COLUMN_NAME_STRENGTH + " TEXT, " +
 		GSMCellTable.COLUMN_NAME_TIME + " TEXT );";
 	
+	public static abstract class MobileNetworkTable implements BaseColumns {
+		public static final String TABLE_NAME = "mobilenetwork";
+		public static final String COLUMN_NAME_NETWORKNAME = "networkname";
+		public static final String COLUMN_NAME_NETWORK = "network";
+		public static final String COLUMN_NAME_TIME = "time";
+	}
+	
+	static final String CREATE_MOBILENETWORK_TABLE =
+		"CREATE TABLE " + MobileNetworkTable.TABLE_NAME + " (" +
+		MobileNetworkTable.COLUMN_NAME_NETWORKNAME + " TEXT, " +
+		MobileNetworkTable.COLUMN_NAME_NETWORK + " TEXT, " +
+		MobileNetworkTable.COLUMN_NAME_TIME + " TEXT );";
+		
 	public static abstract class WifiNetworkTable implements BaseColumns {
 		public static final String TABLE_NAME = "wifinetwork";
 		public static final String COLUMN_NAME_SSID = "ssid";
@@ -51,7 +64,7 @@ public final class MinerTables {
 		public static final String COLUMN_NAME_IP = "ip";
 		public static final String COLUMN_NAME_TIME = "time";	
 	}
-	
+		
 	static final String CREATE_WIFINETWORK_TABLE =
 		"CREATE TABLE " + WifiNetworkTable.TABLE_NAME + " (" +
 	    WifiNetworkTable.COLUMN_NAME_SSID + " TEXT, " +
@@ -69,6 +82,17 @@ public final class MinerTables {
 		"CREATE TABLE " + MinerLogTable.TABLE_NAME + " (" +
 		MinerLogTable.COLUMN_NAME_START + " TEXT, " +
 		MinerLogTable.COLUMN_NAME_STOP + " TEXT );";
+	
+	public static abstract class BookKeepingTable implements BaseColumns {
+		public static final String TABLE_NAME = "bookkeeping";
+		public static final String COLUMN_NAME_KEY = "key";
+		public static final String COLUMN_NAME_VALUE = "value";	
+	}
+	
+	static final String CREATE_BOOKKEEPING_TABLE =
+		"CREATE TABLE " + BookKeepingTable.TABLE_NAME + " (" +
+		BookKeepingTable.COLUMN_NAME_KEY + " TEXT, " +
+		BookKeepingTable.COLUMN_NAME_VALUE + " TEXT );";
 	
 }	
 

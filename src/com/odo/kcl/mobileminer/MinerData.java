@@ -11,6 +11,7 @@ import java.util.List;
 
 import com.odo.kcl.mobileminer.MinerTables.GSMCellTable;
 import com.odo.kcl.mobileminer.MinerTables.MinerLogTable;
+import com.odo.kcl.mobileminer.MinerTables.MobileNetworkTable;
 import com.odo.kcl.mobileminer.MinerTables.SocketTable;
 import com.odo.kcl.mobileminer.MinerTables.WifiNetworkTable;
 
@@ -20,6 +21,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.wifi.WifiInfo;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -71,8 +73,10 @@ public class MinerData extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(MinerTables.CREATE_SOCKET_TABLE);
 		db.execSQL(MinerTables.CREATE_GSMCELL_TABLE);
+		db.execSQL(MinerTables.CREATE_MOBILENETWORK_TABLE);
 		db.execSQL(MinerTables.CREATE_WIFINETWORK_TABLE);
 		db.execSQL(MinerTables.CREATE_MINERLOG_TABLE);
+		db.execSQL(MinerTables.CREATE_BOOKKEEPING_TABLE);		
 	}
 
 	@Override
@@ -94,25 +98,31 @@ public class MinerData extends SQLiteOpenHelper {
 		putRow(db,SocketTable.TABLE_NAME,values);
 	}
 
-	public void putGSMCell(SQLiteDatabase db, String mcc, String mnc, String lac, String cellid,
-	String strength, Date time) {
+	public void putGSMCell(SQLiteDatabase db, MinerLocation location, Date time) {
 		ContentValues values = new ContentValues();
-		values.put(GSMCellTable.COLUMN_NAME_MCC,mcc);
-		values.put(GSMCellTable.COLUMN_NAME_MNC,mnc);
-		values.put(GSMCellTable.COLUMN_NAME_LAC,lac);
-		values.put(GSMCellTable.COLUMN_NAME_CELLID,cellid);
-		values.put(GSMCellTable.COLUMN_NAME_STRENGTH,strength);
+		values.put(GSMCellTable.COLUMN_NAME_MCC,location.getMcc());
+		values.put(GSMCellTable.COLUMN_NAME_MNC,location.getMnc());
+		values.put(GSMCellTable.COLUMN_NAME_LAC,location.getLac());
+		values.put(GSMCellTable.COLUMN_NAME_CELLID,location.getId());
+		values.put(GSMCellTable.COLUMN_NAME_STRENGTH,location.getStrength());
 		values.put(GSMCellTable.COLUMN_NAME_TIME,df.format(time));
 		putRow(db,GSMCellTable.TABLE_NAME,values);
 	}
 
+	public void putMobileNetwork(SQLiteDatabase db, TelephonyManager manager, Date time) {
+		ContentValues values = new ContentValues();
+		values.put(MobileNetworkTable.COLUMN_NAME_NETWORKNAME, manager.getNetworkOperatorName());
+		values.put(MobileNetworkTable.COLUMN_NAME_NETWORK, manager.getNetworkOperator());
+		values.put(MobileNetworkTable.COLUMN_NAME_TIME,df.format(time));
+		putRow(db,MobileNetworkTable.TABLE_NAME,values);	
+	}
+	
 	public void putWifiNetwork(SQLiteDatabase db, WifiData data, Date time ) {
 		ContentValues values = new ContentValues();
 		values.put(WifiNetworkTable.COLUMN_NAME_SSID,data.getSSID());
 		values.put(WifiNetworkTable.COLUMN_NAME_BSSID,data.getBSSID());
 		values.put(WifiNetworkTable.COLUMN_NAME_IP,data.getIP());
 		values.put(WifiNetworkTable.COLUMN_NAME_TIME,df.format(time));
-		Log.i("MinerData","Wireless IP "+data.getIP());
 		putRow(db,WifiNetworkTable.TABLE_NAME,values);
 	}
 	

@@ -14,7 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
+//import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +22,7 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
+	Boolean miningButtonState;
 	Intent miningIntent;
 	ExpandableListView socketView;
 	SocketAdapter socketAdapter;
@@ -34,6 +35,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
       
+        miningButtonState = false;
         processHeader = new ArrayList<String>();
     	socketChild = new HashMap<String, List<String>>();
     	  
@@ -51,8 +53,7 @@ public class MainActivity extends Activity {
         
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 networkReceiver, new IntentFilter("com.odo.kcl.mobileminer.networkupdate"));
-        
-        enableMiningButton(miningActive());  
+         
     }
 
     @Override
@@ -65,6 +66,7 @@ public class MainActivity extends Activity {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
     	super.onSaveInstanceState(savedInstanceState);
+    	savedInstanceState.putBoolean("miningButtonState", miningButtonState);
     	savedInstanceState.putString("cellText",(String)cellText.getText());
     	savedInstanceState.putStringArrayList("processHeader",(ArrayList<String>)processHeader);
     	for (String key: processHeader) savedInstanceState.putStringArrayList(key,(ArrayList<String>)socketChild.get(key));
@@ -73,34 +75,52 @@ public class MainActivity extends Activity {
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
     	super.onRestoreInstanceState(savedInstanceState);
+    	miningButtonState = savedInstanceState.getBoolean("miningButtonState", false);
     	if (savedInstanceState.getString("cellText") != null) cellText.setText(savedInstanceState.getString("cellText"));
     	if (savedInstanceState.getStringArrayList("processHeader") != null) {
     		processHeader = savedInstanceState.getStringArrayList("processHeader");
     		for (String key: processHeader) socketChild.put(key,savedInstanceState.getStringArrayList(key));
     	}
-    	miningActive();
+    	enableMiningButton(miningButtonState);
     }
     
     @Override public void onResume() {
     	super.onResume();
-    	enableMiningButton(miningActive());
+    	if (miningActive()) getApplicationContext().sendBroadcast(new Intent("com.odo.kcl.mobileminer.updatequery"));
+    	enableMiningButton(miningButtonState);
     }
     
     @Override public void onRestart() {
     	super.onRestart();
-    	enableMiningButton(miningActive());
+    	if (miningActive()) getApplicationContext().sendBroadcast(new Intent("com.odo.kcl.mobileminer.updatequery"));
+    	enableMiningButton(miningButtonState);
     }
     
     public void startMining(View buttonView) {
-    	miningIntent = new Intent(this, MinerService.class);
-    	startService(miningIntent);
+    	if (miningActive()) getApplicationContext().sendBroadcast(new Intent("com.odo.kcl.mobileminer.updatequery"));
     	enableMiningButton(true);
     }
     
     public void stopMining(View buttonView) {
-    	miningIntent = new Intent(this, MinerService.class);
-    	stopService(miningIntent);
     	enableMiningButton(false);
+    }
+    
+    private void checkMining() {
+    	// Should we be mining?
+    	if (miningButtonState) {
+    		// Are we not mining?
+    		if (!miningActive()) {
+    	    	miningIntent = new Intent(this, MinerService.class);
+    	    	startService(miningIntent);
+    		}
+    	}
+    	else {
+    		// Are we mining?
+    		if (miningActive()) {
+    	    	miningIntent = new Intent(this, MinerService.class);
+    	    	stopService(miningIntent);	
+    		}
+    	}
     }
     
     // http://stackoverflow.com/questions/600207/how-to-check-if-a-service-is-running-in-android
@@ -108,8 +128,6 @@ public class MainActivity extends Activity {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (MinerService.class.getName().equals(service.service.getClassName())) {
-            	getApplicationContext().sendBroadcast(new Intent("com.odo.kcl.mobileminer.updatequery"));
-            	//Log.i("MobileMiner","SENT SOCKET QUERY");
                 return true;
             }
         }
@@ -120,6 +138,8 @@ public class MainActivity extends Activity {
     	Button stopButton = (Button)this.findViewById(R.id.stopButton);
     	startButton.setEnabled(!mining);
     	stopButton.setEnabled(mining);
+    	miningButtonState = mining;
+    	checkMining();
     }
 
     private BroadcastReceiver socketReceiver = new BroadcastReceiver() {

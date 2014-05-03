@@ -12,13 +12,14 @@ import android.telephony.gsm.GsmCellLocation;
 
 public class MinerLocation {
 	boolean isNone = true;
-	String Mcc,Mnc,Lac,Id;
-	public int signalStrength;
+	private String Mcc,Mnc,Lac,Id;
+	private int signalStrength;
 	
 	public MinerLocation(CellLocation location, Context context) {
 		TelephonyManager manager;
 		String mccmnc;
-		signalStrength = 0;
+		signalStrength = 99;
+		Mcc = Mnc = Lac = Id = "None";
 		manager = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE));
 		mccmnc = manager.getNetworkOperator();
 		if (mccmnc != null) {			
@@ -28,7 +29,7 @@ public class MinerLocation {
 					Mnc = mccmnc.substring(3);
 					Lac = Integer.toString(((GsmCellLocation) location).getLac());
 					Id = Integer.toString(((GsmCellLocation) location).getCid());
-					isNone = false;
+					isNone = false;		
 				}
 				catch(Exception e) {
 					isNone = true;
@@ -47,10 +48,15 @@ public class MinerLocation {
 			Lac = Integer.toString(((CellInfoGsm) cellInfo).getCellIdentity().getLac());
 			Id = Integer.toString(((CellInfoGsm) cellInfo).getCellIdentity().getCid());
 			signalStrength = ((CellInfoGsm) cellInfo).getCellSignalStrength().getAsuLevel();
-			if (signalStrength > 31) signalStrength = 0;
 			isNone = false;
 		}
 	}
+	
+	public String getMcc() {return Mcc;}
+	public String getMnc() {return Mnc;}
+	public String getLac() {return Lac;}
+	public String getId() {return Id;}
+	public String getStrength() {return Integer.toString(signalStrength);}
 	
 	public String dump() {
 		if (isNone) {

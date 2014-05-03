@@ -91,7 +91,12 @@ public class MinerService extends Service {
 		@Override
 		public void onCellLocationChanged (CellLocation location) {
 			cells = new ArrayList<MinerLocation>();
-			if (location != null) cells.add(new MinerLocation(location,context));
+			if (location != null) {
+				cells.add(new MinerLocation(location,context));
+	 			MinerData helper = new MinerData(context);
+	 			helper.putGSMCell(helper.getWritableDatabase(), cells.get(0), new Date());
+	 			helper.close();
+			}
 			cellBroadcast();
 			//Log.i("MinerService","CELL_LOCATION_CHANGED");
 		}	
@@ -185,6 +190,7 @@ public class MinerService extends Service {
 				 			MinerData helper = new MinerData(context);
 				 			helper.putWifiNetwork(helper.getWritableDatabase(), wirelessData, new Date());
 				 			helper.close();
+							networkName = name; networkBroadcast();	
 				 		}
 				 		startScan();
 				 		//Log.i("MinerService","CONNECTED: WIFI");
@@ -198,7 +204,13 @@ public class MinerService extends Service {
 				 		//name = c.getString(c.getColumnIndex("name"));
 				 		TelephonyManager telephonyManager = ((TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE));
 				 		name = telephonyManager.getNetworkOperatorName();
-				 		startScan();
+				 		if (!networkName.equals(name)) {
+				 			MinerData helper = new MinerData(context);
+				 			helper.putMobileNetwork(helper.getWritableDatabase(), telephonyManager, new Date());
+				 			helper.close();
+							networkName = name; networkBroadcast();	
+				 		}
+				 		//startScan();
 				 		Log.i("MinerService","CONNECTED MOBILE: "+name);
 				 		break;
 				 	default:
@@ -215,10 +227,6 @@ public class MinerService extends Service {
 			 networkName = "null";
 		}
 		
-		if (!networkName.equals(name)) {
-			networkName = name;
-			networkBroadcast();
-		}
 	}
 	
 	private void startScan() {
