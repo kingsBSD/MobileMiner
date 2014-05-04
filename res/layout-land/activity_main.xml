@@ -11,7 +11,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-        <LinearLayout
+    <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -20,54 +20,87 @@
 
         <Button
             android:id="@+id/startButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="86dp"
+            android:layout_height="70dip"
             android:onClick="startMining"
-            android:text="Start Mining" />
+            android:text="Start Mining"/>
 
         <Button
             android:id="@+id/stopButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="86dp"
+            android:layout_height="70dp"
             android:onClick="stopMining"
             android:text="Stop Mining" />
-
+        
+        <Button
+        	android:id="@+id/dataButton"
+        	android:layout_width="70dp"
+        	android:layout_height="70dip"
+        	android:text="My Data" />
+             
     </LinearLayout>
 
-	<TextView
-	    android:id="@+id/socketLegend"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_alignLeft="@+id/linearLayout1"
-	    android:layout_below="@+id/linearLayout1"
-	    android:text="Network Sockets:"
-	    android:textAppearance="?android:attr/textAppearanceMedium" />
+    <TextView
+        android:id="@+id/cellLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/socketView"
+        android:layout_alignLeft="@+id/networkName"
+        android:text="Cell ID: None"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
-	<ExpandableListView
-	    android:id="@+id/socketView"
-	    android:layout_width="fill_parent"
-	    android:layout_height="150dip"
-	    android:layout_alignLeft="@+id/socketLegend"
-	    android:layout_below="@+id/socketLegend" >
-	</ExpandableListView>
+    <ExpandableListView
+        android:id="@+id/socketView"
+        android:layout_marginTop="5dp"
+        android:layout_width="fill_parent"
+        android:layout_height="145dip"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true" >
+    </ExpandableListView>
 
-	<TextView
-	    android:id="@+id/networkName"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_alignParentTop="true"
-	    android:layout_marginLeft="18dp"
-	    android:layout_toRightOf="@+id/linearLayout1"
-	    android:text="Network: None"
-	    android:textAppearance="?android:attr/textAppearanceMedium" />
+    <TextView
+        android:id="@+id/networkName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/linearLayout1"
+        android:layout_marginLeft="14dp"
+        android:layout_toRightOf="@+id/linearLayout1"
+        android:text="Network: None"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-	<TextView
-	    android:id="@+id/cellLocation"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_alignBottom="@+id/socketLegend"
-	    android:layout_alignLeft="@+id/networkName"
-	    android:text="Cell ID: None"
-	    android:textAppearance="?android:attr/textAppearanceSmall" />
-            
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/linearLayout1"
+        android:layout_below="@+id/linearLayout1"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/socketLegend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Network Sockets:"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/openView"
+            android:layout_marginLeft="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Open"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#00FF00" />
+
+        <TextView
+            android:id="@+id/closedView"
+            android:layout_marginLeft="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/openView"
+            android:text="Closed"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FF0000" />
+    </LinearLayout>
+
 </RelativeLayout>
