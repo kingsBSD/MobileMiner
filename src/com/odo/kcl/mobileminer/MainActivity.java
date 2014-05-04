@@ -14,7 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
-//import android.util.Log;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -32,6 +32,7 @@ public class MainActivity extends Activity {
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+    	Log.i("MobileMiner","CREATING");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
       
@@ -65,6 +66,7 @@ public class MainActivity extends Activity {
     
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
+    	Log.i("MobileMiner","SAVING");
     	super.onSaveInstanceState(savedInstanceState);
     	savedInstanceState.putBoolean("miningButtonState", miningButtonState);
     	savedInstanceState.putString("cellText",(String)cellText.getText());
@@ -74,6 +76,7 @@ public class MainActivity extends Activity {
     
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
+    	Log.i("MobileMiner","RESTORING");
     	super.onRestoreInstanceState(savedInstanceState);
     	miningButtonState = savedInstanceState.getBoolean("miningButtonState", false);
     	if (savedInstanceState.getString("cellText") != null) cellText.setText(savedInstanceState.getString("cellText"));
@@ -83,16 +86,22 @@ public class MainActivity extends Activity {
     	}
     	enableMiningButton(miningButtonState);
     }
-    
-    @Override public void onResume() {
-    	super.onResume();
-    	if (miningActive()) getApplicationContext().sendBroadcast(new Intent("com.odo.kcl.mobileminer.updatequery"));
-    	enableMiningButton(miningButtonState);
+        
+    @Override public void onRestart() {
+    	Log.i("MobileMiner","RESTARTING");
+    	super.onRestart();
     }
     
-    @Override public void onRestart() {
-    	super.onRestart();
-    	if (miningActive()) getApplicationContext().sendBroadcast(new Intent("com.odo.kcl.mobileminer.updatequery"));
+    @Override public void onResume() {
+    	Log.i("MobileMiner","RESUMING");
+    	super.onResume();
+    	if (miningActive()) {
+    		getApplicationContext().sendBroadcast(new Intent("com.odo.kcl.mobileminer.updatequery"));
+    		miningButtonState = true;
+    	}
+    	else {
+    		miningButtonState = false;
+    	}
     	enableMiningButton(miningButtonState);
     }
     
@@ -102,6 +111,8 @@ public class MainActivity extends Activity {
     }
     
     public void stopMining(View buttonView) {
+    	miningIntent = new Intent(this, MinerService.class);
+    	stopService(miningIntent);
     	enableMiningButton(false);
     }
     
@@ -112,13 +123,6 @@ public class MainActivity extends Activity {
     		if (!miningActive()) {
     	    	miningIntent = new Intent(this, MinerService.class);
     	    	startService(miningIntent);
-    		}
-    	}
-    	else {
-    		// Are we mining?
-    		if (miningActive()) {
-    	    	miningIntent = new Intent(this, MinerService.class);
-    	    	stopService(miningIntent);	
     		}
     	}
     }

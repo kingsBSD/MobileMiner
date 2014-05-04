@@ -71,12 +71,20 @@ public class MinerData extends SQLiteOpenHelper {
     }
 	
 	public void onCreate(SQLiteDatabase db) {
-		db.execSQL(MinerTables.CREATE_SOCKET_TABLE);
-		db.execSQL(MinerTables.CREATE_GSMCELL_TABLE);
-		db.execSQL(MinerTables.CREATE_MOBILENETWORK_TABLE);
-		db.execSQL(MinerTables.CREATE_WIFINETWORK_TABLE);
-		db.execSQL(MinerTables.CREATE_MINERLOG_TABLE);
-		db.execSQL(MinerTables.CREATE_BOOKKEEPING_TABLE);		
+		for (String sql: new String[]{
+			MinerTables.CREATE_SOCKET_TABLE,
+			MinerTables.CREATE_GSMCELL_TABLE,
+			MinerTables.CREATE_GSMLOCATION_TABLE,
+			MinerTables.CREATE_MOBILENETWORK_TABLE,
+			MinerTables.CREATE_WIFINETWORK_TABLE,
+			MinerTables.CREATE_MINERLOG_TABLE,
+			MinerTables.CREATE_BOOKKEEPING_TABLE}) {
+			try {
+				db.execSQL(sql);
+			}
+			catch (Exception e) {
+			}
+		}
 	}
 
 	@Override

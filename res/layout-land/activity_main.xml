@@ -59,7 +59,7 @@
 	    android:layout_marginLeft="18dp"
 	    android:layout_toRightOf="@+id/linearLayout1"
 	    android:text="Network: None"
-	    android:textAppearance="?android:attr/textAppearanceLarge" />
+	    android:textAppearance="?android:attr/textAppearanceMedium" />
 
 	<TextView
 	    android:id="@+id/cellLocation"

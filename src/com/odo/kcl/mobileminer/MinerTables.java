@@ -44,6 +44,25 @@ public final class MinerTables {
 		GSMCellTable.COLUMN_NAME_STRENGTH + " TEXT, " +
 		GSMCellTable.COLUMN_NAME_TIME + " TEXT );";
 	
+	public static abstract class GSMLocationTable implements BaseColumns {
+		public static final String TABLE_NAME = "gsmlocation";
+		public static final String COLUMN_NAME_MCC = "mcc";
+		public static final String COLUMN_NAME_MNC = "mnc";
+		public static final String COLUMN_NAME_LAC = "lac";
+		public static final String COLUMN_NAME_CELLID = "cellid";
+		public static final String COLUMN_NAME_LAT = "lat";
+		public static final String COLUMN_NAME_LONG = "long";
+	}
+	
+	static final String CREATE_GSMLOCATION_TABLE =
+			"CREATE TABLE " + GSMCellTable.TABLE_NAME + " (" +
+			GSMLocationTable.COLUMN_NAME_MCC + " TEXT, " +
+			GSMLocationTable.COLUMN_NAME_MNC + " TEXT, " +
+			GSMLocationTable.COLUMN_NAME_LAC + " TEXT, " +
+			GSMLocationTable.COLUMN_NAME_CELLID + " TEXT, " +
+			GSMLocationTable.COLUMN_NAME_LAT + " TEXT, " +
+			GSMLocationTable.COLUMN_NAME_LONG + " TEXT );";
+	
 	public static abstract class MobileNetworkTable implements BaseColumns {
 		public static final String TABLE_NAME = "mobilenetwork";
 		public static final String COLUMN_NAME_NETWORKNAME = "networkname";
