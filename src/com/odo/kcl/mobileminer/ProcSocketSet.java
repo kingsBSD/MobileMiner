@@ -107,11 +107,7 @@ public class ProcSocketSet {
 		updated = processes.get(name).addSocket(prot, addr); 
 		return updated;	
 	}
-	
-	public void close() {
-		for (String proc: processes.keySet()) processes.get(proc).closeAll();
-	}
-	
+		
 	public void broadcast() {
 		HashMap<String, List<String>> socketMap = new HashMap<String, List<String>>();
 		Intent intent = new Intent("com.odo.kcl.mobileminer.socketupdate");
@@ -242,7 +238,7 @@ public class ProcSocketSet {
     	if (updated) broadcast();
 	}
 	
-	public void closeAll() {
+	public void close() {
 		for (Entry<String, Process> entry: processes.entrySet()) {
 			entry.getValue().closeAll();
 		}

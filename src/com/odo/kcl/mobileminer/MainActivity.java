@@ -116,6 +116,10 @@ public class MainActivity extends Activity {
     	enableMiningButton(false);
     }
     
+    public void launchData(View buttonView) {
+    	startActivity(new Intent(this, DataActivity.class));
+    }
+    
     private void checkMining() {
     	// Should we be mining?
     	if (miningButtonState) {

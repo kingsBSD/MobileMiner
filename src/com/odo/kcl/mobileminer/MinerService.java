@@ -165,7 +165,6 @@ public class MinerService extends Service {
 		MinerData helper = new MinerData(context);
 		helper.putMinerLog(helper.getWritableDatabase(), startTime, new Date());
 		helper.close();
-		socketSet.closeAll();
 		Log.i("MinerService","stopped mining");
 		unregisterReceiver(receiver);
 		scanning = false;

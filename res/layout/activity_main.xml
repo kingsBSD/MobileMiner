@@ -37,6 +37,7 @@
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_marginTop="0dp"
+            android:onClick="launchData"
             android:text="My Data" />
 
     </LinearLayout>

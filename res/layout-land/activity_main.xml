@@ -36,6 +36,7 @@
         	android:id="@+id/dataButton"
         	android:layout_width="70dp"
         	android:layout_height="70dip"
+        	android:onClick="launchData"
         	android:text="My Data" />
              
     </LinearLayout>

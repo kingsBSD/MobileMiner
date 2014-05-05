@@ -2,13 +2,13 @@ package com.odo.kcl.mobileminer;
 
 import java.math.BigInteger;
 import java.net.InetAddress;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
+import com.odo.kcl.mobileminer.MinerTables.BookKeepingTable;
 import com.odo.kcl.mobileminer.MinerTables.GSMCellTable;
 import com.odo.kcl.mobileminer.MinerTables.MinerLogTable;
 import com.odo.kcl.mobileminer.MinerTables.MobileNetworkTable;
@@ -17,6 +17,7 @@ import com.odo.kcl.mobileminer.MinerTables.WifiNetworkTable;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -31,7 +32,7 @@ public class MinerData extends SQLiteOpenHelper {
 
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "MobileMiner.db";
-    private static SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+    private static SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     
     
     public static class WifiData {
@@ -54,7 +55,7 @@ public class MinerData extends SQLiteOpenHelper {
 			}
 			catch (Exception e) {
 				ip = "null";
-			}	
+			}			
     	}
     	public String getSSID() {return ssid;}
     	public String getBSSID() {return bssid;}
@@ -149,5 +150,76 @@ public class MinerData extends SQLiteOpenHelper {
 			
 		}
 	}
+	
+	private String howLongAgo(Date date) {
+		long divider,count;
+		long howLong = new Date().getTime() - date.getTime();
+		String unit;
+
+		divider = 1000; unit = "Second";
+		if (howLong > 60000 && howLong < 3600000) {divider = 60000; unit = "Minute";}
+		if (howLong > 3600000 && howLong < 86400000) {divider = 3600000; unit = "Hour";}
+		if (howLong > 86400000) {divider = 86400000; unit = "Day";}
 		
+		count = howLong / divider;
+		
+		if (count < 2) {
+			return "one "+unit+" ago.";
+		}
+		else {
+			return Long.toString(count)+" "+unit+"s ago.";
+		}
+
+	}
+	
+	private void initBookKeepingDate(SQLiteDatabase db,String key) {
+		ContentValues values = new ContentValues();
+		values.put(BookKeepingTable.COLUMN_NAME_KEY, key);
+		values.put(BookKeepingTable.COLUMN_NAME_VALUE, BookKeepingTable.NULL_DATE);
+		putRow(db,BookKeepingTable.TABLE_NAME,values);
+	}
+	
+	public Date getBookKeepingDate(SQLiteDatabase db,String key) {
+		String[] retColumns = {BookKeepingTable.COLUMN_NAME_VALUE};
+		String[] whereValues = {key};
+		Cursor c = db.query(BookKeepingTable.TABLE_NAME,retColumns,BookKeepingTable.COLUMN_NAME_KEY+" = ?",
+			whereValues,null,null,null);
+		c.moveToFirst();
+		String dateString;	
+		try {
+			dateString = c.getString(c.getColumnIndex(BookKeepingTable.COLUMN_NAME_VALUE));
+		}
+		catch (Exception e) {
+			initBookKeepingDate(db,BookKeepingTable.DATA_LAST_EXPORTED);
+			dateString = BookKeepingTable.NULL_DATE;
+		}
+		
+		if (dateString.equals(BookKeepingTable.NULL_DATE)) {
+			return null;
+		}
+		else {
+			try {
+				return df.parse(dateString);
+			} catch (ParseException e) {
+				Log.i("MobileData","Bugger");
+				return null;
+			}
+		}	
+	}
+	
+	public void setBookKeepingDate(SQLiteDatabase db,String key,Date date) {
+		ContentValues values = new ContentValues();
+		String[] whereArgs = {BookKeepingTable.DATA_LAST_EXPORTED};
+		values.put(BookKeepingTable.COLUMN_NAME_VALUE, df.format(date));
+		db.update(BookKeepingTable.TABLE_NAME, values, BookKeepingTable.COLUMN_NAME_KEY+" = ?", whereArgs);
+	}
+	
+	public String getLastExported(SQLiteDatabase db) {
+		Date exported = getBookKeepingDate(db,BookKeepingTable.DATA_LAST_EXPORTED);
+		if (exported != null) {
+			return howLongAgo(exported);
+		}
+		return null;
+	}
+	
 }

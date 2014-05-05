@@ -35,7 +35,7 @@ public final class MinerTables {
 		public static final String COLUMN_NAME_TIME = "time";
 	}
 	
-	static final String CREATE_GSMCELL_TABLE =
+	public static final String CREATE_GSMCELL_TABLE =
 		"CREATE TABLE " + GSMCellTable.TABLE_NAME + " (" +
 		GSMCellTable.COLUMN_NAME_MCC + " TEXT, " +
 		GSMCellTable.COLUMN_NAME_MNC + " TEXT, " +
@@ -54,7 +54,7 @@ public final class MinerTables {
 		public static final String COLUMN_NAME_LONG = "long";
 	}
 	
-	static final String CREATE_GSMLOCATION_TABLE =
+	public static final String CREATE_GSMLOCATION_TABLE =
 			"CREATE TABLE " + GSMCellTable.TABLE_NAME + " (" +
 			GSMLocationTable.COLUMN_NAME_MCC + " TEXT, " +
 			GSMLocationTable.COLUMN_NAME_MNC + " TEXT, " +
@@ -84,7 +84,7 @@ public final class MinerTables {
 		public static final String COLUMN_NAME_TIME = "time";	
 	}
 		
-	static final String CREATE_WIFINETWORK_TABLE =
+	public static final String CREATE_WIFINETWORK_TABLE =
 		"CREATE TABLE " + WifiNetworkTable.TABLE_NAME + " (" +
 	    WifiNetworkTable.COLUMN_NAME_SSID + " TEXT, " +
 	    WifiNetworkTable.COLUMN_NAME_BSSID + " TEXT, " +
@@ -97,7 +97,7 @@ public final class MinerTables {
 		public static final String COLUMN_NAME_STOP = "stop";
 	}
 	
-	static final String CREATE_MINERLOG_TABLE =
+	public static final String CREATE_MINERLOG_TABLE =
 		"CREATE TABLE " + MinerLogTable.TABLE_NAME + " (" +
 		MinerLogTable.COLUMN_NAME_START + " TEXT, " +
 		MinerLogTable.COLUMN_NAME_STOP + " TEXT );";
@@ -106,12 +106,15 @@ public final class MinerTables {
 		public static final String TABLE_NAME = "bookkeeping";
 		public static final String COLUMN_NAME_KEY = "key";
 		public static final String COLUMN_NAME_VALUE = "value";	
+		public static final String DATA_LAST_EXPORTED = "datalastexported";
+		public static final String NULL_DATE = "nulldate";
 	}
 	
-	static final String CREATE_BOOKKEEPING_TABLE =
+	public static final String CREATE_BOOKKEEPING_TABLE =
 		"CREATE TABLE " + BookKeepingTable.TABLE_NAME + " (" +
 		BookKeepingTable.COLUMN_NAME_KEY + " TEXT, " +
 		BookKeepingTable.COLUMN_NAME_VALUE + " TEXT );";
+
 	
 }	
 
