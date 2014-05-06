@@ -34,7 +34,6 @@ public class MinerData extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "MobileMiner.db";
     private static SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     
-    
     public static class WifiData {
     	private String ssid,bssid,ip;
     	public WifiData() {
@@ -221,5 +220,10 @@ public class MinerData extends SQLiteOpenHelper {
 		}
 		return null;
 	}
+	
+	public void setLastExported(SQLiteDatabase db, Date date) {
+		setBookKeepingDate(db, BookKeepingTable.DATA_LAST_EXPORTED,date);		
+	}	
+	
 	
 }
