@@ -60,7 +60,12 @@ public class MinerService extends Service {
 		        	cellBroadcast();
 		        	networkBroadcast();
 		        	//Log.i("MinerService","RECEIVED SOCKET QUERY");
-		      }		      	      		      
+		      }
+
+		    	if (action.equals("com.odo.kcl.mobileminer.stopmining")) {
+		    		stopSelf();
+		    	}
+		    
 		   }
 		};
 		
@@ -116,6 +121,7 @@ public class MinerService extends Service {
 		filter = new IntentFilter();
 		filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
 		filter.addAction("com.odo.kcl.mobileminer.updatequery");
+		filter.addAction("com.odo.kcl.mobileminer.stopmining");
 		registerReceiver(receiver, filter);
 	 
 		mineWorker = new Runnable() {
@@ -162,12 +168,12 @@ public class MinerService extends Service {
 	
 	@Override
 	public void onDestroy() {
+		scanning = false;
 		MinerData helper = new MinerData(context);
 		helper.putMinerLog(helper.getWritableDatabase(), startTime, new Date());
 		helper.close();
 		Log.i("MinerService","stopped mining");
 		unregisterReceiver(receiver);
-		scanning = false;
 	    Toast.makeText(this, "Stopped mining...", Toast.LENGTH_SHORT).show();
 	}
 	

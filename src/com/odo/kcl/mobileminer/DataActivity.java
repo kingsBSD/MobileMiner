@@ -22,10 +22,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class DataActivity extends Activity {
 	private Context context;
+	private TextView dataText;
 	
 	
 	
@@ -34,6 +36,8 @@ public class DataActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_data);
 		context = this;
+		dataText  = (TextView) findViewById(R.id.dataText);
+		setDbSizeLegend();
 	}
 
 	@Override
@@ -68,6 +72,15 @@ public class DataActivity extends Activity {
     	 myAlertDialog.show();
     }
 
+    private void setDbSizeLegend() {
+    	// http://stackoverflow.com/questions/6364577/how-to-get-the-current-sqlite-database-size-or-package-size-in-android
+    	long dbSize = context.getDatabasePath(MinerData.DATABASE_NAME).length();
+    	long divider = 1024;
+    	String unit = "Kb";
+    	if (dbSize > 1048576) {unit = "Mb"; divider = 1048576;}
+    	dataText.setText((CharSequence) ("Database Size: "+Long.toString(dbSize/divider)+unit));
+    }
+    
     private void dumpDb() {
     	// http://www.techrepublic.com/blog/software-engineer/export-sqlite-data-from-your-android-device/#.
     	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-ddHH-mm-ss");
