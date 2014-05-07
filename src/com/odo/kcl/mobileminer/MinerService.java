@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.odo.kcl.mobileminer.MinerData.WifiData;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -19,6 +21,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.CellInfo;
 import android.telephony.CellLocation;
@@ -64,6 +67,7 @@ public class MinerService extends Service {
 
 		    	if (action.equals("com.odo.kcl.mobileminer.stopmining")) {
 		    		scanning = false;
+		    		stopForeground(true);
 		    		stopSelf();
 		    	}
 		    
@@ -159,7 +163,8 @@ public class MinerService extends Service {
 		}
 		 
 		((TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE)).listen(phoneListener,phoneFlags);
-		Toast.makeText(this, "Started mining...", Toast.LENGTH_SHORT).show();  
+		Toast.makeText(this, "Started mining...", Toast.LENGTH_SHORT).show();
+		moveToForeground();
 		return START_STICKY;
 	}
 	 
@@ -177,6 +182,17 @@ public class MinerService extends Service {
 		Log.i("MinerService","stopped mining");
 		unregisterReceiver(receiver);
 	    Toast.makeText(this, "Stopped mining...", Toast.LENGTH_SHORT).show();
+	}
+	
+	private void moveToForeground() {
+		// https://github.com/commonsguy/cw-android/blob/master/Notifications/FakePlayer/src/com/commonsware/android/fakeplayerfg/PlayerService.java
+		// http://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html
+		Intent minerIntent = new Intent(this, MinerService.class);
+		PendingIntent pendingMinerIntent = PendingIntent.getActivity(this,0,minerIntent,0);
+		NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+		builder.addAction(R.drawable.ic_launcher, "Started mining", pendingMinerIntent);
+		Notification note = builder.build();
+		startForeground(23, note);
 	}
 	
 	private void connectivityChanged() {
