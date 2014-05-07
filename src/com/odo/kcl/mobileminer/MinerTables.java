@@ -1,3 +1,4 @@
+// Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
 package com.odo.kcl.mobileminer;
 
 import android.provider.BaseColumns;
@@ -24,7 +25,9 @@ public final class MinerTables {
 		SocketTable.COLUMN_NAME_PORT + " TEXT, " +
 		SocketTable.COLUMN_NAME_OPENED + " TEXT, " +
 		SocketTable.COLUMN_NAME_CLOSED + " TEXT );";
-
+	
+	static final String SOCKET_TABLE_TIMESTAMP = SocketTable.COLUMN_NAME_CLOSED;
+	
 	public static abstract class GSMCellTable implements BaseColumns {
 		public static final String TABLE_NAME = "gsmcell";
 		public static final String COLUMN_NAME_MCC = "mcc";
@@ -43,6 +46,8 @@ public final class MinerTables {
 		GSMCellTable.COLUMN_NAME_CELLID + " TEXT, " +
 		GSMCellTable.COLUMN_NAME_STRENGTH + " TEXT, " +
 		GSMCellTable.COLUMN_NAME_TIME + " TEXT );";
+	
+	static final String GSMCELL_TABLE_TIMESTAMP = GSMCellTable.COLUMN_NAME_TIME;
 	
 	public static abstract class GSMLocationTable implements BaseColumns {
 		public static final String TABLE_NAME = "gsmlocation";
@@ -75,7 +80,9 @@ public final class MinerTables {
 		MobileNetworkTable.COLUMN_NAME_NETWORKNAME + " TEXT, " +
 		MobileNetworkTable.COLUMN_NAME_NETWORK + " TEXT, " +
 		MobileNetworkTable.COLUMN_NAME_TIME + " TEXT );";
-		
+	
+	static final String MOBILENETWORK_TABLE_TIMESTAMP = MobileNetworkTable.COLUMN_NAME_TIME;
+	
 	public static abstract class WifiNetworkTable implements BaseColumns {
 		public static final String TABLE_NAME = "wifinetwork";
 		public static final String COLUMN_NAME_SSID = "ssid";
@@ -91,6 +98,8 @@ public final class MinerTables {
 	    WifiNetworkTable.COLUMN_NAME_IP + " TEXT, " +
 	    WifiNetworkTable.COLUMN_NAME_TIME + " TEXT );";
 	
+	static final String WIFINETWORK_TABLE_TIMESTAMP = WifiNetworkTable.COLUMN_NAME_TIME;
+	
 	public static abstract class MinerLogTable implements BaseColumns {
 		public static final String TABLE_NAME = "minerlog";
 		public static final String COLUMN_NAME_START = "start";
@@ -102,12 +111,14 @@ public final class MinerTables {
 		MinerLogTable.COLUMN_NAME_START + " TEXT, " +
 		MinerLogTable.COLUMN_NAME_STOP + " TEXT );";
 	
+	static final String MINER_TABLE_TIMESTAMP = MinerLogTable.COLUMN_NAME_STOP;
+	
 	public static abstract class BookKeepingTable implements BaseColumns {
 		public static final String TABLE_NAME = "bookkeeping";
 		public static final String COLUMN_NAME_KEY = "key";
 		public static final String COLUMN_NAME_VALUE = "value";	
 		public static final String DATA_LAST_EXPORTED = "datalastexported";
-		public static final String DATA_LAST_EXPIRED = "datalastexired";
+		public static final String DATA_LAST_EXPIRED = "datalastexpired";
 		public static final String NULL_DATE = "nulldate";
 	}
 	
@@ -115,7 +126,23 @@ public final class MinerTables {
 		"CREATE TABLE " + BookKeepingTable.TABLE_NAME + " (" +
 		BookKeepingTable.COLUMN_NAME_KEY + " TEXT, " +
 		BookKeepingTable.COLUMN_NAME_VALUE + " TEXT );";
+	
+	public static final String[] CreateTables = {
+		MinerTables.CREATE_SOCKET_TABLE,
+		MinerTables.CREATE_GSMCELL_TABLE,
+		MinerTables.CREATE_GSMLOCATION_TABLE,
+		MinerTables.CREATE_MOBILENETWORK_TABLE,
+		MinerTables.CREATE_WIFINETWORK_TABLE,
+		MinerTables.CREATE_MINERLOG_TABLE,
+		MinerTables.CREATE_BOOKKEEPING_TABLE};
+	
+	public static final String[] ExpirableTables = {
+		SocketTable.TABLE_NAME, GSMCellTable.TABLE_NAME, MobileNetworkTable.TABLE_NAME, WifiNetworkTable.TABLE_NAME, 
+		MinerLogTable.TABLE_NAME};
 
+	public static final String[] ExpirableTimeStamps = {SOCKET_TABLE_TIMESTAMP, GSMCELL_TABLE_TIMESTAMP,
+		MOBILENETWORK_TABLE_TIMESTAMP, WIFINETWORK_TABLE_TIMESTAMP, MINER_TABLE_TIMESTAMP
+	};
 	
 }	
 

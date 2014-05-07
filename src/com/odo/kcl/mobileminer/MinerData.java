@@ -1,3 +1,4 @@
+// Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
 package com.odo.kcl.mobileminer;
 
 import java.math.BigInteger;
@@ -71,14 +72,8 @@ public class MinerData extends SQLiteOpenHelper {
     }
 	
 	public void onCreate(SQLiteDatabase db) {
-		for (String sql: new String[]{
-			MinerTables.CREATE_SOCKET_TABLE,
-			MinerTables.CREATE_GSMCELL_TABLE,
-			MinerTables.CREATE_GSMLOCATION_TABLE,
-			MinerTables.CREATE_MOBILENETWORK_TABLE,
-			MinerTables.CREATE_WIFINETWORK_TABLE,
-			MinerTables.CREATE_MINERLOG_TABLE,
-			MinerTables.CREATE_BOOKKEEPING_TABLE}) {
+		for (String sql: MinerTables.CreateTables)
+			 {
 			try {
 				db.execSQL(sql);
 			}
@@ -167,7 +162,7 @@ public class MinerData extends SQLiteOpenHelper {
 			return "one "+unit+" ago.";
 		}
 		else {
-			return Long.toString(count)+" "+unit+"s ago.";
+			return Long.toString(count)+" "+unit+"s ago";
 		}
 
 	}
@@ -190,7 +185,7 @@ public class MinerData extends SQLiteOpenHelper {
 			dateString = c.getString(c.getColumnIndex(BookKeepingTable.COLUMN_NAME_VALUE));
 		}
 		catch (Exception e) {
-			initBookKeepingDate(db,BookKeepingTable.DATA_LAST_EXPORTED);
+			initBookKeepingDate(db,key);
 			dateString = BookKeepingTable.NULL_DATE;
 		}
 		
@@ -201,7 +196,6 @@ public class MinerData extends SQLiteOpenHelper {
 			try {
 				return df.parse(dateString);
 			} catch (ParseException e) {
-				Log.i("MobileData","Bugger");
 				return null;
 			}
 		}	
@@ -210,7 +204,7 @@ public class MinerData extends SQLiteOpenHelper {
 	public void setBookKeepingDate(SQLiteDatabase db,String key,Date date) {
 		// http://developer.android.com/training/basics/data-storage/databases.html#UpdateDbRow
 		ContentValues values = new ContentValues();
-		String[] whereArgs = {BookKeepingTable.DATA_LAST_EXPORTED};
+		String[] whereArgs = {key};
 		values.put(BookKeepingTable.COLUMN_NAME_VALUE, df.format(date));
 		db.update(BookKeepingTable.TABLE_NAME, values, BookKeepingTable.COLUMN_NAME_KEY+" = ?", whereArgs);
 	}
@@ -227,8 +221,24 @@ public class MinerData extends SQLiteOpenHelper {
 		setBookKeepingDate(db, BookKeepingTable.DATA_LAST_EXPORTED,date);		
 	}
 	
-	public void expireData() {
-		
+	public String getLastExpired(SQLiteDatabase db) {
+		Date expired = getBookKeepingDate(db,BookKeepingTable.DATA_LAST_EXPIRED);
+		if (expired != null) {
+			return howLongAgo(expired);
+		}
+		return null;
+	}
+	
+	public void expireData(SQLiteDatabase db) {
+		Date expiryDate = getBookKeepingDate(db,BookKeepingTable.DATA_LAST_EXPORTED);
+		if (expiryDate == null) return;
+		String[] expiryValues = {df.format(expiryDate)};
+		int i;
+		for (i=0;i<MinerTables.ExpirableTables.length;i++) {
+			db.delete(MinerTables.ExpirableTables[i], MinerTables.ExpirableTimeStamps[i]+ " < ?", expiryValues);
+		}
+		getBookKeepingDate(db,BookKeepingTable.DATA_LAST_EXPIRED);
+		setBookKeepingDate(db,BookKeepingTable.DATA_LAST_EXPIRED,expiryDate);
 	}
 	
 	

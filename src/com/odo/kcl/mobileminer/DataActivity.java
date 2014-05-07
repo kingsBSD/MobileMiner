@@ -57,7 +57,7 @@ public class DataActivity extends Activity {
     		myAlertDialog.setMessage("No data has been exported yet.");	
     	}
     	else {
-    		myAlertDialog.setMessage("Data was last exported "+lastExported);	
+    		myAlertDialog.setMessage("Data was last exported "+lastExported+".");	
     	}
     	myAlertDialog.setPositiveButton("Export", new DialogInterface.OnClickListener() {
 
@@ -75,11 +75,23 @@ public class DataActivity extends Activity {
     public void expireData(View buttonView) {
     	AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(context);
     	myAlertDialog.setTitle("Expire Data");
-    	myAlertDialog.setMessage("Remove exported data from the database?");
+    	String message = "Remove exported data from the database? ";	
+    	MinerData helper = new MinerData(context);
+    	String lastExpired = helper.getLastExpired(helper.getReadableDatabase());
+    	if (lastExpired == null) {
+    		message += "No data has been expired yet.";
+    	}
+    	else {
+    		message += "There is no data older than " + lastExpired + ".";
+    	}
+    	myAlertDialog.setMessage(message);
     	myAlertDialog.setPositiveButton("Expire", new DialogInterface.OnClickListener() {
-
     	public void onClick(DialogInterface arg0, int arg1) {
-
+    		MinerData helper = new MinerData(context);
+    		helper.expireData(helper.getReadableDatabase());
+            helper.close();
+            setDbSizeLegend();
+            Toast.makeText(context, "Data Expired.", Toast.LENGTH_LONG).show();
     	  }});
     	
    	 myAlertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -120,8 +132,8 @@ public class DataActivity extends Activity {
             destStream.close();
             MinerData helper = new MinerData(context);
     		helper.setLastExported(helper.getReadableDatabase(),rightNow);
-            Toast.makeText(this, "Data Exported.", Toast.LENGTH_LONG).show();
             helper.close();
+            Toast.makeText(this, "Data Exported.", Toast.LENGTH_LONG).show();
         }
         catch(IOException e) {
         	e.printStackTrace();
