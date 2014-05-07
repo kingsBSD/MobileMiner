@@ -142,6 +142,7 @@ public class MinerData extends SQLiteOpenHelper {
 	}	
 		
 	private void putRow(SQLiteDatabase db, String table, ContentValues values ) {
+		// http://developer.android.com/training/basics/data-storage/databases.html#WriteDbRow
 		try {
 			db.insert(table,null,values);
 		}
@@ -207,6 +208,7 @@ public class MinerData extends SQLiteOpenHelper {
 	}
 	
 	public void setBookKeepingDate(SQLiteDatabase db,String key,Date date) {
+		// http://developer.android.com/training/basics/data-storage/databases.html#UpdateDbRow
 		ContentValues values = new ContentValues();
 		String[] whereArgs = {BookKeepingTable.DATA_LAST_EXPORTED};
 		values.put(BookKeepingTable.COLUMN_NAME_VALUE, df.format(date));
@@ -223,7 +225,11 @@ public class MinerData extends SQLiteOpenHelper {
 	
 	public void setLastExported(SQLiteDatabase db, Date date) {
 		setBookKeepingDate(db, BookKeepingTable.DATA_LAST_EXPORTED,date);		
-	}	
+	}
+	
+	public void expireData() {
+		
+	}
 	
 	
 }

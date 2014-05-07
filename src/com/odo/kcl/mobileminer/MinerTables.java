@@ -107,6 +107,7 @@ public final class MinerTables {
 		public static final String COLUMN_NAME_KEY = "key";
 		public static final String COLUMN_NAME_VALUE = "value";	
 		public static final String DATA_LAST_EXPORTED = "datalastexported";
+		public static final String DATA_LAST_EXPIRED = "datalastexired";
 		public static final String NULL_DATE = "nulldate";
 	}
 	

@@ -15,6 +15,7 @@
             android:layout_alignBaseline="@+id/exportButton"
             android:layout_alignBottom="@+id/exportButton"
             android:layout_toRightOf="@+id/exportButton"
+            android:onClick="expireData"
             android:text="Expire Data" />
 
         <Button

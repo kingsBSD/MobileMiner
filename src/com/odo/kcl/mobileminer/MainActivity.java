@@ -39,7 +39,6 @@ public class MainActivity extends Activity {
         miningButtonState = false;
         processHeader = new ArrayList<String>();
     	socketChild = new HashMap<String, List<String>>();
-    	  
         socketView = (ExpandableListView) findViewById(R.id.socketView);
         socketAdapter = new SocketAdapter(this,processHeader,socketChild,null);
         socketView.setAdapter(socketAdapter);
@@ -111,8 +110,9 @@ public class MainActivity extends Activity {
     }
     
     public void stopMining(View buttonView) {
-    	miningIntent = new Intent(this, MinerService.class);
-    	stopService(miningIntent);
+    	//miningIntent = new Intent(this, MinerService.class);
+    	//stopService(miningIntent);
+    	getApplicationContext().sendBroadcast(new Intent("com.odo.kcl.mobileminer.stopmining"));
     	enableMiningButton(false);
     }
     

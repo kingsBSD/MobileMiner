@@ -72,6 +72,26 @@ public class DataActivity extends Activity {
     	 myAlertDialog.show();
     }
 
+    public void expireData(View buttonView) {
+    	AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(context);
+    	myAlertDialog.setTitle("Expire Data");
+    	myAlertDialog.setMessage("Remove exported data from the database?");
+    	myAlertDialog.setPositiveButton("Expire", new DialogInterface.OnClickListener() {
+
+    	public void onClick(DialogInterface arg0, int arg1) {
+
+    	  }});
+    	
+   	 myAlertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+	       
+   	  public void onClick(DialogInterface arg0, int arg1) {
+   	  // do something when the Cancel button is clicked
+   	  }});
+   	 
+   	 myAlertDialog.show();
+    	
+    }
+    
     private void setDbSizeLegend() {
     	// http://stackoverflow.com/questions/6364577/how-to-get-the-current-sqlite-database-size-or-package-size-in-android
     	long dbSize = context.getDatabasePath(MinerData.DATABASE_NAME).length();

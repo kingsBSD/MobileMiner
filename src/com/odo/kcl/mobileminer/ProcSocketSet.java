@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -26,23 +28,24 @@ public class ProcSocketSet {
 	private String[] protocols = new String[]{"tcp","tcp6","udp","udp6"};
 	private Context context;
 	private ActivityManager am;
-	private HashMap<String, Process> processes;
+	// http://www.javacodegeeks.com/2011/05/avoid-concurrentmodificationexception.html
+	private ConcurrentHashMap<String, Process> processes;
 	private Boolean updated;
-	HashMap<String, List<String>> lastOpenSockets = new HashMap<String, List<String>>();
+	ConcurrentHashMap<String, List<String>> lastOpenSockets = new ConcurrentHashMap<String, List<String>>();
 	
 	private class Process {
 		private String name,id;
-		private HashMap<String, ArrayList<String>> sockets;
-		private HashMap<String, Date> openingTimes;
+		private ConcurrentHashMap<String, CopyOnWriteArrayList<String>> sockets;
+		private ConcurrentHashMap<String, Date> openingTimes;
 		
 		public Process(String procName, String pid) {
 			name = procName;
 			id = pid;
-			sockets = new HashMap<String, ArrayList<String>>();
+			sockets = new ConcurrentHashMap<String, CopyOnWriteArrayList<String>>();
 			for (String protocol: protocols) {
-				sockets.put(protocol, new ArrayList<String>());
+				sockets.put(protocol, new CopyOnWriteArrayList<String>());
 			}
-			openingTimes = new HashMap<String, Date>();
+			openingTimes = new ConcurrentHashMap<String, Date>();
 		}
 		
 		public boolean addSocket(String protocol,String addr) {
@@ -98,7 +101,7 @@ public class ProcSocketSet {
 	
 	public ProcSocketSet(Context ctx) {
 		context = ctx;
-		processes = new HashMap<String, Process>();
+		processes = new ConcurrentHashMap<String, Process>();
 		am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 	}
 	
@@ -242,7 +245,7 @@ public class ProcSocketSet {
 		for (Entry<String, Process> entry: processes.entrySet()) {
 			entry.getValue().closeAll();
 		}
-		processes = new HashMap<String, Process>();
+		processes = new ConcurrentHashMap<String, Process>();
 		broadcast();
 	}
 }

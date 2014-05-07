@@ -63,6 +63,7 @@ public class MinerService extends Service {
 		      }
 
 		    	if (action.equals("com.odo.kcl.mobileminer.stopmining")) {
+		    		scanning = false;
 		    		stopSelf();
 		    	}
 		    
@@ -109,6 +110,7 @@ public class MinerService extends Service {
 	
 	@Override
 	public void onCreate() {
+		startTime = new Date();
 		networkName = "null";
 		mobileData = false;
 		wifiData = false;
