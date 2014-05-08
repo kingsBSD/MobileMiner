@@ -5,6 +5,7 @@ package com.odo.kcl.mobileminer;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,10 +35,11 @@ public class ProcSocketSet {
 	private Boolean updated;
 	ConcurrentHashMap<String, List<String>> lastOpenSockets = new ConcurrentHashMap<String, List<String>>();
 	
-	private class Process {
+	private class Process {				
 		private String name,id;
 		private ConcurrentHashMap<String, CopyOnWriteArrayList<String>> sockets;
 		private ConcurrentHashMap<String, Date> openingTimes;
+		private final SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
 		
 		public Process(String procName, String pid) {
 			name = procName;
@@ -49,22 +51,22 @@ public class ProcSocketSet {
 			openingTimes = new ConcurrentHashMap<String, Date>();
 		}
 		
-		public boolean addSocket(String protocol,String addr) {
+		public boolean addSocket(String protocol,String addr) {				
 			if (sockets.get(protocol).contains(addr) ) {
 				return false;
 			}
 			sockets.get(protocol).add(addr);
-			openingTimes.put(addr,new Date());
+			openingTimes.put(protocol+addr,new Date());
 			Log.i("MinerService","New socket: "+protocol+" "+name+" "+id+" "+addr);
-			return true;
+			return true;								
 		}
 		
 		private void closeSocket(String protocol, String addr) {
 			MinerData helper = new MinerData(context);
-			helper.putSocket(helper.getWritableDatabase(),name,protocol,addr,openingTimes.get(addr),new Date());
+			helper.putSocket(helper.getWritableDatabase(),name,protocol,addr,openingTimes.get(protocol+addr),new Date());
 			helper.close();
 			sockets.get(protocol).remove(addr);
-			openingTimes.remove(addr);
+			//openingTimes.remove(protocol+addr);
 			updated = true;
 			Log.i("MinerService","Closed socket: "+protocol+" "+name+" "+addr);
 		}
@@ -87,14 +89,15 @@ public class ProcSocketSet {
 					changed = true;
 					closeSocket(protocol,addr);
 				}
-			}
+			}				
 			return changed;
 		}
 		
 		public ArrayList<String> dump() {
 			ArrayList<String> socketList = new ArrayList<String>();
 			for (String protocol: protocols) {
-				for (String addr: sockets.get(protocol)) socketList.add(protocol+" "+addr);
+				for (String addr: sockets.get(protocol)) socketList.add(protocol+" " + addr + 
+					" ("+df.format(openingTimes.get(protocol+addr))+")");
 			}
 			return socketList;	
 		}	
@@ -211,14 +214,14 @@ public class ProcSocketSet {
 		            		
 		            		for (j=0;j<remoteAddr.length();j+=digitCount) {
 		            			remoteIPchunks.add(Integer.valueOf(remoteAddr.subSequence(j,j+digitInc).toString(),16));
-		            		}
+		        						}
 		            		
 		            		if (remoteIPchunks.get(0) != 0) {
 		            			remoteIP = TextUtils.join(".",remoteIPchunks);
 		            			if (discoveredSockets.get(thisName) == null) discoveredSockets.put(thisName,new ArrayList<String>());
 		            				discoveredSockets.get(thisName).add(remoteIP+":"+remotePort);
 		            		}
-		            	}
+		            	}				
 		            }
 				}
 		            

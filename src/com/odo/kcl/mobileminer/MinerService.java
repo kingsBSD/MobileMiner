@@ -163,7 +163,7 @@ public class MinerService extends Service {
 		}
 		 
 		((TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE)).listen(phoneListener,phoneFlags);
-		Toast.makeText(this, "Started mining...", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "Started Mining...", Toast.LENGTH_SHORT).show();
 		moveToForeground();
 		return START_STICKY;
 	}
@@ -181,7 +181,7 @@ public class MinerService extends Service {
 		helper.close();
 		Log.i("MinerService","stopped mining");
 		unregisterReceiver(receiver);
-	    Toast.makeText(this, "Stopped mining...", Toast.LENGTH_SHORT).show();
+	    Toast.makeText(this, "Stopped Mining...", Toast.LENGTH_SHORT).show();
 	}
 	
 	private void moveToForeground() {

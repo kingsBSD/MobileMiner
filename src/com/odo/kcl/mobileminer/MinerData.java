@@ -142,7 +142,7 @@ public class MinerData extends SQLiteOpenHelper {
 			db.insert(table,null,values);
 		}
 		catch(Exception e) {
-			
+			Log.i("MobileData","Bugger: "+table);
 		}
 	}
 	
