@@ -14,6 +14,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
@@ -24,6 +25,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.CellInfo;
+import android.telephony.CellInfoGsm;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -46,6 +48,7 @@ public class MinerService extends Service {
 	private String networkName;
 	private String cellLocation;
 	private ArrayList<MinerLocation> cells;
+	private ArrayList<String> cellIds;
 	private Boolean mobileData, wifiData;
 	private WifiData wirelessData;
 	
@@ -86,17 +89,42 @@ public class MinerService extends Service {
 			}
 		}
 
+		// What a swiz:
+		// http://code.google.com/p/android/issues/detail?id=43467
+		// http://stackoverflow.com/questions/20049510/oncellinfochanged-callback-is-always-null
+		
+		/**
 		@Override
 		public void onCellInfoChanged (List<CellInfo> cellInfo) {
-			//Log.i("MinerService","CELL_INFO_CHANGED");
-			cells = new ArrayList<MinerLocation>();
+			ArrayList<CellInfoGsm> cellInfoGsm = new ArrayList<CellInfoGsm>();
+			ArrayList<String> activeCells = new ArrayList<String>();
+			MinerLocation newLocation;
+			Boolean newCell = false;
+			String cellId;
 			if (cellInfo != null) {
-				for (CellInfo info: cellInfo) {
+				cells = new ArrayList<MinerLocation>();
+				for (CellInfo info: cellInfo) cellInfoGsm.add((CellInfoGsm) info);
+				cells = new ArrayList<MinerLocation>();
+				for (CellInfoGsm info: cellInfoGsm) {
+					newLocation = new MinerLocation(info);
+					cells.add(newLocation);
+					cellId = newLocation.dump();
+					activeCells.add(cellId);
+					if (!cellIds.contains(cellId)) newCell = true;
 					cells.add(new MinerLocation(info));
 				}
+				cellIds = activeCells;
+			}
+			
+			if (newCell) {
+				MinerData helper = new MinerData(context);
+				SQLiteDatabase db = helper.getWritableDatabase();
+				for (MinerLocation cell: cells) helper.putGSMCell(db,cell,new Date());
+				helper.close();
 			}
 			cellBroadcast();
 		}
+		**/
 
 		@Override
 		public void onCellLocationChanged (CellLocation location) {
@@ -121,6 +149,7 @@ public class MinerService extends Service {
 		context = this;
 		wirelessData = new WifiData();
 		cells = new ArrayList<MinerLocation>();
+		cellIds = new ArrayList<String>();
 		socketSet = new ProcSocketSet(this);
 		scanHandle = new Handler();
 		
@@ -154,13 +183,20 @@ public class MinerService extends Service {
 		startTime = new Date();
 		Log.i("MinerService","started mining");
 		int phoneFlags;
-		 
+		
+		phoneFlags = PhoneStateListener.LISTEN_DATA_ACTIVITY|PhoneStateListener.LISTEN_CELL_LOCATION;
+		
+		/**
 		if (Build.VERSION.SDK_INT >= 17) {
-			phoneFlags = PhoneStateListener.LISTEN_DATA_ACTIVITY|PhoneStateListener.LISTEN_CELL_INFO;
+			// http://code.google.com/p/android/issues/detail?id=43467
+			// http://stackoverflow.com/questions/20049510/oncellinfochanged-callback-is-always-null
+			phoneFlags = PhoneStateListener.LISTEN_DATA_ACTIVITY|PhoneStateListener.LISTEN_CELL_INFO
+				|PhoneStateListener.LISTEN_SIGNAL_STRENGTHS;
 		}
 		else {
 			phoneFlags = PhoneStateListener.LISTEN_DATA_ACTIVITY|PhoneStateListener.LISTEN_CELL_LOCATION;
 		}
+		**/
 		 
 		((TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE)).listen(phoneListener,phoneFlags);
 		Toast.makeText(this, "Started Mining...", Toast.LENGTH_SHORT).show();
@@ -260,6 +296,7 @@ public class MinerService extends Service {
 	}
 	
 	private void cellBroadcast() {
+		Log.i("MinerService","Cellbroadcast");
 		String cellText = "None";
 		Intent intent = new Intent("com.odo.kcl.mobileminer.cellupdate");
 			
@@ -287,7 +324,4 @@ public class MinerService extends Service {
     }
 
 }
-
-
-
 
