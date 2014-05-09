@@ -9,6 +9,7 @@ import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Environment;
 //import android.annotation.SuppressLint;
@@ -112,7 +113,7 @@ public class DataActivity extends Activity {
     private void dumpDb() {
     	// http://www.techrepublic.com/blog/software-engineer/export-sqlite-data-from-your-android-device/#.
     	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-ddHH-mm-ss");
-    	File dest = Environment.getExternalStorageDirectory();
+    	File dest = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
       	File source = Environment.getDataDirectory();
       	FileChannel sourceStream, destStream;
       	String dbPath = "/data/"+ "com.odo.kcl.mobileminer" +"/databases/"+MinerData.DATABASE_NAME;
@@ -126,6 +127,8 @@ public class DataActivity extends Activity {
             destStream.transferFrom(sourceStream, 0, sourceStream.size());
             sourceStream.close();
             destStream.close();
+            // http://stackoverflow.com/questions/13737261/nexus-4-not-showing-files-via-mtp
+            MediaScannerConnection.scanFile(this, new String[] { exportFile.getAbsolutePath() }, null, null);
             MinerData helper = new MinerData(context);
     		helper.setLastExported(helper.getReadableDatabase(),rightNow);
             helper.close();
