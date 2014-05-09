@@ -1,3 +1,7 @@
+---
+
+title: MobileMiner
+---
 <!DOCTYPE html>
 <html>
 
@@ -31,6 +35,53 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
+      
+      <div style="float: right;">
+      <h5><a href="https://github.com/kingsBSD/MobileMiner/releases/download/v0.1/MobileMiner.apk">Download to your Android device</a></h5>
+      <a href="https://github.com/kingsBSD/MobileMiner/releases/download/v0.1/MobileMiner.apk">
+        <div style="margin-left: auto; margin-right: auto;"><img src="/images/release_0_1.png"/></div>
+      </a>
+      </div>
+
+      <p>
+        MobileMiner allows you to track the trail of data your Android device leaves behind you.
+        It was written as part of the "<a href="http://big-social-data.net/">Big Social Data</a>" project at King's College London's
+        <a href="http://www.kcl.ac.uk/innovation/groups/cerch/index.aspx">Centre for e-Research</a>.
+        Currently it logs:
+      </p>
+      
+      <ul>
+        <li>IDs of the GSM cells you visit.</li>
+        <li>Mobile networks that provide mobile data.</li>
+        <li>Names and BSSIDs of wifi hot-spots.</li>
+        <li>Processes that open network sockets.</li>
+        <li>Socket IP addresses and ports.</li>
+      </ul>
+      
+      <p>
+            At the moment, this data is saved to an SQLite database that can be exported and analysed elsewhere. Soon, we hope to have it
+            enable browsing the data on the device, showing which apps use mobile data the most frequently and where. It will also upload
+            anonymized data to a central store, possibly based on <a href="http://ckan.org/">CKAN</a>.
+      </p>
+      
+      
+      <h4>Installation</h4>
+
+      <div style="float: right;">
+      <img src="/images/installminer.gif"/>
+      </div>
+      
+      <p>
+        We're not in the Play Store yet, so you'll need to allow your device to install from "unknown sources" in settings.
+        Either visit this site with your device and use
+        the <a href="https://github.com/kingsBSD/MobileMiner/releases/download/v0.1/MobileMiner.apk">download link</a>, or else use the QR-code
+        above. Open <a href="https://github.com/kingsBSD/MobileMiner/releases/download/v0.1/MobileMiner.apk">"MobileMiner.apk"</a> in the
+        notifications tray, and confirm that you want to install the app. (It's interesting how few permissions it needs to track network
+        activity. What permissions do your favourite apps have?)
+      <p>
+      
+      <div style="clear: both;"></div>
+      
      </section>
     </div>
 
