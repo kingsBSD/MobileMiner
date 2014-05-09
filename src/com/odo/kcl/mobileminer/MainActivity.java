@@ -14,7 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
+//import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-    	Log.i("MobileMiner","CREATING");
+    	//Log.i("MobileMiner","CREATING");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
       
@@ -65,7 +65,7 @@ public class MainActivity extends Activity {
     
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-    	Log.i("MobileMiner","SAVING");
+    	//Log.i("MobileMiner","SAVING");
     	super.onSaveInstanceState(savedInstanceState);
     	savedInstanceState.putBoolean("miningButtonState", miningButtonState);
     	savedInstanceState.putString("cellText",(String)cellText.getText());
@@ -75,7 +75,7 @@ public class MainActivity extends Activity {
     
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
-    	Log.i("MobileMiner","RESTORING");
+    	//Log.i("MobileMiner","RESTORING");
     	super.onRestoreInstanceState(savedInstanceState);
     	miningButtonState = savedInstanceState.getBoolean("miningButtonState", false);
     	if (savedInstanceState.getString("cellText") != null) cellText.setText(savedInstanceState.getString("cellText"));
@@ -87,12 +87,12 @@ public class MainActivity extends Activity {
     }
         
     @Override public void onRestart() {
-    	Log.i("MobileMiner","RESTARTING");
+    	//Log.i("MobileMiner","RESTARTING");
     	super.onRestart();
     }
     
     @Override public void onResume() {
-    	Log.i("MobileMiner","RESUMING");
+    	//Log.i("MobileMiner","RESUMING");
     	super.onResume();
     	if (miningActive()) {
     		getApplicationContext().sendBroadcast(new Intent("com.odo.kcl.mobileminer.updatequery"));

@@ -9,18 +9,13 @@ import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.odo.kcl.mobileminer.MinerTables.BookKeepingTable;
-
 import android.os.Bundle;
 import android.os.Environment;
-import android.annotation.SuppressLint;
+//import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;

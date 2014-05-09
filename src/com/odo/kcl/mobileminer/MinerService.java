@@ -3,7 +3,6 @@ package com.odo.kcl.mobileminer;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import com.odo.kcl.mobileminer.MinerData.WifiData;
 
@@ -14,22 +13,21 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.os.Build;
+//import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.telephony.CellInfo;
-import android.telephony.CellInfoGsm;
+//import android.telephony.CellInfo;
+//import android.telephony.CellInfoGsm;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-import android.util.Log;
+//import android.util.Log;
 import android.widget.Toast;
 
 /**
@@ -181,7 +179,7 @@ public class MinerService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		startTime = new Date();
-		Log.i("MinerService","started mining");
+		//Log.i("MinerService","started mining");
 		int phoneFlags;
 		
 		phoneFlags = PhoneStateListener.LISTEN_DATA_ACTIVITY|PhoneStateListener.LISTEN_CELL_LOCATION;
@@ -215,7 +213,7 @@ public class MinerService extends Service {
 		MinerData helper = new MinerData(context);
 		helper.putMinerLog(helper.getWritableDatabase(), startTime, new Date());
 		helper.close();
-		Log.i("MinerService","stopped mining");
+		//Log.i("MinerService","stopped mining");
 		unregisterReceiver(receiver);
 	    Toast.makeText(this, "Stopped Mining...", Toast.LENGTH_SHORT).show();
 	}
@@ -270,10 +268,10 @@ public class MinerService extends Service {
 							networkName = name; networkBroadcast();	
 				 		}
 				 		//startScan();
-				 		Log.i("MinerService","CONNECTED MOBILE: "+name);
+				 		//Log.i("MinerService","CONNECTED MOBILE: "+name);
 				 		break;
 				 	default:
-				 		Log.i("MinerService",netInfo.getTypeName());
+				 		//Log.i("MinerService",netInfo.getTypeName());
 				 		break;
 				 }	 
 			 }
@@ -296,7 +294,7 @@ public class MinerService extends Service {
 	}
 	
 	private void cellBroadcast() {
-		Log.i("MinerService","Cellbroadcast");
+		//Log.i("MinerService","Cellbroadcast");
 		String cellText = "None";
 		Intent intent = new Intent("com.odo.kcl.mobileminer.cellupdate");
 			

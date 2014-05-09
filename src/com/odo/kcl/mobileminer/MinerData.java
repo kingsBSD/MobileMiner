@@ -25,8 +25,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.wifi.WifiInfo;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.text.format.DateFormat;
-import android.util.Log;
+//import android.util.Log;
 
 
 public class MinerData extends SQLiteOpenHelper {
@@ -142,7 +141,7 @@ public class MinerData extends SQLiteOpenHelper {
 			db.insert(table,null,values);
 		}
 		catch(Exception e) {
-			Log.i("MobileData","Bugger: "+table);
+
 		}
 	}
 	

@@ -13,14 +13,12 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
-import android.util.Log;
+//import android.util.Log;
 
 /**
  * Maintains a list of which active processes have opened or closed network sockets.
@@ -57,7 +55,7 @@ public class ProcSocketSet {
 			}
 			sockets.get(protocol).add(addr);
 			openingTimes.put(protocol+addr,new Date());
-			Log.i("MinerService","New socket: "+protocol+" "+name+" "+id+" "+addr);
+			//Log.i("MinerService","New socket: "+protocol+" "+name+" "+id+" "+addr);
 			return true;								
 		}
 		
@@ -68,7 +66,7 @@ public class ProcSocketSet {
 			sockets.get(protocol).remove(addr);
 			//openingTimes.remove(protocol+addr);
 			updated = true;
-			Log.i("MinerService","Closed socket: "+protocol+" "+name+" "+addr);
+			//Log.i("MinerService","Closed socket: "+protocol+" "+name+" "+addr);
 		}
 		
 		public void closeAll() {
