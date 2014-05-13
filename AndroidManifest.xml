@@ -42,8 +42,10 @@
 
         <service android:name="com.odo.kcl.mobileminer.MinerService" />
         
-      	<service android:name="com.odo.kcl.mobileminer.NotificationService" 
+      	<service android:name="com.odo.kcl.mobileminer.NotificationService"
       	    android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <meta-data android:name="android.accessibilityservice" android:resource="@xml/accessibilityservice" />
+      	    
      		<intent-filter>
          		<action android:name="android.accessibilityservice.AccessibilityService" />
      		</intent-filter>

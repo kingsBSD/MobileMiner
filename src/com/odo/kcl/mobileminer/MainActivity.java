@@ -5,21 +5,30 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.accessibilityservice.AccessibilityServiceInfo;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 //import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	Boolean miningButtonState;
@@ -35,7 +44,6 @@ public class MainActivity extends Activity {
     	//Log.i("MobileMiner","CREATING");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-      
         miningButtonState = false;
         processHeader = new ArrayList<String>();
     	socketChild = new HashMap<String, List<String>>();
@@ -105,6 +113,7 @@ public class MainActivity extends Activity {
     }
     
     public void startMining(View buttonView) {
+    	if (!isAccessibilityEnabled()) accessibilityNag();
     	if (miningActive()) getApplicationContext().sendBroadcast(new Intent("com.odo.kcl.mobileminer.updatequery"));
     	enableMiningButton(true);
     }
@@ -179,5 +188,39 @@ public class MainActivity extends Activity {
 			networkText.setText((CharSequence) ("Network: "+intent.getSerializableExtra("networktext")));	
 		}
     };
+    
+    @SuppressLint("NewApi")
+	public boolean isAccessibilityEnabled() {
+    	// http://stackoverflow.com/questions/5081145/android-how-do-you-check-if-a-particular-accessibilityservice-is-enabled
+    	if (Build.VERSION.SDK_INT >= 17) {
+    		AccessibilityManager am = (AccessibilityManager) this.getSystemService(Context.ACCESSIBILITY_SERVICE);
+    		List<AccessibilityServiceInfo> runningServices = am.getEnabledAccessibilityServiceList(AccessibilityEvent.TYPES_ALL_MASK);
+    		for (AccessibilityServiceInfo service : runningServices) {
+    			if ("com.odo.kcl.mobileminer/.NotificationService".equals(service.getId())) return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    private void accessibilityNag() {
+    	AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(this);
+    	myAlertDialog.setTitle("Store Notifications?"); 
+    	myAlertDialog.setMessage("If MobileMiner is to archive notifications from net-enabled apps, "
+    		+"you need to authorize it as an Accessibility Service. Do this now?");
+    	myAlertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+    	public void onClick(DialogInterface arg0, int arg1) {
+    		startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+    	  }});
+    	
+   	 myAlertDialog.setNegativeButton("Not Now", new DialogInterface.OnClickListener() {
+	       
+   	  public void onClick(DialogInterface arg0, int arg1) {
+   	  // do something when the Cancel button is clicked
+   	  }});
+   	 
+   	 myAlertDialog.show();
+    	
+    }
+    
 
 }
