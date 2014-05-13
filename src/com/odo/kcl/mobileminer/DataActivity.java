@@ -112,7 +112,7 @@ public class DataActivity extends Activity {
     
     private void dumpDb() {
     	// http://www.techrepublic.com/blog/software-engineer/export-sqlite-data-from-your-android-device/#.
-    	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-ddHH-mm-ss");
+    	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
     	File dest = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
       	File source = Environment.getDataDirectory();
       	FileChannel sourceStream, destStream;
