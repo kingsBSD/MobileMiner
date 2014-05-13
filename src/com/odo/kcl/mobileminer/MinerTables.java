@@ -112,6 +112,21 @@ public final class MinerTables {
 		MinerLogTable.COLUMN_NAME_STOP + " TEXT );";
 	
 	static final String MINER_TABLE_TIMESTAMP = MinerLogTable.COLUMN_NAME_STOP;
+
+	public static abstract class NotificationTable implements BaseColumns {
+		public static final String TABLE_NAME = "notification";
+		public static final String COLUMN_NAME_PACKAGE = "package";
+		public static final String COLUMN_NAME_TEXT = "text";
+		public static final String COLUMN_NAME_TIME = "time";
+	}
+	
+	public static final String CREATE_NOTIFICATION_TABLE =
+			"CREATE TABLE " + NotificationTable.TABLE_NAME + " (" +
+			NotificationTable.COLUMN_NAME_PACKAGE + " TEXT, " +
+			NotificationTable.COLUMN_NAME_TEXT + " TEXT, " +
+			NotificationTable.COLUMN_NAME_TIME + " TEXT );";
+	
+	static final String NOTIFICATION_TABLE_TIMESTAMP = NotificationTable.COLUMN_NAME_TIME;
 	
 	public static abstract class BookKeepingTable implements BaseColumns {
 		public static final String TABLE_NAME = "bookkeeping";
@@ -134,14 +149,15 @@ public final class MinerTables {
 		MinerTables.CREATE_MOBILENETWORK_TABLE,
 		MinerTables.CREATE_WIFINETWORK_TABLE,
 		MinerTables.CREATE_MINERLOG_TABLE,
+		MinerTables.CREATE_NOTIFICATION_TABLE,
 		MinerTables.CREATE_BOOKKEEPING_TABLE};
 	
 	public static final String[] ExpirableTables = {
 		SocketTable.TABLE_NAME, GSMCellTable.TABLE_NAME, MobileNetworkTable.TABLE_NAME, WifiNetworkTable.TABLE_NAME, 
-		MinerLogTable.TABLE_NAME};
+		MinerLogTable.TABLE_NAME, NotificationTable.TABLE_NAME};
 
 	public static final String[] ExpirableTimeStamps = {SOCKET_TABLE_TIMESTAMP, GSMCELL_TABLE_TIMESTAMP,
-		MOBILENETWORK_TABLE_TIMESTAMP, WIFINETWORK_TABLE_TIMESTAMP, MINER_TABLE_TIMESTAMP
+		MOBILENETWORK_TABLE_TIMESTAMP, WIFINETWORK_TABLE_TIMESTAMP, MINER_TABLE_TIMESTAMP, NOTIFICATION_TABLE_TIMESTAMP
 	};
 	
 }	

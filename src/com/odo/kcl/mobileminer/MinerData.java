@@ -13,6 +13,7 @@ import com.odo.kcl.mobileminer.MinerTables.BookKeepingTable;
 import com.odo.kcl.mobileminer.MinerTables.GSMCellTable;
 import com.odo.kcl.mobileminer.MinerTables.MinerLogTable;
 import com.odo.kcl.mobileminer.MinerTables.MobileNetworkTable;
+import com.odo.kcl.mobileminer.MinerTables.NotificationTable;
 import com.odo.kcl.mobileminer.MinerTables.SocketTable;
 import com.odo.kcl.mobileminer.MinerTables.WifiNetworkTable;
 
@@ -134,7 +135,15 @@ public class MinerData extends SQLiteOpenHelper {
 		values.put(MinerLogTable.COLUMN_NAME_STOP,df.format(stop));
 		putRow(db,MinerLogTable.TABLE_NAME,values);
 	}	
-		
+
+	public void putNotification(SQLiteDatabase db, String packageName, String text, Date time) {
+		ContentValues values = new ContentValues();
+		values.put(NotificationTable.COLUMN_NAME_PACKAGE,packageName);
+		values.put(NotificationTable.COLUMN_NAME_TEXT,text);
+		values.put(NotificationTable.COLUMN_NAME_TIME,df.format(time));
+		putRow(db,NotificationTable.TABLE_NAME,values);
+	}
+	
 	private void putRow(SQLiteDatabase db, String table, ContentValues values ) {
 		// http://developer.android.com/training/basics/data-storage/databases.html#WriteDbRow
 		try {

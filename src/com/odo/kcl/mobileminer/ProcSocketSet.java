@@ -190,11 +190,15 @@ public class ProcSocketSet {
         		digitCount = 2; digitInc = 1;
         	}
     		ipv6 = !ipv6; 
-    			
+    		
+    		discoveredSockets = new HashMap<String, ArrayList<String>>();
+    		
+    		for (String scannedPid: pids) {
+    		
     		try {
     			line = null;
-				reader = new BufferedReader (new FileReader("/proc/"+pidsByName.get("com.odo.kcl.mobileminer")+"/net/"+prot));
-				discoveredSockets = new HashMap<String, ArrayList<String>>();
+				reader = new BufferedReader (new FileReader("/proc/"+scannedPid+"/net/"+prot));
+				
 					
 				while ((line = reader.readLine()) != null) {
 					tokens = line.split("\\s+");
@@ -238,6 +242,7 @@ public class ProcSocketSet {
     		catch (IOException e) {
     			//Log.i("MinerService","Can't open /proc/<pid>/net");
 			}
+    		}
     	}
     		
     	if (updated) broadcast();
