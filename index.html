@@ -56,6 +56,7 @@ title: MobileMiner
         <li>Names and BSSIDs of wifi hot-spots.</li>
         <li>Processes that open network sockets.</li>
         <li>Socket IP addresses and ports.</li>
+        <li>When 'net-enabled apps send notifications.</li>
       </ul>
       
       <p>
@@ -85,13 +86,30 @@ title: MobileMiner
       <h4>Usage</h4>
       
       <div style="float: left;">
+            <img src="{{ site.baseurl }}/images/accessibility.gif"/>
+      </div>
+      
+      <p>
+        The first time you press the "Start Mining" button, you'll be asked to authorize the app as an accessibility service so it can log
+        when apps send you notifications. (Only the time of the app and the time of the notification are stored, the content is not.)
+        Once mining has been started, you'll see details about the network you're using to get data, your current GSM cell
+        location, and any network sockets that have been opened. 
+      </p>
+
+      <div style="clear: both;"></div>
+      
+      <div style="float: right;">
             <img src="{{ site.baseurl }}/images/minerdemo.gif"/>
       </div>
       
       <p>
-        As soon as you press the "Start Mining" button, you'll see details about the network you're using to get data, your current GSM cell
-        location, and any network sockets that have been opened. Chrome for Android has been quite busy. Press "My Data" then "Export" to
-        copy the current SQLite database to where your computer will be able to see it when you mount your device.
+        Chrome for Android has been quite busy... Press "My Data" then "Export" to
+        copy the current SQLite database to where your computer will be able to see it when you mount your device. The data will be in the
+        "Download" directory of the device's flash memory, or SD card if it has one. The easiest way to explore the data is with an SQLite
+        browser extension, there's <a href="https://addons.mozilla.org/en-US/firefox/addon/sqlite-manager/">SQLite Manager</a> for Firefox,
+        and <a href="https://chrome.google.com/webstore/detail/codev/jhccgicacaljbkehndlbnolffafhjiop">codev</a> for Chrome. If you want to
+        play with your data with some code, SQLite is supported by Python's <a href="https://docs.python.org/2/library/sqlite3.html">standard
+        library</a>.
       </p>
       
        <div style="clear: both;"></div>
