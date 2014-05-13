@@ -60,8 +60,10 @@ public class NotificationService extends AccessibilityService {
 	@Override
 	public void onAccessibilityEvent(AccessibilityEvent event) {		
 		MinerData helper = new MinerData(this);
-		helper.putNotification(helper.getWritableDatabase(), (String) event.getPackageName(),
-			TextUtils.join(" ", event.getText()),new Date());
+		helper.putNotification(helper.getWritableDatabase(), (String) event.getPackageName(),new Date());
+		// None of our business...
+//		helper.putNotification(helper.getWritableDatabase(), (String) event.getPackageName(),
+//			TextUtils.join(" ", event.getText()),new Date());
 		helper.close();
 	}
 

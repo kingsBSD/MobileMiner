@@ -116,14 +116,16 @@ public final class MinerTables {
 	public static abstract class NotificationTable implements BaseColumns {
 		public static final String TABLE_NAME = "notification";
 		public static final String COLUMN_NAME_PACKAGE = "package";
-		public static final String COLUMN_NAME_TEXT = "text";
+		// None of our business...
+		// public static final String COLUMN_NAME_TEXT = "text";
 		public static final String COLUMN_NAME_TIME = "time";
 	}
 	
 	public static final String CREATE_NOTIFICATION_TABLE =
 			"CREATE TABLE " + NotificationTable.TABLE_NAME + " (" +
 			NotificationTable.COLUMN_NAME_PACKAGE + " TEXT, " +
-			NotificationTable.COLUMN_NAME_TEXT + " TEXT, " +
+			// None of our business...
+			// NotificationTable.COLUMN_NAME_TEXT + " TEXT, " +
 			NotificationTable.COLUMN_NAME_TIME + " TEXT );";
 	
 	static final String NOTIFICATION_TABLE_TIMESTAMP = NotificationTable.COLUMN_NAME_TIME;

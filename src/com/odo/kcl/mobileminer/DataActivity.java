@@ -79,7 +79,7 @@ public class DataActivity extends Activity {
     		message += "No data has been expired yet.";
     	}
     	else {
-    		message += "There is no data older than " + lastExpired + ".";
+    		message += "The oldest data is from " + lastExpired + ".";
     	}
     	myAlertDialog.setMessage(message);
     	myAlertDialog.setPositiveButton("Expire", new DialogInterface.OnClickListener() {

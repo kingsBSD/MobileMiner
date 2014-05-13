@@ -136,13 +136,22 @@ public class MinerData extends SQLiteOpenHelper {
 		putRow(db,MinerLogTable.TABLE_NAME,values);
 	}	
 
-	public void putNotification(SQLiteDatabase db, String packageName, String text, Date time) {
+	public void putNotification(SQLiteDatabase db, String packageName, Date time) {
 		ContentValues values = new ContentValues();
 		values.put(NotificationTable.COLUMN_NAME_PACKAGE,packageName);
-		values.put(NotificationTable.COLUMN_NAME_TEXT,text);
+
 		values.put(NotificationTable.COLUMN_NAME_TIME,df.format(time));
 		putRow(db,NotificationTable.TABLE_NAME,values);
-	}
+	}	
+
+	// None of our business...
+//	public void putNotification(SQLiteDatabase db, String packageName, String text, Date time) {
+//		ContentValues values = new ContentValues();
+//		values.put(NotificationTable.COLUMN_NAME_PACKAGE,packageName);
+//		values.put(NotificationTable.COLUMN_NAME_TEXT,text);
+//		values.put(NotificationTable.COLUMN_NAME_TIME,df.format(time));
+//		putRow(db,NotificationTable.TABLE_NAME,values);
+//	}
 	
 	private void putRow(SQLiteDatabase db, String table, ContentValues values ) {
 		// http://developer.android.com/training/basics/data-storage/databases.html#WriteDbRow

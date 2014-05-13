@@ -4,6 +4,6 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_data">DataActivity</string>
-    <string name="accessibility_service_description">Enable this service to allow MobileMiner to log when net-enabled apps send notifications.</string>
+    <string name="accessibility_service_description">Enable this service to allow MobileMiner to record when net-enabled apps send notifications.</string>
 </resources>
  
