@@ -1,10 +1,22 @@
 // Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
 package com.odo.kcl.mobileminer;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -20,6 +32,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 //import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -31,13 +44,48 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-	Boolean miningButtonState;
+	Boolean miningButtonState,cellValid;
 	Intent miningIntent;
 	ExpandableListView socketView;
 	SocketAdapter socketAdapter;
 	List<String> processHeader;
 	HashMap<String, List<String>> socketChild;
-	TextView cellText,networkText;
+	TextView networkText;
+	Button cellButton;
+	String Mcc,Mnc,Lac,Id;
+	
+	class CellLocationGetter extends AsyncTask {
+
+		@Override
+		protected Object doInBackground(Object... arg0) {
+	    	HttpClient client = new DefaultHttpClient();
+	    	HttpPost post = new HttpPost("http://www.openbmap.org/api/getGPSfromGSM.php");
+	    	List<NameValuePair> postData = new ArrayList<NameValuePair>(4);
+	    	postData.add(new BasicNameValuePair("mcc", Mcc));
+	    	postData.add(new BasicNameValuePair("mnc", Mnc));
+	    	postData.add(new BasicNameValuePair("lac", Lac));
+	    	postData.add(new BasicNameValuePair("cell_id", Id));
+	    	try {
+				post.setEntity(new UrlEncodedFormEntity(postData));
+				HttpResponse response = client.execute(post);
+				Log.i("MobileMiner",EntityUtils.toString(response.getEntity()));
+				
+			}
+	    	catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+			}
+	    	catch (IOException e) {
+	        // TODO Auto-generated catch block
+	    	}
+			
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		
+		
+	}
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,12 +93,14 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         miningButtonState = false;
+        cellValid = false;
         processHeader = new ArrayList<String>();
     	socketChild = new HashMap<String, List<String>>();
         socketView = (ExpandableListView) findViewById(R.id.socketView);
         socketAdapter = new SocketAdapter(this,processHeader,socketChild,null);
         socketView.setAdapter(socketAdapter);
-        cellText = (TextView) findViewById(R.id.cellLocation);
+        cellButton = (Button) findViewById(R.id.cellLocation);
+        cellButton.setEnabled(false);
         networkText = (TextView) findViewById(R.id.networkName);
         
         LocalBroadcastManager.getInstance(this).registerReceiver(
@@ -76,7 +126,7 @@ public class MainActivity extends Activity {
     	//Log.i("MobileMiner","SAVING");
     	super.onSaveInstanceState(savedInstanceState);
     	savedInstanceState.putBoolean("miningButtonState", miningButtonState);
-    	savedInstanceState.putString("cellText",(String)cellText.getText());
+    	savedInstanceState.putString("cellText",(String)cellButton.getText());
     	savedInstanceState.putStringArrayList("processHeader",(ArrayList<String>)processHeader);
     	for (String key: processHeader) savedInstanceState.putStringArrayList(key,(ArrayList<String>)socketChild.get(key));
     }
@@ -86,7 +136,7 @@ public class MainActivity extends Activity {
     	//Log.i("MobileMiner","RESTORING");
     	super.onRestoreInstanceState(savedInstanceState);
     	miningButtonState = savedInstanceState.getBoolean("miningButtonState", false);
-    	if (savedInstanceState.getString("cellText") != null) cellText.setText(savedInstanceState.getString("cellText"));
+    	if (savedInstanceState.getString("cellText") != null) cellButton.setText(savedInstanceState.getString("cellText"));
     	if (savedInstanceState.getStringArrayList("processHeader") != null) {
     		processHeader = savedInstanceState.getStringArrayList("processHeader");
     		for (String key: processHeader) socketChild.put(key,savedInstanceState.getStringArrayList(key));
@@ -127,6 +177,11 @@ public class MainActivity extends Activity {
     
     public void launchData(View buttonView) {
     	startActivity(new Intent(this, DataActivity.class));
+    }
+    
+    public void cellMap(View buttonView) {
+    	new CellLocationGetter().execute("junk");
+    	
     }
     
     private void checkMining() {
@@ -178,7 +233,15 @@ public class MainActivity extends Activity {
     private BroadcastReceiver cellReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			cellText.setText((CharSequence) ("Cell ID: "+intent.getSerializableExtra("celltext")));
+			cellButton.setText((CharSequence) ("Cell ID: "+intent.getSerializableExtra("celltext")));
+			cellValid = (Boolean) intent.getSerializableExtra("cellvalid");
+			cellButton.setEnabled(cellValid);
+			if (cellValid) {
+				Mcc = (String) intent.getSerializableExtra("mcc");
+				Mnc = (String) intent.getSerializableExtra("mnc");
+				Lac = (String) intent.getSerializableExtra("lac");
+				Id = (String) intent.getSerializableExtra("id");
+			}
 		}
     };
     

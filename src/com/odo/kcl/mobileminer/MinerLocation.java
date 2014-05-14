@@ -12,12 +12,14 @@ import android.telephony.gsm.GsmCellLocation;
 
 public class MinerLocation {
 	boolean isNone = true;
+	boolean isValid = false;
 	private String Mcc,Mnc,Lac,Id;
 	private int signalStrength;
 	
 	public MinerLocation(CellLocation location, Context context) {
 		TelephonyManager manager;
 		String mccmnc;
+		int intLac,intId; 
 		signalStrength = 99;
 		Mcc = Mnc = Lac = Id = "None";
 		manager = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE));
@@ -27,8 +29,11 @@ public class MinerLocation {
 				try {
 					Mcc = mccmnc.substring(0,3);
 					Mnc = mccmnc.substring(3);
-					Lac = Integer.toString(((GsmCellLocation) location).getLac());
-					Id = Integer.toString(((GsmCellLocation) location).getCid());
+					intLac = ((GsmCellLocation) location).getLac();
+					intId = ((GsmCellLocation) location).getCid();
+					Lac = Integer.toString(intLac);
+					Id = Integer.toString(intId);
+					if (intLac >= 0 && intId >= 0) isValid = true;
 					isNone = false;		
 				}
 				catch(Exception e) {
@@ -42,13 +47,24 @@ public class MinerLocation {
 	
 	@SuppressLint("NewApi")
 	public MinerLocation(CellInfo cellInfo) {
+		int intMcc,intMnc,intLac,intId; 
 		if (cellInfo instanceof CellInfoGsm) {
-			Mcc = Integer.toString(((CellInfoGsm) cellInfo).getCellIdentity().getMcc());
-			Mnc = Integer.toString(((CellInfoGsm) cellInfo).getCellIdentity().getMnc());
-			Lac = Integer.toString(((CellInfoGsm) cellInfo).getCellIdentity().getLac());
-			Id = Integer.toString(((CellInfoGsm) cellInfo).getCellIdentity().getCid());
-			signalStrength = ((CellInfoGsm) cellInfo).getCellSignalStrength().getAsuLevel();
 			isNone = false;
+			isValid = true;
+			intMcc = ((CellInfoGsm) cellInfo).getCellIdentity().getMcc();
+			intMnc = ((CellInfoGsm) cellInfo).getCellIdentity().getMnc();
+			intLac = ((CellInfoGsm) cellInfo).getCellIdentity().getLac();
+			intId = ((CellInfoGsm) cellInfo).getCellIdentity().getCid();
+			for (int value: new int[]{intMcc,intMcc,intLac,intId}) {
+				if (value < 0) {
+					isValid = false; break;
+				}
+			}
+			Mcc = Integer.toString(intMcc);
+			Mnc = Integer.toString(intMnc);
+			Lac = Integer.toString(intLac);
+			Id = Integer.toString(intId);
+			signalStrength = ((CellInfoGsm) cellInfo).getCellSignalStrength().getAsuLevel();
 		}
 	}
 	
@@ -66,6 +82,8 @@ public class MinerLocation {
 			return "MNC "+Mnc+" LAC "+Lac+" CID "+Id;
 		}
 	}
+	
+	public Boolean isValid() {return isValid;}
 	
 	public MinerLocation compare(MinerLocation location) {
 		if (this.signalStrength > location.signalStrength) {

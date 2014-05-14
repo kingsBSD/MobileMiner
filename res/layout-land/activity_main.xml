@@ -68,14 +68,15 @@
         			android:layout_height="wrap_content"
         			android:text="Network: None"
         			android:textAppearance="?android:attr/textAppearanceMedium" /> 
-        			               
-             	<TextView
-        			android:id="@+id/cellLocation"
-        			android:layout_width="wrap_content"
-        			android:layout_height="wrap_content"
+        		
+    			<Button
+		    		android:id="@+id/cellLocation"
+		    		android:layout_width="fill_parent"
+        			android:layout_height="35dp"
+        			android:onClick="cellMap"
         			android:text="Cell ID: None"
         			android:textAppearance="?android:attr/textAppearanceSmall" />
-    			
+    				            
         	</LinearLayout> 
         	
 		</LinearLayout>            

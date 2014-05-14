@@ -295,18 +295,30 @@ public class MinerService extends Service {
 	
 	private void cellBroadcast() {
 		//Log.i("MinerService","Cellbroadcast");
+		MinerLocation cell = null;
 		String cellText = "None";
+		Boolean cellValid = false;
 		Intent intent = new Intent("com.odo.kcl.mobileminer.cellupdate");
 			
 		switch (cells.size()) {
-			case 0: cellText = "None"; break;
-			case 1: cellText = cells.get(0).dump(); break;
+			case 0: cellValid = false; break;
+			case 1: cell = cells.get(0); break;
 			default:
-				MinerLocation cell = cells.get(0);
+				cell = cells.get(0);
 				for (MinerLocation location: cells.subList(1,cells.size())) cell = cell.compare(location);
-				cellText = cell.dump();
 		}
+		
+		if (cell != null) {
+			cellValid = cell.isValid();
+			cellText = cell.dump();
+			intent.putExtra("mcc", cell.getMcc());
+			intent.putExtra("mnc", cell.getMnc());
+			intent.putExtra("lac", cell.getLac());
+			intent.putExtra("id", cell.getId());
+		}
+		
 		intent.putExtra("celltext", cellText);
+		intent.putExtra("cellvalid", cellValid);
 		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 	}
 	
