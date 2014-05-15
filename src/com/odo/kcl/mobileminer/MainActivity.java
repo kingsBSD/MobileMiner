@@ -54,38 +54,7 @@ public class MainActivity extends Activity {
 	Button cellButton;
 	String Mcc,Mnc,Lac,Id;
 	
-	class CellLocationGetter extends AsyncTask {
 
-		@Override
-		protected Object doInBackground(Object... arg0) {
-	    	HttpClient client = new DefaultHttpClient();
-	    	HttpPost post = new HttpPost("http://www.openbmap.org/api/getGPSfromGSM.php");
-	    	List<NameValuePair> postData = new ArrayList<NameValuePair>(4);
-	    	postData.add(new BasicNameValuePair("mcc", Mcc));
-	    	postData.add(new BasicNameValuePair("mnc", Mnc));
-	    	postData.add(new BasicNameValuePair("lac", Lac));
-	    	postData.add(new BasicNameValuePair("cell_id", Id));
-	    	try {
-				post.setEntity(new UrlEncodedFormEntity(postData));
-				HttpResponse response = client.execute(post);
-				Log.i("MobileMiner",EntityUtils.toString(response.getEntity()));
-				
-			}
-	    	catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				//e.printStackTrace();
-			}
-	    	catch (IOException e) {
-	        // TODO Auto-generated catch block
-	    	}
-			
-			// TODO Auto-generated method stub
-			return null;
-		}
-		
-		
-		
-	}
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,8 +149,7 @@ public class MainActivity extends Activity {
     }
     
     public void cellMap(View buttonView) {
-    	new CellLocationGetter().execute("junk");
-    	
+    	new OpenBmapCellRequest().execute(new String[] {Mcc,Mnc,Lac,Id});
     }
     
     private void checkMining() {
