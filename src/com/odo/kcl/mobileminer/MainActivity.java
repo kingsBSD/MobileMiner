@@ -149,7 +149,8 @@ public class MainActivity extends Activity {
     }
     
     public void cellMap(View buttonView) {
-    	new OpenBmapCellRequest().execute(new String[] {Mcc,Mnc,Lac,Id});
+    	new CellLocationGetter(this).getCell(Mcc, Mnc, Lac, Id);
+    	//new OpenBmapCellRequest().execute(new String[] {Mcc,Mnc,Lac,Id});
     }
     
     private void checkMining() {

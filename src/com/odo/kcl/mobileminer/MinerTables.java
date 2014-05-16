@@ -57,16 +57,45 @@ public final class MinerTables {
 		public static final String COLUMN_NAME_CELLID = "cellid";
 		public static final String COLUMN_NAME_LAT = "lat";
 		public static final String COLUMN_NAME_LONG = "long";
+		public static final String COLUMN_NAME_SOURCE = "source";
+		public static final String COLUMN_NAME_TIME = "time";
 	}
 	
+	static final String GSMLOCATION_TABLE_TIMESTAMP = GSMLocationTable.COLUMN_NAME_TIME;
+	
 	public static final String CREATE_GSMLOCATION_TABLE =
-			"CREATE TABLE " + GSMCellTable.TABLE_NAME + " (" +
+			"CREATE TABLE " + GSMLocationTable.TABLE_NAME + " (" +
 			GSMLocationTable.COLUMN_NAME_MCC + " TEXT, " +
 			GSMLocationTable.COLUMN_NAME_MNC + " TEXT, " +
 			GSMLocationTable.COLUMN_NAME_LAC + " TEXT, " +
 			GSMLocationTable.COLUMN_NAME_CELLID + " TEXT, " +
 			GSMLocationTable.COLUMN_NAME_LAT + " TEXT, " +
-			GSMLocationTable.COLUMN_NAME_LONG + " TEXT );";
+			GSMLocationTable.COLUMN_NAME_LONG + " TEXT, "+
+			GSMLocationTable.COLUMN_NAME_SOURCE + " TEXT, "+
+			GSMLocationTable.COLUMN_NAME_TIME + " TEXT );";
+	
+	public static abstract class GSMCellPolygonTable implements BaseColumns {
+		public static final String TABLE_NAME = "gsmcellpolygon";
+		public static final String COLUMN_NAME_MCC = "mcc";
+		public static final String COLUMN_NAME_MNC = "mnc";
+		public static final String COLUMN_NAME_LAC = "lac";
+		public static final String COLUMN_NAME_CELLID = "cellid";
+		public static final String COLUMN_NAME_JSON = "json";
+		public static final String COLUMN_NAME_SOURCE = "source";
+		public static final String COLUMN_NAME_TIME = "time";
+	}
+	
+	static final String GSMCELLPOLYGON_TABLE_TIMESTAMP = GSMCellPolygonTable.COLUMN_NAME_TIME;
+	
+	public static final String CREATE_GSMCELLPOLYGON_TABLE =
+			"CREATE TABLE " + GSMCellPolygonTable.TABLE_NAME + " (" +
+			GSMLocationTable.COLUMN_NAME_MCC + " TEXT, " +
+			GSMCellPolygonTable.COLUMN_NAME_MNC + " TEXT, " +
+			GSMCellPolygonTable.COLUMN_NAME_LAC + " TEXT, " +
+			GSMCellPolygonTable.COLUMN_NAME_CELLID + " TEXT, " +
+			GSMCellPolygonTable.COLUMN_NAME_JSON+ " TEXT, " +
+			GSMCellPolygonTable.COLUMN_NAME_SOURCE + " TEXT, "+
+			GSMCellPolygonTable.COLUMN_NAME_TIME + " TEXT );";
 	
 	public static abstract class MobileNetworkTable implements BaseColumns {
 		public static final String TABLE_NAME = "mobilenetwork";
@@ -148,6 +177,7 @@ public final class MinerTables {
 		MinerTables.CREATE_SOCKET_TABLE,
 		MinerTables.CREATE_GSMCELL_TABLE,
 		MinerTables.CREATE_GSMLOCATION_TABLE,
+		MinerTables.CREATE_GSMCELLPOLYGON_TABLE,
 		MinerTables.CREATE_MOBILENETWORK_TABLE,
 		MinerTables.CREATE_WIFINETWORK_TABLE,
 		MinerTables.CREATE_MINERLOG_TABLE,
@@ -155,11 +185,13 @@ public final class MinerTables {
 		MinerTables.CREATE_BOOKKEEPING_TABLE};
 	
 	public static final String[] ExpirableTables = {
-		SocketTable.TABLE_NAME, GSMCellTable.TABLE_NAME, MobileNetworkTable.TABLE_NAME, WifiNetworkTable.TABLE_NAME, 
-		MinerLogTable.TABLE_NAME, NotificationTable.TABLE_NAME};
+		SocketTable.TABLE_NAME, GSMCellTable.TABLE_NAME, GSMLocationTable.TABLE_NAME, GSMCellPolygonTable.TABLE_NAME,
+		MobileNetworkTable.TABLE_NAME, WifiNetworkTable.TABLE_NAME, MinerLogTable.TABLE_NAME, NotificationTable.TABLE_NAME};
 
-	public static final String[] ExpirableTimeStamps = {SOCKET_TABLE_TIMESTAMP, GSMCELL_TABLE_TIMESTAMP,
-		MOBILENETWORK_TABLE_TIMESTAMP, WIFINETWORK_TABLE_TIMESTAMP, MINER_TABLE_TIMESTAMP, NOTIFICATION_TABLE_TIMESTAMP
+	public static final String[] ExpirableTimeStamps = {SOCKET_TABLE_TIMESTAMP, GSMCELL_TABLE_TIMESTAMP, 
+		GSMLOCATION_TABLE_TIMESTAMP, GSMCELLPOLYGON_TABLE_TIMESTAMP, MOBILENETWORK_TABLE_TIMESTAMP,
+		WIFINETWORK_TABLE_TIMESTAMP, MINER_TABLE_TIMESTAMP, 
+		NOTIFICATION_TABLE_TIMESTAMP
 	};
 	
 }	

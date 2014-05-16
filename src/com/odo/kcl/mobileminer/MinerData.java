@@ -10,7 +10,9 @@ import java.util.Collections;
 import java.util.Date;
 
 import com.odo.kcl.mobileminer.MinerTables.BookKeepingTable;
+import com.odo.kcl.mobileminer.MinerTables.GSMCellPolygonTable;
 import com.odo.kcl.mobileminer.MinerTables.GSMCellTable;
+import com.odo.kcl.mobileminer.MinerTables.GSMLocationTable;
 import com.odo.kcl.mobileminer.MinerTables.MinerLogTable;
 import com.odo.kcl.mobileminer.MinerTables.MobileNetworkTable;
 import com.odo.kcl.mobileminer.MinerTables.NotificationTable;
@@ -27,6 +29,7 @@ import android.net.wifi.WifiInfo;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 //import android.util.Log;
+import android.util.Log;
 
 
 public class MinerData extends SQLiteOpenHelper {
@@ -112,6 +115,33 @@ public class MinerData extends SQLiteOpenHelper {
 		putRow(db,GSMCellTable.TABLE_NAME,values);
 	}
 
+	public void putGSMLocation(SQLiteDatabase db, String Mcc, String Mnc, String Lac, String Id, String Lat, String Long,
+		String Source,Date time) {
+			ContentValues values = new ContentValues();
+			values.put(GSMLocationTable.COLUMN_NAME_MCC,Mcc);
+			values.put(GSMLocationTable.COLUMN_NAME_MNC,Mnc);
+			values.put(GSMLocationTable.COLUMN_NAME_LAC,Lac);
+			values.put(GSMLocationTable.COLUMN_NAME_CELLID,Id);
+			values.put(GSMLocationTable.COLUMN_NAME_LAT,Lat);
+			values.put(GSMLocationTable.COLUMN_NAME_LONG,Long);
+			values.put(GSMLocationTable.COLUMN_NAME_SOURCE,Source);
+			values.put(GSMLocationTable.COLUMN_NAME_TIME,df.format(time));
+			putRow(db,GSMLocationTable.TABLE_NAME,values);
+		}
+	
+	public void putGSMCellPolygon(SQLiteDatabase db, String Mcc, String Mnc, String Lac, String Id, String Json, 
+		String Source,Date time) {
+			ContentValues values = new ContentValues();
+			values.put(GSMCellPolygonTable.COLUMN_NAME_MCC,Mcc);
+			values.put(GSMCellPolygonTable.COLUMN_NAME_MNC,Mnc);
+			values.put(GSMCellPolygonTable.COLUMN_NAME_LAC,Lac);
+			values.put(GSMCellPolygonTable.COLUMN_NAME_CELLID,Id);
+			values.put(GSMCellPolygonTable.COLUMN_NAME_JSON,Json);
+			values.put(GSMCellPolygonTable.COLUMN_NAME_SOURCE,Source);
+			values.put(GSMCellPolygonTable.COLUMN_NAME_TIME,df.format(time));
+			putRow(db,GSMCellPolygonTable.TABLE_NAME,values);
+		}
+	
 	public void putMobileNetwork(SQLiteDatabase db, TelephonyManager manager, Date time) {
 		ContentValues values = new ContentValues();
 		values.put(MobileNetworkTable.COLUMN_NAME_NETWORKNAME, manager.getNetworkOperatorName());
@@ -224,6 +254,36 @@ public class MinerData extends SQLiteOpenHelper {
 		String[] whereArgs = {key};
 		values.put(BookKeepingTable.COLUMN_NAME_VALUE, df.format(date));
 		db.update(BookKeepingTable.TABLE_NAME, values, BookKeepingTable.COLUMN_NAME_KEY+" = ?", whereArgs);
+	}
+	
+	public String[] getCellLocation(SQLiteDatabase db, String Mcc, String Mnc, String Lac, String Id) {
+		String[] retColumns = {GSMLocationTable.COLUMN_NAME_LAT,GSMLocationTable.COLUMN_NAME_LONG};
+		String q = TextUtils.join(" = ? AND ",new String[]{GSMLocationTable.COLUMN_NAME_MCC,GSMLocationTable.COLUMN_NAME_MNC,
+		GSMLocationTable.COLUMN_NAME_LAC,GSMLocationTable.COLUMN_NAME_CELLID})+ " = ?";
+		String[] whereValues = {Mcc,Mnc,Lac,Id};
+		Cursor c = db.query(GSMLocationTable.TABLE_NAME,retColumns,q,whereValues,null,null,null);
+		c.moveToFirst();
+		try {
+			return new String[]{c.getString(c.getColumnIndex(GSMLocationTable.COLUMN_NAME_LAT)),
+				c.getString(c.getColumnIndex(GSMLocationTable.COLUMN_NAME_LONG))};
+		}
+		catch (Exception e) {
+			return null;
+		}
+	}
+	
+	public String getCellPolygon(SQLiteDatabase db, String Mcc, String Mnc, String Lac, String Id) {
+		String[] retColumns = {GSMCellPolygonTable.COLUMN_NAME_JSON};
+		String[] whereValues = {Mcc,Mnc,Lac,Id};
+		String q = TextUtils.join(" = ? AND ",new String[]{GSMCellPolygonTable.COLUMN_NAME_MCC,GSMCellPolygonTable.COLUMN_NAME_MNC,
+			GSMCellPolygonTable.COLUMN_NAME_LAC,GSMCellPolygonTable.COLUMN_NAME_CELLID})+ " = ?";
+		Cursor c = db.query(GSMCellPolygonTable.TABLE_NAME,retColumns,q,whereValues,null,null,null);
+		try {
+			return c.getString(c.getColumnIndex(GSMCellPolygonTable.COLUMN_NAME_JSON));
+		}
+		catch (Exception e) {
+			return null;
+		}
 	}
 	
 	public String getLastExported(SQLiteDatabase db) {
