@@ -52,8 +52,8 @@ public class CellLocationGetter {
 				return null;
 			}
     		
-			Log.i("MobileMiner","Lat "+locRef[0]);
-			Log.i("MobileMiner","Long "+locRef[1]);
+			//Log.i("MobileMiner","Lat "+locRef[0]);
+			//Log.i("MobileMiner","Long "+locRef[1]);
 			//Log.i("MobileMiner","Poly "+locRef[2]);
     		
     		minerHelper.putGSMLocation(db,Mcc,Mnc,Lac,Id,locRef[0],locRef[1],"OpenBmap",new Date());

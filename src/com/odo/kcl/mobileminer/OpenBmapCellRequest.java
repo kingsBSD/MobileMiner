@@ -41,7 +41,7 @@ public class OpenBmapCellRequest extends AsyncTask {
     	postData.add(new BasicNameValuePair("cell_id", Id));
     	try {
     		String XMLdump,Lat,Long,poly,polyDump;
-    		Lat = new String(); Long = new String(); poly = new String();
+    		Lat = null; Long = null; poly = null;
     		post.setEntity(new UrlEncodedFormEntity(postData));
 			XMLdump = EntityUtils.toString(client.execute(post).getEntity());;
 			//Log.i("MobileMiner",XMLdump);
@@ -51,19 +51,29 @@ public class OpenBmapCellRequest extends AsyncTask {
 			while (longMatch.find()) Long = longMatch.group(1);
 			Matcher polyMatch = polyPattern.matcher(XMLdump);
 			while (polyMatch.find()) poly = polyMatch.group(1);
-			Log.i("MobileMiner","Lat "+Lat);
-			Log.i("MobileMiner","Long "+Long);
+			//Log.i("MobileMiner","Lat "+Lat);
+			//Log.i("MobileMiner","Long "+Long);
 			//Log.i("MobileMiner","Poly "+poly);
-			List<String> points = new ArrayList<String>();
-			String[] point; 
-			String[] polyChunks = poly.split(",");
-			for (String chunk: polyChunks) {
-				point = chunk.split("\\s+");
-				points.add("["+point[1]+","+point[0]+"]");
+			if (poly != null) {
+				List<String> points = new ArrayList<String>();
+				String[] point; 
+				String[] polyChunks = poly.split(",");
+				for (String chunk: polyChunks) {
+					point = chunk.split("\\s+");
+					points.add("["+point[1]+","+point[0]+"]");
+				}
+				polyDump = "["+TextUtils.join(",",points.subList(0, points.size()-1))+"]";
+				//Log.i("MobileMiner",polyDump);
 			}
-			polyDump = "["+TextUtils.join(",",points.subList(0, points.size()-1))+"]";
-			Log.i("MobileMiner",polyDump);
-			return new String[] {Lat,Long,polyDump};
+			else {
+				polyDump = null;
+			}
+			if (Lat != null && Long != null) {
+				return new String[] {Lat,Long,polyDump};
+			}
+			else {
+				return null;
+			}
 		}
     	catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block

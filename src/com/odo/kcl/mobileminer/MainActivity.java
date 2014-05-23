@@ -157,7 +157,15 @@ public class MainActivity extends Activity {
     }
     
     public void cellMap(View buttonView) {
-    	String[] location = new CellLocationGetter(this).getCell(Mcc, Mnc, Lac, Id);
+    	String[] location;
+    	cellButton.setEnabled(false);
+    	try {
+    		location = new CellLocationGetter(this).getCell(Mcc, Mnc, Lac, Id);
+    	}
+    	catch (Exception e) {
+    		location = null;
+    	}
+    	cellButton.setEnabled(true);
     	if (location != null) {
     		Intent mapIntent = new Intent(this, MapActivity.class);
     		mapIntent.putExtra("lat", location[0]);
