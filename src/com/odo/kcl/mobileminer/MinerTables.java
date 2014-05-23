@@ -33,7 +33,7 @@ public final class MinerTables {
 		public static final String COLUMN_NAME_MCC = "mcc";
 		public static final String COLUMN_NAME_MNC = "mnc";
 		public static final String COLUMN_NAME_LAC = "lac";
-		public static final String COLUMN_NAME_CELLID = "cellid";
+		public static final String COLUMN_NAME_CELLID = "cid";
 		public static final String COLUMN_NAME_STRENGTH = "strength";
 		public static final String COLUMN_NAME_TIME = "time";
 	}
@@ -54,7 +54,7 @@ public final class MinerTables {
 		public static final String COLUMN_NAME_MCC = "mcc";
 		public static final String COLUMN_NAME_MNC = "mnc";
 		public static final String COLUMN_NAME_LAC = "lac";
-		public static final String COLUMN_NAME_CELLID = "cellid";
+		public static final String COLUMN_NAME_CELLID = "cid";
 		public static final String COLUMN_NAME_LAT = "lat";
 		public static final String COLUMN_NAME_LONG = "long";
 		public static final String COLUMN_NAME_SOURCE = "source";
@@ -79,7 +79,7 @@ public final class MinerTables {
 		public static final String COLUMN_NAME_MCC = "mcc";
 		public static final String COLUMN_NAME_MNC = "mnc";
 		public static final String COLUMN_NAME_LAC = "lac";
-		public static final String COLUMN_NAME_CELLID = "cellid";
+		public static final String COLUMN_NAME_CELLID = "cid";
 		public static final String COLUMN_NAME_JSON = "json";
 		public static final String COLUMN_NAME_SOURCE = "source";
 		public static final String COLUMN_NAME_TIME = "time";

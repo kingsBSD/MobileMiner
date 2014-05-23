@@ -256,7 +256,7 @@ public class MinerData extends SQLiteOpenHelper {
 		db.update(BookKeepingTable.TABLE_NAME, values, BookKeepingTable.COLUMN_NAME_KEY+" = ?", whereArgs);
 	}
 	
-	public String[] getCellLocation(SQLiteDatabase db, String Mcc, String Mnc, String Lac, String Id) {
+	public static String[] getCellLocation(SQLiteDatabase db, String Mcc, String Mnc, String Lac, String Id) {
 		String[] retColumns = {GSMLocationTable.COLUMN_NAME_LAT,GSMLocationTable.COLUMN_NAME_LONG};
 		String q = TextUtils.join(" = ? AND ",new String[]{GSMLocationTable.COLUMN_NAME_MCC,GSMLocationTable.COLUMN_NAME_MNC,
 		GSMLocationTable.COLUMN_NAME_LAC,GSMLocationTable.COLUMN_NAME_CELLID})+ " = ?";

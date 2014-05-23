@@ -14,13 +14,25 @@ public class CellLocationGetter {
 		context = ctx;
 	}
 	
+	
 	public String[] getCell(String Mcc, String Mnc, String Lac, String Id) {
-    	MinerData helper = new MinerData(context);
+		
+//		Log.i("MobileMiner","Mcc "+Mcc);
+//		Log.i("MobileMiner","Mnc "+Mnc);
+//		Log.i("MobileMiner","Lac "+Lac);
+//		Log.i("MobileMiner","Id "+Id);
+		
+		CellData helper = new CellData(context);
+		String[] location = MinerData.getCellLocation(helper.getReadableDatabase(),Mcc,Mnc,Lac,Id);
+		
+		if (location != null) return location;
+		
+    	MinerData minerHelper = new MinerData(context);
     	SQLiteDatabase db = helper.getReadableDatabase();
-    	String[] location = helper.getCellLocation(db,Mcc,Mnc,Lac,Id);
+    	location = minerHelper.getCellLocation(db,Mcc,Mnc,Lac,Id);
     	String polygon;
     	if (location != null) {
-    		polygon = helper.getCellPolygon(db,Mcc,Mnc,Lac,Id);
+    		polygon = minerHelper.getCellPolygon(db,Mcc,Mnc,Lac,Id);
     	}
     	else {
     		polygon = null;
@@ -40,19 +52,21 @@ public class CellLocationGetter {
 				return null;
 			}
     		
-			//Log.i("MobileMiner","Lat "+locRef[0]);
-			//Log.i("MobileMiner","Long "+locRef[1]);
+			Log.i("MobileMiner","Lat "+locRef[0]);
+			Log.i("MobileMiner","Long "+locRef[1]);
 			//Log.i("MobileMiner","Poly "+locRef[2]);
     		
-    		helper.putGSMLocation(db,Mcc,Mnc,Lac,Id,locRef[0],locRef[1],"OpenBmap",new Date());
-    		helper.putGSMCellPolygon(db,Mcc,Mnc,Lac,Id,locRef[2],"OpenBmap",new Date());
+    		minerHelper.putGSMLocation(db,Mcc,Mnc,Lac,Id,locRef[0],locRef[1],"OpenBmap",new Date());
+    		minerHelper.putGSMCellPolygon(db,Mcc,Mnc,Lac,Id,locRef[2],"OpenBmap",new Date());
     		
     		return locRef;
     	}
     	else {
-    		return new String[]{location[0],location[1],polygon};
+    		return new String[]{location[0],location[1]};
     	}
     	
 	}
 	
 }
+
+

@@ -31,6 +31,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 //import android.util.Log;
@@ -80,6 +81,13 @@ public class MainActivity extends Activity {
         
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 networkReceiver, new IntentFilter("com.odo.kcl.mobileminer.networkupdate"));
+        
+        MinerData minerHelper = new MinerData(this);
+        minerHelper.getReadableDatabase();
+        minerHelper.close();
+        CellData cellHelper = new CellData(this);
+        cellHelper.init();
+        cellHelper.close();
          
     }
 
@@ -149,8 +157,17 @@ public class MainActivity extends Activity {
     }
     
     public void cellMap(View buttonView) {
-    	new CellLocationGetter(this).getCell(Mcc, Mnc, Lac, Id);
-    	//new OpenBmapCellRequest().execute(new String[] {Mcc,Mnc,Lac,Id});
+    	String[] location = new CellLocationGetter(this).getCell(Mcc, Mnc, Lac, Id);
+    	if (location != null) {
+    		Intent mapIntent = new Intent(this, MapActivity.class);
+    		mapIntent.putExtra("lat", location[0]);
+    		mapIntent.putExtra("long", location[1]);
+    		mapIntent.putExtra("zoom", "15");
+    		startActivity(mapIntent);
+    	}
+    	else {
+    		Toast.makeText(this, "Can't find the tower position...", Toast.LENGTH_SHORT).show();
+    	}
     }
     
     private void checkMining() {

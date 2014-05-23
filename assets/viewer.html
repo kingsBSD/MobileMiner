@@ -1,0 +1,30 @@
+
+<html>
+    <head>
+        <script type="text/JavaScript" src="./js/OpenLayers-2.13.1/OpenLayers.js"></script>
+        <script>
+            function initMap() {
+            
+                var mapSpec = JSON.parse(MapActivity.mapDump());
+            
+                var map = new OpenLayers.Map("map");
+                var osmLayer = new OpenLayers.Layer.OSM("OpenStreetMap");
+                map.addLayer(osmLayer);
+                
+                map.setCenter(
+                    new OpenLayers.LonLat(mapSpec.long,mapSpec.lat).transform(
+                        new OpenLayers.Projection("EPSG:4326"),
+                        new OpenLayers.Projection("EPSG:900913")
+                ),mapSpec.zoom);
+                
+
+            }
+        </script>
+        <style>
+            #map { width: 100%; height: 100%; }
+        </style>
+    </head>
+    <body onLoad = "initMap()">
+    <div id="map"></div>
+    </body>
+</html>

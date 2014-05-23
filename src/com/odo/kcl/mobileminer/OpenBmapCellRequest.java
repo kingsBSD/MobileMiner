@@ -51,8 +51,8 @@ public class OpenBmapCellRequest extends AsyncTask {
 			while (longMatch.find()) Long = longMatch.group(1);
 			Matcher polyMatch = polyPattern.matcher(XMLdump);
 			while (polyMatch.find()) poly = polyMatch.group(1);
-			//Log.i("MobileMiner","Lat "+Lat);
-			//Log.i("MobileMiner","Long "+Long);
+			Log.i("MobileMiner","Lat "+Lat);
+			Log.i("MobileMiner","Long "+Long);
 			//Log.i("MobileMiner","Poly "+poly);
 			List<String> points = new ArrayList<String>();
 			String[] point; 
@@ -62,7 +62,7 @@ public class OpenBmapCellRequest extends AsyncTask {
 				points.add("["+point[1]+","+point[0]+"]");
 			}
 			polyDump = "["+TextUtils.join(",",points.subList(0, points.size()-1))+"]";
-			//Log.i("MobileMiner",polyDump);
+			Log.i("MobileMiner",polyDump);
 			return new String[] {Lat,Long,polyDump};
 		}
     	catch (UnsupportedEncodingException e) {
