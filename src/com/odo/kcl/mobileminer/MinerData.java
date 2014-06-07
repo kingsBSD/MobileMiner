@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -284,6 +285,32 @@ public class MinerData extends SQLiteOpenHelper {
 		catch (Exception e) {
 			return null;
 		}
+	}
+	
+	public static ArrayList<CountedCell> getMyCells(SQLiteDatabase db) {
+		ArrayList<CountedCell> cells = new ArrayList<CountedCell>();
+		final String myCellLocationsQuery = "SELECT count(*) AS count,mcc, mnc, lac, cid FROM gsmcell GROUP BY lac,cid ORDER BY count DESC";
+		Cursor c = db.rawQuery(myCellLocationsQuery, null);
+		c.moveToFirst();
+		boolean searching = true;
+		while (searching) {
+			searching = !c.isLast();
+			try {
+				cells.add(new CountedCell(
+					c.getInt(c.getColumnIndex("count")),
+					c.getString(c.getColumnIndex("mcc")),
+					c.getString(c.getColumnIndex("mnc")),
+					c.getString(c.getColumnIndex("lac")),
+					c.getString(c.getColumnIndex("cid"))
+				));
+			}
+			catch (Exception e) {
+				
+			}
+			c.moveToNext();
+		}
+		
+		return cells;
 	}
 	
 	public String getLastExported(SQLiteDatabase db) {

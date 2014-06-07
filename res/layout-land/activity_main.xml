@@ -70,12 +70,12 @@
         			android:textAppearance="?android:attr/textAppearanceMedium" /> 
         		
     			<Button
-		    		android:id="@+id/cellLocation"
-		    		android:layout_width="fill_parent"
-        			android:layout_height="35dp"
-        			android:onClick="cellMap"
-        			android:text="Cell ID: None"
-        			android:textAppearance="?android:attr/textAppearanceSmall" />
+    			    android:id="@+id/cellLocation"
+    			    android:layout_width="256dp"
+    			    android:layout_height="35dp"
+    			    android:onClick="cellMap"
+    			    android:text="No Cell"
+    			    android:textAppearance="?android:attr/textAppearanceSmall" />
     				            
         	</LinearLayout> 
         	

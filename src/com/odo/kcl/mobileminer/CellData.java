@@ -50,7 +50,7 @@ public class CellData extends SQLiteOpenHelper {
 	}
 	
 	public void init() {
-		Log.i("CellData","CREATING");
+		//Log.i("CellData","CREATING");
 		File dataDir = Environment.getDataDirectory();
 		String dbPath = "/data/"+ "com.odo.kcl.mobileminer" +"/databases/"+DATABASE_NAME;
 		File dbFile = new File(dataDir, dbPath);
@@ -73,7 +73,7 @@ public class CellData extends SQLiteOpenHelper {
 				okay = true;
 			}
 			catch (Exception e) {
-				Log.i("CellData","Can't open source stream.");
+				//Log.i("CellData","Can't open source stream.");
 				sourceStream = null;
 				okay = false;
 			}
@@ -83,10 +83,10 @@ public class CellData extends SQLiteOpenHelper {
 				int len;
 			    try {
 					while ((len = sourceStream.read(buffer)) > 0) destStream.write(buffer, 0, len);
-					Log.i("CellData","Writing data..."); 			
+					//Log.i("MinerData","Writing data..."); 			
 				} 
 			    catch (IOException e) {
-			    	 Log.i("CellData","Can't copy source stream.");
+			    	 //Log.i("MinerData","Can't copy source stream.");
 				}
 			    
 				try {
@@ -105,7 +105,6 @@ public class CellData extends SQLiteOpenHelper {
 			       
 				
 			}
-			
 			
 			
 		}

@@ -3,6 +3,7 @@ package com.odo.kcl.mobileminer;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,12 +12,15 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.Menu;
 import android.webkit.WebView;
 
 public class MapActivity extends Activity {
 	WebView mapWebView;
 	String lat,lon,zoom;
+	boolean noCentre;
+	ArrayList<String> redLat,redLong,yellowLat,yellowLong,greenLat,greenLong,blueLat,blueLong;
 	
 	public class MapInterface {
 		 Context context;
@@ -38,6 +42,26 @@ public class MapActivity extends Activity {
 					JSONdump.put("long",lon);
 					JSONdump.put("lat",lat);
 					JSONdump.put("zoom",zoom);
+					JSONdump.put("nocentre",noCentre);
+					if (redLat != null) {
+						JSONdump.put("redlat",redLat);
+						JSONdump.put("redlong",redLong);	
+					}
+					if (yellowLat != null) {
+						JSONdump.put("yellowlat",yellowLat);
+						JSONdump.put("yellowlong",yellowLong);	
+					}
+					if (greenLat != null) {
+						JSONdump.put("greenlat",greenLat);
+						JSONdump.put("greenlong",greenLong);	
+					}
+					if (blueLat != null) {
+						JSONdump.put("bluelat",blueLat);
+						JSONdump.put("bluelong",blueLong);	
+					}
+					
+					//Log.i("MinerMap",JSONdump.toString());
+					
 					return JSONdump.toString();
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -63,8 +87,15 @@ public class MapActivity extends Activity {
 		lat = mapIntent.getStringExtra("lat");
 		lon = mapIntent.getStringExtra("long");
 		zoom = mapIntent.getStringExtra("zoom");
-
-				
+		noCentre = mapIntent.getBooleanExtra("nocentre",false);
+		redLat = mapIntent.getStringArrayListExtra("redlat");
+		redLong = mapIntent.getStringArrayListExtra("redlong");
+		yellowLat = mapIntent.getStringArrayListExtra("yellowlat");
+		yellowLong = mapIntent.getStringArrayListExtra("yellowlong");
+		greenLat = mapIntent.getStringArrayListExtra("greenlat");
+		greenLong = mapIntent.getStringArrayListExtra("greenlong");
+		blueLat = mapIntent.getStringArrayListExtra("bluelat");
+		blueLong = mapIntent.getStringArrayListExtra("bluelong");
 	}
 
 	@Override

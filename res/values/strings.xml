@@ -6,6 +6,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_data">DataActivity</string>
     <string name="accessibility_service_description">Enable this service to allow MobileMiner to record when net-enabled apps send notifications.</string>
-    <string name="title_activity_map">MapActivity</string>
+    <string name="title_activity_map">MinerMap</string>
 
 </resources>

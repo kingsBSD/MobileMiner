@@ -227,7 +227,7 @@ public class MainActivity extends Activity {
     private BroadcastReceiver cellReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			cellButton.setText((CharSequence) ("Cell ID: "+intent.getSerializableExtra("celltext")));
+			cellButton.setText((CharSequence) (intent.getSerializableExtra("celltext")));
 			cellValid = (Boolean) intent.getSerializableExtra("cellvalid");
 			cellButton.setEnabled(cellValid);
 			if (cellValid) {

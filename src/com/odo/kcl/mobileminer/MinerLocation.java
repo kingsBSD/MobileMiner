@@ -9,7 +9,6 @@ import android.telephony.CellLocation;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 //import android.util.Log;
-
 public class MinerLocation {
 	boolean isNone = true;
 	boolean isValid = false;
@@ -76,7 +75,7 @@ public class MinerLocation {
 	
 	public String dump() {
 		if (isNone) {
-			return "None";
+			return "No Cell";
 		}
 		else {
 			return "MNC "+Mnc+" LAC "+Lac+" CID "+Id;

@@ -296,7 +296,7 @@ public class MinerService extends Service {
 	private void cellBroadcast() {
 		//Log.i("MinerService","Cellbroadcast");
 		MinerLocation cell = null;
-		String cellText = "None";
+		String cellText = "No Cell";
 		Boolean cellValid = false;
 		Intent intent = new Intent("com.odo.kcl.mobileminer.cellupdate");
 			

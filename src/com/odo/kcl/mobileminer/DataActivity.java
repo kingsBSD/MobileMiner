@@ -7,7 +7,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
@@ -17,6 +19,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
@@ -138,6 +142,95 @@ public class DataActivity extends Activity {
         	e.printStackTrace();
         	Toast.makeText(this, "Couldn't Export Data!", Toast.LENGTH_LONG).show();
         }
+    }
+ 
+    public void myLocations(View buttonView) {
+    	buttonView.setEnabled(false);
+    	MinerData helper = new MinerData(context);
+    	ArrayList<CountedCell> cells = MinerData.getMyCells(helper.getReadableDatabase());
+    	
+    	CellLocationGetter cellGetter = new CellLocationGetter(this);
+    	ArrayList<String[]> locations = new ArrayList<String[]>();
+    	ArrayList<Integer> counts = new ArrayList<Integer>();
+    	int thisCount,totalCount = 0;
+    	double totalLat = 0.0;
+    	double totalLong = 0.0;
+    	double maxLat, minLat, maxLong, minLong, lat, lon;
+    	String[] thisLocation;
+
+		maxLat = maxLong = -1000;
+		minLat = minLong = 1000;
+    	
+    	for (CountedCell cell: cells) {
+    		thisLocation = cellGetter.getCell(cell);
+    		if (thisLocation != null) {
+    			thisCount = cell.getCount();
+    			locations.add(thisLocation);
+    			counts.add(thisCount);
+    			totalCount += thisCount;
+    			lat = new Double(thisLocation[0]);
+    			lon = new Double(thisLocation[1]);
+    			totalLat += thisCount * lat;
+    			totalLong += thisCount * lon;
+    			if (lat > maxLat) maxLat = lat;
+    			if (lon > maxLong) maxLong = lon;
+    			if (lat < minLat) minLat = lat;
+    			if (lon < minLong) minLong = lon;
+    		}
+    	}
+    	
+    	if (locations.size() > 0) {
+    		    		
+    		String centreLat = String.valueOf(totalLat / totalCount);
+    		String centreLong = String.valueOf(totalLong / totalCount);
+    		
+    		HashMap<String,ArrayList<String>> markerLat = new HashMap<String,ArrayList<String>>();
+    		HashMap<String,ArrayList<String>> markerLong = new HashMap<String,ArrayList<String>>();
+    		String[] markerLists = {"red", "yellow", "green", "blue"};
+    		
+    		for (String key: markerLists) {
+    			markerLat.put(key,new ArrayList<String>());
+    			markerLong.put(key,new ArrayList<String>());
+    		}
+    		
+    		int cumulCounts = 0;
+    		int colour = 0;
+    		int quart = totalCount / 4;
+    		int thresh = quart;
+ 
+    		for (int i=0;i<locations.size();i++) {
+    			markerLat.get(markerLists[colour]).add(locations.get(i)[0]);
+    			markerLong.get(markerLists[colour]).add(locations.get(i)[1]);
+    			cumulCounts += counts.get(i);
+    			if (cumulCounts > thresh && colour < 3) {
+    				colour += 1;
+    				thresh += quart;
+    			}
+    			
+    		}
+    		
+    		Intent mapIntent = new Intent(this, MapActivity.class);
+    		mapIntent.putExtra("lat", centreLat);
+    		mapIntent.putExtra("long", centreLong);
+    		mapIntent.putExtra("nocentre", true);
+    		mapIntent.putExtra("redlat", markerLat.get("red"));
+    		mapIntent.putExtra("redlong", markerLong.get("red"));
+    		mapIntent.putExtra("yellowlat", markerLat.get("yellow"));
+    		mapIntent.putExtra("yellowlong", markerLong.get("yellow"));
+    		mapIntent.putExtra("greenlat", markerLat.get("green"));
+    		mapIntent.putExtra("greenlong", markerLong.get("green"));
+    		mapIntent.putExtra("bluelat", markerLat.get("blue"));
+    		mapIntent.putExtra("bluelong", markerLong.get("blue"));
+    		mapIntent.putExtra("zoom", "15");
+    		buttonView.setEnabled(true);
+    		startActivity(mapIntent);
+    		
+    	}
+    	else {
+    		Toast.makeText(this, "Can't find any towers...", Toast.LENGTH_SHORT).show();
+    		buttonView.setEnabled(true);   		
+    	}
+    	 
     }
     
 }

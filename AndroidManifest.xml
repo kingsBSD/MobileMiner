@@ -14,15 +14,15 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-	<uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE" />
-	<uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        
         <activity
             android:name="com.odo.kcl.mobileminer.MainActivity"
             android:label="@string/app_name" >
@@ -42,16 +42,22 @@
         </activity>
 
         <service android:name="com.odo.kcl.mobileminer.MinerService" />
-        
-      	<service android:name="com.odo.kcl.mobileminer.NotificationService"
-      	    android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
-            <meta-data android:name="android.accessibilityservice" android:resource="@xml/accessibilityservice" />
-      	    
-     		<intent-filter>
-         		<action android:name="android.accessibilityservice.AccessibilityService" />
-     		</intent-filter>
- 		</service>
+        <service
+            android:name="com.odo.kcl.mobileminer.NotificationService"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" >
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibilityservice" />
 
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name="com.odo.kcl.mobileminer.MapActivity"
+            android:label="@string/title_activity_map" >
+        </activity>
     </application>
 
 </manifest>
