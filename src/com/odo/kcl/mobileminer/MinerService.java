@@ -1,4 +1,7 @@
 // Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
+
+// This is the service that grabs most of the data.
+
 package com.odo.kcl.mobileminer;
 
 import java.util.ArrayList;
@@ -54,30 +57,30 @@ public class MinerService extends Service {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
-		    	if (action.equals("android.net.conn.CONNECTIVITY_CHANGE")) {
-		    		connectivityChanged();
-		    		//Log.i("MinerService","CONNECTIVITY_CHANGE");
-		    	}
+		    if (action.equals("android.net.conn.CONNECTIVITY_CHANGE")) { // We've switched mobile/wireless networks.
+		    	connectivityChanged();
+		    	//Log.i("MinerService","CONNECTIVITY_CHANGE");
+		    }
    
-		    	if (action.equals("com.odo.kcl.mobileminer.updatequery")) {
-		        	socketSet.broadcast();
-		        	cellBroadcast();
-		        	networkBroadcast();
-		        	//Log.i("MinerService","RECEIVED SOCKET QUERY");
-		      }
+		    if (action.equals("com.odo.kcl.mobileminer.updatequery")) { // The MainActivity wants an update.
+		        socketSet.broadcast();
+		        cellBroadcast();
+		        networkBroadcast();
+		        //Log.i("MinerService","RECEIVED SOCKET QUERY");
+		     }
 
-		    	if (action.equals("com.odo.kcl.mobileminer.stopmining")) {
-		    		scanning = false;
-		    		stopForeground(true);
-		    		stopSelf();
-		    	}
-		    
-		   }
-		};
+		    if (action.equals("com.odo.kcl.mobileminer.stopmining")) {
+		    	scanning = false;
+		    	stopForeground(true);
+		    	stopSelf();
+		    }
+		}
+	};
 		
 	private final PhoneStateListener phoneListener = new PhoneStateListener() {
 		@Override
 		public void onDataActivity(int direction) {
+			// Is it worth scanning for sockets?
 			if (direction != TelephonyManager.DATA_ACTIVITY_NONE || direction != TelephonyManager.DATA_ACTIVITY_DORMANT) {
 				//Log.i("MinerService","DATA_ACTIVE");
 				startScan();
@@ -90,6 +93,7 @@ public class MinerService extends Service {
 		// What a swiz:
 		// http://code.google.com/p/android/issues/detail?id=43467
 		// http://stackoverflow.com/questions/20049510/oncellinfochanged-callback-is-always-null
+		// It would be nice if we could get a set of active cell towers and their signal strengths with the newer API. Oh well.
 		
 		/**
 		@Override
@@ -157,7 +161,7 @@ public class MinerService extends Service {
 		filter.addAction("com.odo.kcl.mobileminer.stopmining");
 		registerReceiver(receiver, filter);
 	 
-		mineWorker = new Runnable() {
+		mineWorker = new Runnable() { // Check for new network sockets every half-second.
 			@Override
 			public void run() {
 				try {
@@ -249,7 +253,7 @@ public class MinerService extends Service {
 				 			helper.close();
 							networkName = name; networkBroadcast();	
 				 		}
-				 		startScan();
+				 		startScan(); // Always scan when we've got WIFI.
 				 		//Log.i("MinerService","CONNECTED: WIFI");
 				 		break;
 				 	case ConnectivityManager.TYPE_MOBILE:

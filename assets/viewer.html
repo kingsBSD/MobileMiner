@@ -1,4 +1,4 @@
-
+<!-- Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt -->
 <html>
     <head>
         <script type="text/JavaScript" src="./js/OpenLayers-2.13.1/OpenLayers.js"></script>
@@ -46,8 +46,7 @@
                 if (mapSpec.bluelat != undefined) addMarkerList(markerLayer,mapSpec.bluelat,mapSpec.bluelong,'blue');
                 
                 map.addLayer(markerLayer);
-                
-                
+                                
                 if (mapSpec.nocentre != true) {
                     map.setCenter(new OpenLayers.LonLat(mapSpec.long,mapSpec.lat).transform(new OpenLayers.Projection("EPSG:4326"),new OpenLayers.Projection("EPSG:900913")),mapSpec.zoom);
                 }    
@@ -56,8 +55,7 @@
                     var bounds = markerLayer.getDataExtent();
                     map.zoomToExtent(bounds);
                 }
-
-                
+ 
             }
             
         </script>
