@@ -30,8 +30,6 @@ import android.net.wifi.WifiInfo;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 //import android.util.Log;
-import android.util.Log;
-
 
 public class MinerData extends SQLiteOpenHelper {
 

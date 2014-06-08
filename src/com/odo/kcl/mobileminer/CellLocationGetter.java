@@ -1,11 +1,12 @@
+// Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
 package com.odo.kcl.mobileminer;
 
-import java.util.Date;
-import java.util.concurrent.ExecutionException;
+//import java.util.Date;
+//import java.util.concurrent.ExecutionException;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+//import android.database.sqlite.SQLiteDatabase;
+//import android.util.Log;
 
 public class CellLocationGetter {
 	private Context context;
