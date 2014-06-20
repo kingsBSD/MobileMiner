@@ -42,7 +42,7 @@ public class MinerService extends Service {
 	private Date startTime;
 	private ProcSocketSet socketSet;
 	private IntentFilter filter;
-	private Handler scanHandle;
+	private Handler scanHandle,updateHandle;
 	private boolean scanning;
 	private Runnable mineWorker;
 	private Context context;
@@ -154,6 +154,7 @@ public class MinerService extends Service {
 		cellIds = new ArrayList<String>();
 		socketSet = new ProcSocketSet(this);
 		scanHandle = new Handler();
+		updateHandle = new Handler();
 		
 		filter = new IntentFilter();
 		filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");

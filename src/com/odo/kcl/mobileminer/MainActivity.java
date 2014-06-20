@@ -74,6 +74,8 @@ public class MainActivity extends Activity {
         CellData cellHelper = new CellData(this);
         cellHelper.init();
         cellHelper.close();
+        
+        //new UidGetter(this).getUid();
          
     }
 

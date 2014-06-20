@@ -44,7 +44,7 @@ public class OpenBmapCellRequest extends AsyncTask {
     		String XMLdump,Lat,Long,poly,polyDump;
     		Lat = null; Long = null; poly = null;
     		post.setEntity(new UrlEncodedFormEntity(postData));
-			XMLdump = EntityUtils.toString(client.execute(post).getEntity());;
+			XMLdump = EntityUtils.toString(client.execute(post).getEntity());
 			//Log.i("MobileMiner",XMLdump);
 			Matcher latMatch = latPattern.matcher(XMLdump);
 			while (latMatch.find()) Lat = latMatch.group(1);

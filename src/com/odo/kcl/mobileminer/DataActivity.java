@@ -39,6 +39,8 @@ public class DataActivity extends Activity {
 		context = this;
 		dataText  = (TextView) findViewById(R.id.dataText);
 		setDbSizeLegend();
+		
+		//new CkanUpdater().execute(new Context[] {this});
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 import com.odo.kcl.mobileminer.MinerTables.BookKeepingTable;
 import com.odo.kcl.mobileminer.MinerTables.GSMCellPolygonTable;
@@ -27,6 +28,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.wifi.WifiInfo;
+import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 //import android.util.Log;
@@ -35,7 +37,8 @@ public class MinerData extends SQLiteOpenHelper {
 
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "MobileMiner.db";
-    private static SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    public static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    public static final SimpleDateFormat dayGetter = new SimpleDateFormat("EEE");
     
     public static class WifiData {
     	private String ssid,bssid,ip;
@@ -100,6 +103,7 @@ public class MinerData extends SQLiteOpenHelper {
 		values.put(SocketTable.COLUMN_NAME_PORT,chunks[1]);
 		values.put(SocketTable.COLUMN_NAME_OPENED,df.format(opened));
 		values.put(SocketTable.COLUMN_NAME_CLOSED,df.format(closed));
+		values.put(SocketTable.COLUMN_NAME_DAY,dayGetter.format(opened));
 		putRow(db,SocketTable.TABLE_NAME,values);
 	}
 
@@ -111,6 +115,7 @@ public class MinerData extends SQLiteOpenHelper {
 		values.put(GSMCellTable.COLUMN_NAME_CELLID,location.getId());
 		values.put(GSMCellTable.COLUMN_NAME_STRENGTH,location.getStrength());
 		values.put(GSMCellTable.COLUMN_NAME_TIME,df.format(time));
+		values.put(SocketTable.COLUMN_NAME_DAY,dayGetter.format(time));
 		putRow(db,GSMCellTable.TABLE_NAME,values);
 	}
 
@@ -155,6 +160,7 @@ public class MinerData extends SQLiteOpenHelper {
 		values.put(WifiNetworkTable.COLUMN_NAME_BSSID,data.getBSSID());
 		values.put(WifiNetworkTable.COLUMN_NAME_IP,data.getIP());
 		values.put(WifiNetworkTable.COLUMN_NAME_TIME,df.format(time));
+		values.put(SocketTable.COLUMN_NAME_DAY,dayGetter.format(time));
 		putRow(db,WifiNetworkTable.TABLE_NAME,values);
 	}
 	
@@ -168,8 +174,8 @@ public class MinerData extends SQLiteOpenHelper {
 	public void putNotification(SQLiteDatabase db, String packageName, Date time) {
 		ContentValues values = new ContentValues();
 		values.put(NotificationTable.COLUMN_NAME_PACKAGE,packageName);
-
 		values.put(NotificationTable.COLUMN_NAME_TIME,df.format(time));
+		values.put(SocketTable.COLUMN_NAME_DAY,dayGetter.format(time));
 		putRow(db,NotificationTable.TABLE_NAME,values);
 	}	
 
@@ -343,5 +349,15 @@ public class MinerData extends SQLiteOpenHelper {
 		setBookKeepingDate(db,BookKeepingTable.DATA_LAST_EXPIRED,expiryDate);
 	}
 	
+	public static String getCkanUrl() {
+		// http://stackoverflow.com/questions/2799097/how-can-i-detect-when-an-android-application-is-running-in-the-emulator
+		if ("goldfish".equals(Build.HARDWARE)) {
+			return "http://10.0.2.2:5000";
+		}
+		else {
+			return null;
+		}
+		
+	}
 	
 }

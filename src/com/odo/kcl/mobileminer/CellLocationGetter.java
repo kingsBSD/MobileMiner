@@ -3,10 +3,8 @@ package com.odo.kcl.mobileminer;
 
 //import java.util.Date;
 //import java.util.concurrent.ExecutionException;
-
 import android.content.Context;
 //import android.database.sqlite.SQLiteDatabase;
-//import android.util.Log;
 
 public class CellLocationGetter {
 	private Context context;
@@ -35,7 +33,7 @@ public class CellLocationGetter {
 		
 //		if (location != null) return location;
 //		
-//		Log.i("LocationGetter","Can't find cell");
+//		//Log.i("LocationGetter","Can't find cell");
 //		
 //    	MinerData minerHelper = new MinerData(context);
 //    	SQLiteDatabase db = helper.getReadableDatabase();
@@ -74,7 +72,7 @@ public class CellLocationGetter {
 //    	else {
 //    		return new String[]{location[0],location[1]};
 //    	}
-//    	
+    	
 	}
 	
 }
