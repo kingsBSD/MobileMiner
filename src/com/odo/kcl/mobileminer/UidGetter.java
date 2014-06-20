@@ -41,7 +41,6 @@ public class UidGetter {
 				Log.i("MobileMiner","No uid in the DB.");
 				uid = null;
 			}
-		
 		}
 		else {
 			Log.i("MobileMiner","Force new uid.");
@@ -58,7 +57,6 @@ public class UidGetter {
 				uid = null;
 			}
 			catch (ExecutionException e) {
-				Log.i("MobileMiner","Bang!");
 				uid = null;
 			}
 			
