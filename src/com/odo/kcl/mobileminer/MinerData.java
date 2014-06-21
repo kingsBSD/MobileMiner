@@ -216,7 +216,38 @@ public class MinerData extends SQLiteOpenHelper {
 		else {
 			return Long.toString(count)+" "+unit+"s ago";
 		}
+		
 
+	}
+	
+	public void deleteBookKeepingKey(SQLiteDatabase db, String key) {
+		db.beginTransaction();
+		db.delete(BookKeepingTable.TABLE_NAME, BookKeepingTable.COLUMN_NAME_KEY + " = ? ", new String[]{key});
+		db.setTransactionSuccessful();
+		db.endTransaction();	
+	}
+	
+	public void setBookKeepingKey(SQLiteDatabase db, String key, String value) {
+		ContentValues values = new ContentValues();
+		values.put(BookKeepingTable.COLUMN_NAME_KEY, key);
+		values.put(BookKeepingTable.COLUMN_NAME_VALUE, value);
+		db.beginTransaction();
+		putRow(db,BookKeepingTable.TABLE_NAME,values);
+		db.setTransactionSuccessful();
+		db.endTransaction();	
+	}
+	
+	public String getBookKeepingKey(SQLiteDatabase db, String key) {
+		String[] retColumns = {BookKeepingTable.COLUMN_NAME_VALUE};
+		String[] whereValues = {key};
+		Cursor c = db.query(BookKeepingTable.TABLE_NAME,retColumns,BookKeepingTable.COLUMN_NAME_KEY+" = ?",whereValues,null,null,null);
+		c.moveToFirst();
+		try {
+			return c.getString(c.getColumnIndex(BookKeepingTable.COLUMN_NAME_VALUE));
+		}
+		catch (Exception e) {
+			return null;
+		}
 	}
 	
 	private void initBookKeepingDate(SQLiteDatabase db,String key) {
@@ -349,15 +380,5 @@ public class MinerData extends SQLiteOpenHelper {
 		setBookKeepingDate(db,BookKeepingTable.DATA_LAST_EXPIRED,expiryDate);
 	}
 	
-	public static String getCkanUrl() {
-		// http://stackoverflow.com/questions/2799097/how-can-i-detect-when-an-android-application-is-running-in-the-emulator
-		if ("goldfish".equals(Build.HARDWARE)) {
-			return "http://10.0.2.2:5000";
-		}
-		else {
-			return null;
-		}
-		
-	}
 	
 }

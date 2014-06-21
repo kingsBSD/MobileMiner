@@ -20,6 +20,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 //import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -43,8 +44,8 @@ public class MinerService extends Service {
 	private ProcSocketSet socketSet;
 	private IntentFilter filter;
 	private Handler scanHandle,updateHandle;
-	private boolean scanning;
-	private Runnable mineWorker;
+	private boolean scanning,updating;
+	private Runnable mineWorker,ckanWorker;
 	private Context context;
 	private String networkName;
 	private String cellLocation;
@@ -133,7 +134,7 @@ public class MinerService extends Service {
 			cells = new ArrayList<MinerLocation>();
 			if (location != null) {
 				cells.add(new MinerLocation(location,context));
-	 			MinerData helper = new MinerData(context);
+				MinerData helper = new MinerData(context);
 	 			helper.putGSMCell(helper.getWritableDatabase(), cells.get(0), new Date());
 	 			helper.close();
 			}
@@ -178,9 +179,20 @@ public class MinerService extends Service {
 					}
 				}
 			}	 
-		 };				 
+		 };
+		 
+		ckanWorker = new Runnable() {
+			@Override
+			public void run() {
+				new CkanUrlGetter(context).getUrl();
+				new CkanUidGetter(context).getUid();
+				new CkanUpdater().execute(new Context[] {context});
+				if (updating) updateHandle.postDelayed(this, 600000);				
+			}				
+		};
+		 
 	 }
-	 
+	 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		startTime = new Date();
@@ -244,6 +256,7 @@ public class MinerService extends Service {
 					case ConnectivityManager.TYPE_WIFI:
 						wifiData = true;
 						mobileData = false;
+						if (!updating) startUpdating();
 						WifiManager wifiMgr = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
 				 		WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
 				 		name = wifiInfo.getSSID();
@@ -260,6 +273,13 @@ public class MinerService extends Service {
 				 	case ConnectivityManager.TYPE_MOBILE:
 						wifiData = false;
 						mobileData = true;
+						if ("goldfish".equals(Build.HARDWARE)) {
+							if (!updating) startUpdating();
+						}
+						else {
+							updating = false;	
+						}
+						
 				 		// https://code.google.com/p/android/issues/detail?id=24227
 				 		//String name; Cursor c;
 				 		//c = this.getContentResolver().query(Uri.parse("content://telephony/carriers/preferapn"), null, null, null, null);
@@ -295,6 +315,13 @@ public class MinerService extends Service {
 		if (!scanning) {
 			scanning = true;
 			scanHandle.post(mineWorker);
+		}
+	}
+	
+	private void startUpdating() {
+		if (!updating) {
+			updating = true;
+			updateHandle.post(ckanWorker);
 		}
 	}
 	

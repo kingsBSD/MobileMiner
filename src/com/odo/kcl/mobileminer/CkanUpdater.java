@@ -25,9 +25,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.provider.Settings;
 import android.text.TextUtils;
-import android.util.Log;
+//import android.util.Log;
 
 public class CkanUpdater extends AsyncTask {
 	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -37,7 +38,7 @@ public class CkanUpdater extends AsyncTask {
 		
 		Context context = (Context) arg0[0];
 		Field[] tableClassFields;
-		String uid,tableName,thisName,thisValue,dateKey,dateVal,response;
+		String url,uid,tableName,thisName,thisValue,dateKey,dateVal,response;
 		Date date,rightNow;
 		ArrayList<String> tableFields;
 		HashMap<String,String> timeStamps;
@@ -58,9 +59,14 @@ public class CkanUpdater extends AsyncTask {
 		for (int i=0;i<MinerTables.ExpirableTables.length;i++) {
 			timeStamps.put(MinerTables.ExpirableTables[i], MinerTables.ExpirableTimeStamps[i]);
 		}
+				
+		url = helper.getBookKeepingKey(dbReader, "ckanurl");
+		// http://stackoverflow.com/questions/2799097/how-can-i-detect-when-an-android-application-is-running-in-the-emulator
+		if ("goldfish".equals(Build.HARDWARE)) url = "http://10.0.2.2:5000";
 		
+		uid = helper.getBookKeepingKey(dbReader, "ckanuid");
 		
-		uid = new UidGetter(context).getUid();
+		if (url == null) return null; 
 		
 		if (uid == null) return null;
 		
@@ -125,7 +131,7 @@ public class CkanUpdater extends AsyncTask {
 					c.moveToNext();
 				}
 				
-				if (things == 0) Log.i("MobileMiner","No new records.");
+				//if (things == 0) Log.i("MobileMiner","No new records.");
 				
 				if (things > 0) {
 					jsonDump = new JSONObject();
@@ -133,13 +139,13 @@ public class CkanUpdater extends AsyncTask {
 						jsonDump.put("uid", uid);
 						jsonDump.put("table",tableName);
 						jsonDump.put("records", allTheThings);
-						Log.i("MobileMiner",jsonDump.toString());
+						//Log.i("MobileMiner",jsonDump.toString());
 					}
 					catch (JSONException e) {
 						jsonDump = null;
 					}
 					
-					post = new HttpPost(MinerData.getCkanUrl()+"/api/action/miner_update");
+					post = new HttpPost(url+"/api/action/miner_update");
 					post.setHeader("content-type", "application/x-www-form-urlencoded");
 					
 					if (jsonDump != null) {
@@ -168,7 +174,7 @@ public class CkanUpdater extends AsyncTask {
 					}
 					
 					if (response != null) {
-						Log.i("MobileMiner",response);
+						//Log.i("MobileMiner",response);
 						try {
 							jsonResponse = new JSONObject(response);
 							
@@ -178,8 +184,8 @@ public class CkanUpdater extends AsyncTask {
 							else {
 								error = jsonResponse.getJSONObject("error");
 								if (error.getString("message").equals("No such user.")) {
-									Log.i("MobileMiner","No such user.");
-									uid = new UidGetter(context).getUid(true);
+									//Log.i("MobileMiner","No such user.");
+									uid = new CkanUidGetter(context).getUid(true);
 									return null;				
 								}
 							}
@@ -218,42 +224,6 @@ public class CkanUpdater extends AsyncTask {
 }
 
 
-//HttpPost post = new HttpPost(MinerData.getCkanUrl()+"/api/action/miner_register");
-//post.setHeader("content-type", "application/x-www-form-urlencoded");
-//	
-//JSONObject JSONdump = new JSONObject();
-//try {
-//	JSONdump.put("androidid",Settings.Secure.ANDROID_ID);
-//	JSONdump.put("version",MinerTables.APP_VERSION);
-//	post.setEntity(new ByteArrayEntity(JSONdump.toString().getBytes("UTF8")));
-//}
-//catch (JSONException e) {
-//	return null;
-//}
-//catch (UnsupportedEncodingException e) {
-//	return null;
-//}
-//
-//HttpClient client = new DefaultHttpClient();
-//String response;
-//try {
-//	response = EntityUtils.toString(client.execute(post).getEntity());
-//}
-//catch (ParseException e) {
-//	response = null;
-//}
-//catch (ClientProtocolException e) {
-//	response = null;
-//}
-//catch (IOException e) {
-//	response = null;
-//}
-//
-//try {
-//	return Integer.toString(new JSONObject(response).getInt("result"));
-//}
-//catch (JSONException e) {
-//	return null;
 
 
 

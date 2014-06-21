@@ -14,16 +14,20 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.provider.Settings;
-import android.util.Log;
+//import android.util.Log;
 
 public class CkanUidRequest extends AsyncTask {
 	String androidId =  Settings.Secure.ANDROID_ID;
 	@Override
 	protected Object doInBackground(Object... arg0) {
 		
-		HttpPost post = new HttpPost(MinerData.getCkanUrl()+"/api/action/miner_register");
+		Context context = (Context) arg0[0];
+		String url = new CkanUrlGetter(context).getUrl();
+		
+		HttpPost post = new HttpPost(url+"/api/action/miner_register");
 		post.setHeader("content-type", "application/x-www-form-urlencoded");
 			
 		JSONObject JSONdump = new JSONObject();
@@ -39,10 +43,12 @@ public class CkanUidRequest extends AsyncTask {
 			return null;
 		}
 		
-    	HttpClient client = new DefaultHttpClient();
+		HttpClient client = new DefaultHttpClient();
     	String response;
+    	
     	try {
 			response = EntityUtils.toString(client.execute(post).getEntity());
+			//Log.i("MobileMiner",response);
 		}
     	catch (ParseException e) {
     		response = null;
@@ -55,7 +61,7 @@ public class CkanUidRequest extends AsyncTask {
 		}
     	
     	try {
-			return Integer.toString(new JSONObject(response).getInt("result"));
+			return (new JSONObject(response).getString("result"));
 		}
     	catch (JSONException e) {
     		return null;
