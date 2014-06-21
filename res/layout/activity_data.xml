@@ -49,5 +49,15 @@
             android:layout_marginTop="24dp"
             android:onClick="myLocations"
             android:text="My Cell Locations" />
+
+        <ListView
+            android:id="@+id/usedApps"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:layout_alignLeft="@+id/myLocationsButton"
+            android:layout_below="@+id/myLocationsButton"
+            android:layout_marginTop="43dp" >
+
+        </ListView>
 		
 </RelativeLayout>

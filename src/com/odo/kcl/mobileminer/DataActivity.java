@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
@@ -23,13 +24,17 @@ import android.content.Intent;
 //import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 public class DataActivity extends Activity {
 	private Context context;
 	private TextView dataText;
-	
+	private ListView lv;
 	
 	
 	@Override
@@ -39,7 +44,18 @@ public class DataActivity extends Activity {
 		context = this;
 		dataText  = (TextView) findViewById(R.id.dataText);
 		setDbSizeLegend();
+		lv = (ListView) findViewById(R.id.usedApps);
+		List<String> coolVariable = new ArrayList<String>();
+		coolVariable.add("jazz");
+		coolVariable.add("funk");
+		coolVariable.add("prog rock");
+		coolVariable.add("pokemon");
+		
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,coolVariable);
+		lv.setAdapter(adapter);
 	}
+	
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
