@@ -163,9 +163,11 @@ public class CkanUpdater extends AsyncTask {
 							response = EntityUtils.toString(client.execute(post).getEntity());
 						}
 						catch (ParseException e) {
+							helper.deleteBookKeepingKey(dbWriter, "ckanurl");
 							return null;
 						}
 						catch (ClientProtocolException e) {
+							helper.deleteBookKeepingKey(dbWriter, "ckanurl");
 							return null;
 						}
 						catch (IOException e) {
@@ -185,7 +187,7 @@ public class CkanUpdater extends AsyncTask {
 								error = jsonResponse.getJSONObject("error");
 								if (error.getString("message").equals("No such user.")) {
 									//Log.i("MobileMiner","No such user.");
-									uid = new CkanUidGetter(context).getUid(true);
+									helper.deleteBookKeepingKey(dbWriter, "ckanuid");
 									return null;				
 								}
 							}
