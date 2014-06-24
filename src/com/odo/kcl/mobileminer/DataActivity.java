@@ -21,6 +21,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 //import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -45,11 +46,20 @@ public class DataActivity extends Activity {
 		dataText  = (TextView) findViewById(R.id.dataText);
 		setDbSizeLegend();
 		lv = (ListView) findViewById(R.id.usedApps);
+		
 		List<String> coolVariable = new ArrayList<String>();
-		coolVariable.add("jazz");
-		coolVariable.add("funk");
-		coolVariable.add("prog rock");
-		coolVariable.add("pokemon");
+		
+		MinerData mydata = new MinerData(this);
+		SQLiteDatabase db = mydata.getReadableDatabase();
+		
+		
+		
+		coolVariable = mydata.topApps(db);
+		
+//		coolVariable.add("jazz");
+//		coolVariable.add("funk");
+//		coolVariable.add("prog rock");
+//		coolVariable.add("pokemon");
 		
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,coolVariable);
 		lv.setAdapter(adapter);

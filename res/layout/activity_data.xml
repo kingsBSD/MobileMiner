@@ -53,11 +53,20 @@
         <ListView
             android:id="@+id/usedApps"
             android:layout_width="match_parent"
-            android:layout_height="32dp"
+            android:layout_height="208dp"
             android:layout_alignLeft="@+id/myLocationsButton"
             android:layout_below="@+id/myLocationsButton"
             android:layout_marginTop="43dp" >
 
         </ListView>
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:text="My top apps:"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 		
 </RelativeLayout>
