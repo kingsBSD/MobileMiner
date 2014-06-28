@@ -91,7 +91,7 @@ public class MainActivity extends Activity {
     	//Log.i("MobileMiner","SAVING");
     	super.onSaveInstanceState(savedInstanceState);
     	savedInstanceState.putBoolean("miningButtonState", miningButtonState);
-    	savedInstanceState.putString("cellText",(String)cellButton.getText());
+    	savedInstanceState.putString("cellText",cellButton.getText().toString());
     	savedInstanceState.putStringArrayList("processHeader",(ArrayList<String>)processHeader);
     	for (String key: processHeader) savedInstanceState.putStringArrayList(key,(ArrayList<String>)socketChild.get(key));
     }
