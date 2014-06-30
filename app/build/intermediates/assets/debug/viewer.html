@@ -1,0 +1,69 @@
+<!-- Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt -->
+<html>
+    <head>
+        <script type="text/JavaScript" src="./js/OpenLayers-2.13.1/OpenLayers.js"></script>
+        <script>
+        
+            function getMarker(lat,long,colour) {
+                var  iconLoc = "./js/OpenLayers-2.13.1/img/" ;
+                switch (colour) {
+                    case "yellow": iconLoc += "marker-gold.png"; break;
+                    case "green": iconLoc += "marker-green.png"; break;
+                    case "blue": iconLoc += "marker-blue.png"; break;
+                    default: iconLoc += "marker.png";
+                }
+                var size = new OpenLayers.Size(21,25);
+                var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
+                var icon = new OpenLayers.Icon(iconLoc, size, offset);
+                return new OpenLayers.Marker(new OpenLayers.LonLat(long,lat).transform(new OpenLayers.Projection("EPSG:4326"),new OpenLayers.Projection("EPSG:900913")),icon);
+            }
+        
+            function addMarkerList(layer,lat,long,colour) {
+                var markerLat = JSON.parse(lat);
+                var markerLong = JSON.parse(long);
+                var i = 0;
+                for (i=0;i<markerLat.length;i++) {
+                    layer.addMarker(getMarker(markerLat[i],markerLong[i],colour));
+                }
+            }
+        
+            function initMap() {
+                    
+                var mapSpec = JSON.parse(MapActivity.mapDump());
+                var map = new OpenLayers.Map("map");
+                var osmLayer = new OpenLayers.Layer.OSM("OpenStreetMap");
+                map.addLayer(osmLayer);
+                
+                var markerLayer = new OpenLayers.Layer.Markers("Markers");
+                
+                if (mapSpec.nocentre != true) {
+                    markerLayer.addMarker(getMarker(mapSpec.lat,mapSpec.long,"red"));
+                }
+                
+                if (mapSpec.redlat != undefined) addMarkerList(markerLayer,mapSpec.redlat,mapSpec.redlong,'red');
+                if (mapSpec.yellowlat != undefined) addMarkerList(markerLayer,mapSpec.yellowlat,mapSpec.yellowlong,'yellow');
+                if (mapSpec.greenlat != undefined) addMarkerList(markerLayer,mapSpec.greenlat,mapSpec.greenlong,'green');
+                if (mapSpec.bluelat != undefined) addMarkerList(markerLayer,mapSpec.bluelat,mapSpec.bluelong,'blue');
+                
+                map.addLayer(markerLayer);
+                                
+                if (mapSpec.nocentre != true) {
+                    map.setCenter(new OpenLayers.LonLat(mapSpec.long,mapSpec.lat).transform(new OpenLayers.Projection("EPSG:4326"),new OpenLayers.Projection("EPSG:900913")),mapSpec.zoom);
+                }    
+                else {
+                    map.setCenter(new OpenLayers.LonLat(mapSpec.long,mapSpec.lat).transform(new OpenLayers.Projection("EPSG:4326"),new OpenLayers.Projection("EPSG:900913")));
+                    var bounds = markerLayer.getDataExtent();
+                    map.zoomToExtent(bounds);
+                }
+ 
+            }
+            
+        </script>
+        <style>
+            #map { width: 100%; height: 100%; }
+        </style>
+    </head>
+    <body onLoad = "initMap()">
+        <div id="map"></div>
+    </body>
+</html>
