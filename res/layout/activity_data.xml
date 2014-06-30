@@ -18,16 +18,6 @@
             android:onClick="expireData"
             android:text="Expire Data" />
 
-        <Button
-            android:id="@+id/exportButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignRight="@+id/textView1"
-            android:layout_marginTop="59dp"
-            android:onClick="exportData"
-            android:text="Export Data" />
-
         <TextView
             android:id="@+id/dataText"
             android:layout_width="wrap_content"
@@ -38,7 +28,27 @@
             android:text="Database Size:"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        
+        <StackView
+            android:id="@+id/stackView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignRight="@+id/exportButton"
+            android:layout_marginBottom="112dp"
+            android:layout_marginRight="54dp" >
+        </StackView>
+
+        <Button
+            android:id="@+id/exportButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="18dp"
+            android:layout_marginTop="48dp"
+            android:onClick="exportData"
+            android:text="Export Data" />
+
         <Button
             android:id="@+id/myLocationsButton"
             android:layout_width="wrap_content"
@@ -46,8 +56,28 @@
             android:layout_alignLeft="@+id/exportButton"
             android:layout_alignRight="@+id/expireButton"
             android:layout_below="@+id/expireButton"
-            android:layout_marginTop="24dp"
             android:onClick="myLocations"
             android:text="My Cell Locations" />
+
+        <TextView
+            android:id="@+id/TopAppLegend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/myLocationsButton"
+            android:layout_below="@+id/myLocationsButton"
+            android:layout_marginTop="16dp"
+            android:text="Most Active Apps:"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <fragment android:name="com.odo.kcl.mobileminer.ActiveAppFragment"
+            android:id="@+id/activeApps"
+            android:layout_width="match_parent"
+            android:layout_height="196dp"
+            android:layout_alignLeft="@+id/TopAppLegend"
+            android:layout_below="@+id/TopAppLegend"
+            android:layout_marginTop="15dp" />
+         
+        
+
 		
 </RelativeLayout>

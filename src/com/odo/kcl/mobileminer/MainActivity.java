@@ -20,7 +20,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
-
 import android.view.Menu;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
@@ -91,7 +90,7 @@ public class MainActivity extends Activity {
     	//Log.i("MobileMiner","SAVING");
     	super.onSaveInstanceState(savedInstanceState);
     	savedInstanceState.putBoolean("miningButtonState", miningButtonState);
-    	savedInstanceState.putString("cellText",(String)cellButton.getText());
+    	savedInstanceState.putString("cellText",(String) cellButton.getText());
     	savedInstanceState.putStringArrayList("processHeader",(ArrayList<String>)processHeader);
     	for (String key: processHeader) savedInstanceState.putStringArrayList(key,(ArrayList<String>)socketChild.get(key));
     }

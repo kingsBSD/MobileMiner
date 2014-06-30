@@ -66,6 +66,10 @@ public class CkanUidRequest extends AsyncTask {
     	catch (JSONException e) {
     		return null;
 		}
+    	catch (NullPointerException e) {
+    		return null;
+    	}
+	
 
 	}
 

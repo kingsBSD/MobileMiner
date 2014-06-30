@@ -7,7 +7,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="9"
+        android:minSdkVersion="11"
         android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -58,6 +58,13 @@
             android:name="com.odo.kcl.mobileminer.MapActivity"
             android:label="@string/title_activity_map" >
         </activity>
+        
+        <provider
+            android:name="MinerDataProvider"
+            android:authorities="com.odo.kcl.mobileminer.minerdata"
+            android:exported="false" />
+        
+        
     </application>
 
 </manifest>

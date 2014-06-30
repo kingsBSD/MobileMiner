@@ -11,6 +11,7 @@ public final class MinerTables {
 	public MinerTables() {}
 
 	static final String APP_VERSION = "0.5";
+	static final String INTEGER_PRIMARY_KEY = "_id INTEGER PRIMARY KEY AUTOINCREMENT,";
 	
 	public static abstract class SocketTable implements BaseColumns {
 		public static final String TABLE_NAME = "socket";
@@ -24,7 +25,8 @@ public final class MinerTables {
 	}
 	
 	static final String CREATE_SOCKET_TABLE =
-		"CREATE TABLE " + SocketTable.TABLE_NAME + " (" +	
+		"CREATE TABLE " + SocketTable.TABLE_NAME + " (" +
+		INTEGER_PRIMARY_KEY +
 		SocketTable.COLUMN_NAME_PROCESS + " TEXT, " +
 		SocketTable.COLUMN_NAME_PROTOCOL + " TEXT, " +
 		SocketTable.COLUMN_NAME_IP + " TEXT, " +
@@ -48,6 +50,7 @@ public final class MinerTables {
 	
 	public static final String CREATE_GSMCELL_TABLE =
 		"CREATE TABLE " + GSMCellTable.TABLE_NAME + " (" +
+		INTEGER_PRIMARY_KEY +
 		GSMCellTable.COLUMN_NAME_MCC + " TEXT, " +
 		GSMCellTable.COLUMN_NAME_MNC + " TEXT, " +
 		GSMCellTable.COLUMN_NAME_LAC + " TEXT, " +
@@ -74,6 +77,7 @@ public final class MinerTables {
 	
 	public static final String CREATE_GSMLOCATION_TABLE =
 			"CREATE TABLE " + GSMLocationTable.TABLE_NAME + " (" +
+			INTEGER_PRIMARY_KEY +
 			GSMLocationTable.COLUMN_NAME_MCC + " TEXT, " +
 			GSMLocationTable.COLUMN_NAME_MNC + " TEXT, " +
 			GSMLocationTable.COLUMN_NAME_LAC + " TEXT, " +
@@ -98,6 +102,7 @@ public final class MinerTables {
 	
 	public static final String CREATE_GSMCELLPOLYGON_TABLE =
 			"CREATE TABLE " + GSMCellPolygonTable.TABLE_NAME + " (" +
+			INTEGER_PRIMARY_KEY +
 			GSMLocationTable.COLUMN_NAME_MCC + " TEXT, " +
 			GSMCellPolygonTable.COLUMN_NAME_MNC + " TEXT, " +
 			GSMCellPolygonTable.COLUMN_NAME_LAC + " TEXT, " +
@@ -115,6 +120,7 @@ public final class MinerTables {
 	
 	static final String CREATE_MOBILENETWORK_TABLE =
 		"CREATE TABLE " + MobileNetworkTable.TABLE_NAME + " (" +
+		INTEGER_PRIMARY_KEY +
 		MobileNetworkTable.COLUMN_NAME_NETWORKNAME + " TEXT, " +
 		MobileNetworkTable.COLUMN_NAME_NETWORK + " TEXT, " +
 		MobileNetworkTable.COLUMN_NAME_TIME + " TEXT );";
@@ -132,6 +138,7 @@ public final class MinerTables {
 		
 	public static final String CREATE_WIFINETWORK_TABLE =
 		"CREATE TABLE " + WifiNetworkTable.TABLE_NAME + " (" +
+		INTEGER_PRIMARY_KEY +
 	    WifiNetworkTable.COLUMN_NAME_SSID + " TEXT, " +
 	    WifiNetworkTable.COLUMN_NAME_BSSID + " TEXT, " +
 	    WifiNetworkTable.COLUMN_NAME_IP + " TEXT, " +
@@ -148,6 +155,7 @@ public final class MinerTables {
 	
 	public static final String CREATE_MINERLOG_TABLE =
 		"CREATE TABLE " + MinerLogTable.TABLE_NAME + " (" +
+		INTEGER_PRIMARY_KEY +
 		MinerLogTable.COLUMN_NAME_START + " TEXT, " +
 		MinerLogTable.COLUMN_NAME_STOP + " TEXT );";
 	
@@ -164,6 +172,7 @@ public final class MinerTables {
 	
 	public static final String CREATE_NOTIFICATION_TABLE =
 		"CREATE TABLE " + NotificationTable.TABLE_NAME + " (" +
+		INTEGER_PRIMARY_KEY +
 		NotificationTable.COLUMN_NAME_PACKAGE + " TEXT, " +
 		// None of our business...
 		// NotificationTable.COLUMN_NAME_TEXT + " TEXT, " +
@@ -183,6 +192,7 @@ public final class MinerTables {
 	
 	public static final String CREATE_BOOKKEEPING_TABLE =
 		"CREATE TABLE " + BookKeepingTable.TABLE_NAME + " (" +
+		INTEGER_PRIMARY_KEY +
 		BookKeepingTable.COLUMN_NAME_KEY + " TEXT, " +
 		BookKeepingTable.COLUMN_NAME_VALUE + " TEXT );";
 	

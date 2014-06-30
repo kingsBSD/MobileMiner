@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import com.odo.kcl.mobileminer.MinerTables.BookKeepingTable;
@@ -27,6 +28,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.os.Build;
 import android.telephony.TelephonyManager;
@@ -346,6 +348,19 @@ public class MinerData extends SQLiteOpenHelper {
 		}
 		
 		return cells;
+	}
+	
+	public Cursor socketsByProc(String[] projection, String selection, String[] selectionArgs) {
+		SQLiteDatabase db = getReadableDatabase();
+		
+		String[] retCols = new String[projection.length+1];
+		
+		System.arraycopy(projection, 0, retCols, 0, projection.length);
+		System.arraycopy(new String[]{"_id"}, 0, retCols, projection.length, 1);
+				
+		return db.query(MinerTables.SocketTable.TABLE_NAME,retCols,selection,selectionArgs,
+				MinerTables.SocketTable.COLUMN_NAME_PROCESS,null,"COUNT(*) DESC",null);
+		
 	}
 	
 	public String getLastExported(SQLiteDatabase db) {
