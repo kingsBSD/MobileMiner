@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import com.odo.kcl.mobileminer.MinerTables.SocketTable;
 
@@ -26,17 +27,17 @@ import android.view.LayoutInflater;
 //import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 public class DataActivity extends Activity {
 	private Context context;
 	private TextView dataText;
-	//private MinerData helper;
-	//private SimpleCursorAdapter activeAppAdapter;
-	
+
 	
 	
 	@Override
@@ -46,18 +47,10 @@ public class DataActivity extends Activity {
 		context = this;
 		dataText  = (TextView) findViewById(R.id.dataText);
 		setDbSizeLegend();
-		
-//		helper = new MinerData(this);
-//		
-//		String[] appColumns = {SocketTable.COLUMN_NAME_PROCESS};
-//		LayoutInflater inflater = ( LayoutInflater ) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//		View activeAppItem = inflater.inflate(R.layout.active_app, null);
-//		int[] activeAppViews = {activeAppItem.getId()};
-//		activeAppAdapter = new SimpleCursorAdapter(this, R.layout.active_app, null,appColumns, activeAppViews, 0);
-//		ListView activeAppList = (ListView) findViewById(R.id.activeAppList);
-//		activeAppList.setAdapter(activeAppAdapter);
-		
+
 	}
+	
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
