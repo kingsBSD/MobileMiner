@@ -32,7 +32,7 @@
         
         <activity
             android:name="com.odo.kcl.mobileminer.DataActivity"
-            android:label="MyData" >
+            android:label="@string/my_data_actionbar_title" >
         </activity>
 
         <service android:name="com.odo.kcl.mobileminer.MinerService" />
