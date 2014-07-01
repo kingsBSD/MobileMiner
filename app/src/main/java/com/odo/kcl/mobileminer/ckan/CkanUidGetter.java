@@ -1,15 +1,10 @@
-package com.odo.kcl.mobileminer;
+package com.odo.kcl.mobileminer.ckan;
+
+import android.content.Context;
+
+import com.odo.kcl.mobileminer.miner.MinerData;
 
 import java.util.concurrent.ExecutionException;
-
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
-
-import com.odo.kcl.mobileminer.MinerTables.BookKeepingTable;
-import com.odo.kcl.mobileminer.MinerTables.MinerLogTable;
 
 public class CkanUidGetter {
     Context context;
@@ -35,11 +30,9 @@ public class CkanUidGetter {
         if (uid == null) {
             try {
                 uid = (String) new CkanUidRequest().execute(new Context[]{context}).get();
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 uid = null;
-            }
-            catch (ExecutionException e) {
+            } catch (ExecutionException e) {
                 uid = null;
             }
 

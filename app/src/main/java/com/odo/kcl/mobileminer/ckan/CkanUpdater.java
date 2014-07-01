@@ -1,12 +1,13 @@
-package com.odo.kcl.mobileminer;
+package com.odo.kcl.mobileminer.ckan;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
+import android.os.Build;
+
+import com.odo.kcl.mobileminer.miner.MinerData;
+import com.odo.kcl.mobileminer.miner.MinerTables;
 
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
@@ -19,15 +20,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.odo.kcl.mobileminer.MinerTables.BookKeepingTable;
-
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.provider.Settings;
-import android.text.TextUtils;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 //import android.util.Log;
 
 public class CkanUpdater extends AsyncTask {
@@ -38,10 +37,10 @@ public class CkanUpdater extends AsyncTask {
 
         Context context = (Context) arg0[0];
         Field[] tableClassFields;
-        String url,uid,tableName,thisName,thisValue,dateKey,dateVal,response;
-        Date date,rightNow;
+        String url, uid, tableName, thisName, thisValue, dateKey, dateVal, response;
+        Date date, rightNow;
         ArrayList<String> tableFields;
-        HashMap<String,String> timeStamps;
+        HashMap<String, String> timeStamps;
         MinerData helper = new MinerData(context);
         SQLiteDatabase dbReader, dbWriter;
         dbReader = helper.getReadableDatabase();
@@ -51,12 +50,12 @@ public class CkanUpdater extends AsyncTask {
         Boolean searching;
         int things;
         JSONArray allTheThings;
-        JSONObject thisItem, jsonDump, jsonResponse,error;
+        JSONObject thisItem, jsonDump, jsonResponse, error;
         HttpPost post;
         HttpClient client = new DefaultHttpClient();
 
-        timeStamps = new HashMap<String,String>();
-        for (int i=0;i<MinerTables.ExpirableTables.length;i++) {
+        timeStamps = new HashMap<String, String>();
+        for (int i = 0; i < MinerTables.ExpirableTables.length; i++) {
             timeStamps.put(MinerTables.ExpirableTables[i], MinerTables.ExpirableTimeStamps[i]);
         }
 
@@ -70,20 +69,18 @@ public class CkanUpdater extends AsyncTask {
 
         if (uid == null) return null;
 
-        for (Object table: MinerTables.tableClasses) {
+        for (Object table : MinerTables.tableClasses) {
             tableClassFields = ((Class) table).getFields();
             tableFields = new ArrayList<String>();
             tableName = null;
-            for (Field tableField: tableClassFields) {
+            for (Field tableField : tableClassFields) {
                 thisName = tableField.getName();
                 //Log.i("MobileMiner",thisName);
                 try {
                     thisValue = (String) tableField.get(table);
-                }
-                catch (IllegalAccessException e) {
+                } catch (IllegalAccessException e) {
                     thisValue = null;
-                }
-                catch (IllegalArgumentException e) {
+                } catch (IllegalArgumentException e) {
                     thisValue = null;
                 }
 
@@ -91,8 +88,7 @@ public class CkanUpdater extends AsyncTask {
                     //Log.i("MobileMiner",thisValue);
                     if ("TABLE_NAME".equals(thisName)) {
                         tableName = thisValue;
-                    }
-                    else {
+                    } else {
                         tableFields.add(thisValue);
                     }
                 }
@@ -103,14 +99,13 @@ public class CkanUpdater extends AsyncTask {
                 things = 0;
                 allTheThings = new JSONArray();
                 retColumns = tableFields.toArray(new String[tableFields.size()]);
-                dateKey = tableName+"update";
-                date = helper.getBookKeepingDate(dbReader,dateKey);
+                dateKey = tableName + "update";
+                date = helper.getBookKeepingDate(dbReader, dateKey);
                 rightNow = new Date();
                 if (date == null) {
-                    c = dbReader.query(tableName,retColumns,null,null,null,null,null);
-                }
-                else {
-                    c = dbReader.query(tableName,retColumns,timeStamps.get(tableName)+" >= ? ",new String[]{df.format(date)},null,null,null);
+                    c = dbReader.query(tableName, retColumns, null, null, null, null, null);
+                } else {
+                    c = dbReader.query(tableName, retColumns, timeStamps.get(tableName) + " >= ? ", new String[]{df.format(date)}, null, null, null);
                 }
 
                 c.moveToFirst();
@@ -119,13 +114,12 @@ public class CkanUpdater extends AsyncTask {
                     searching = !c.isLast();
                     try {
                         thisItem = new JSONObject();
-                        for (String thisCol: retColumns) {
+                        for (String thisCol : retColumns) {
                             thisItem.put(thisCol, c.getString(c.getColumnIndex(thisCol)));
                         }
                         allTheThings.put(thisItem);
                         things += 1;
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         searching = false;
                     }
                     c.moveToNext();
@@ -137,22 +131,20 @@ public class CkanUpdater extends AsyncTask {
                     jsonDump = new JSONObject();
                     try {
                         jsonDump.put("uid", uid);
-                        jsonDump.put("table",tableName);
+                        jsonDump.put("table", tableName);
                         jsonDump.put("records", allTheThings);
                         //Log.i("MobileMiner",jsonDump.toString());
-                    }
-                    catch (JSONException e) {
+                    } catch (JSONException e) {
                         jsonDump = null;
                     }
 
-                    post = new HttpPost(url+"/api/action/miner_update");
+                    post = new HttpPost(url + "/api/action/miner_update");
                     post.setHeader("content-type", "application/x-www-form-urlencoded");
 
                     if (jsonDump != null) {
                         try {
                             post.setEntity(new ByteArrayEntity(jsonDump.toString().getBytes("UTF8")));
-                        }
-                        catch (UnsupportedEncodingException e) {
+                        } catch (UnsupportedEncodingException e) {
                             post = null;
                         }
                     }
@@ -161,16 +153,13 @@ public class CkanUpdater extends AsyncTask {
                     if (post != null) {
                         try {
                             response = EntityUtils.toString(client.execute(post).getEntity());
-                        }
-                        catch (ParseException e) {
+                        } catch (ParseException e) {
                             helper.deleteBookKeepingKey(dbWriter, "ckanurl");
                             return null;
-                        }
-                        catch (ClientProtocolException e) {
+                        } catch (ClientProtocolException e) {
                             helper.deleteBookKeepingKey(dbWriter, "ckanurl");
                             return null;
-                        }
-                        catch (IOException e) {
+                        } catch (IOException e) {
                             return null;
                         }
                     }
@@ -182,8 +171,7 @@ public class CkanUpdater extends AsyncTask {
 
                             if (jsonResponse.getBoolean("success")) {
                                 helper.setBookKeepingDate(dbWriter, dateKey, rightNow);
-                            }
-                            else {
+                            } else {
                                 error = jsonResponse.getJSONObject("error");
                                 if (error.getString("message").equals("No such user.")) {
                                     //Log.i("MobileMiner","No such user.");
@@ -203,16 +191,10 @@ public class CkanUpdater extends AsyncTask {
                     }
 
 
-
                 }
 
 
-
-
-
             }
-
-
 
 
         }

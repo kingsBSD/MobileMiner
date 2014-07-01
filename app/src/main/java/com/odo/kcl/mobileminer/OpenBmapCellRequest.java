@@ -1,14 +1,9 @@
 // Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
 package com.odo.kcl.mobileminer;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import android.os.AsyncTask;
+import android.text.TextUtils;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -17,9 +12,12 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import android.os.AsyncTask;
-import android.text.TextUtils;
-import android.util.Log;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class OpenBmapCellRequest extends AsyncTask {
 
@@ -30,9 +28,11 @@ public class OpenBmapCellRequest extends AsyncTask {
     @Override
     protected Object doInBackground(Object... cellSpec) {
         if (cellSpec.length < 4) return null;
-        String Mcc,Mnc,Lac,Id;
-        Mcc = (String) cellSpec[0]; Mnc = (String) cellSpec[1];
-        Lac = (String) cellSpec[2]; Id = (String) cellSpec[3];
+        String Mcc, Mnc, Lac, Id;
+        Mcc = (String) cellSpec[0];
+        Mnc = (String) cellSpec[1];
+        Lac = (String) cellSpec[2];
+        Id = (String) cellSpec[3];
         HttpClient client = new DefaultHttpClient();
         HttpPost post = new HttpPost("http://www.openbmap.org/api/getGPSfromGSM.php");
         List<NameValuePair> postData = new ArrayList<NameValuePair>(4);
@@ -41,8 +41,10 @@ public class OpenBmapCellRequest extends AsyncTask {
         postData.add(new BasicNameValuePair("lac", Lac));
         postData.add(new BasicNameValuePair("cell_id", Id));
         try {
-            String XMLdump,Lat,Long,poly,polyDump;
-            Lat = null; Long = null; poly = null;
+            String XMLdump, Lat, Long, poly, polyDump;
+            Lat = null;
+            Long = null;
+            poly = null;
             post.setEntity(new UrlEncodedFormEntity(postData));
             XMLdump = EntityUtils.toString(client.execute(post).getEntity());
             //Log.i("MobileMiner",XMLdump);
@@ -59,29 +61,25 @@ public class OpenBmapCellRequest extends AsyncTask {
                 List<String> points = new ArrayList<String>();
                 String[] point;
                 String[] polyChunks = poly.split(",");
-                for (String chunk: polyChunks) {
+                for (String chunk : polyChunks) {
                     point = chunk.split("\\s+");
-                    points.add("["+point[1]+","+point[0]+"]");
+                    points.add("[" + point[1] + "," + point[0] + "]");
                 }
-                polyDump = "["+TextUtils.join(",",points.subList(0, points.size()-1))+"]";
+                polyDump = "[" + TextUtils.join(",", points.subList(0, points.size() - 1)) + "]";
                 //Log.i("MobileMiner",polyDump);
-            }
-            else {
+            } else {
                 polyDump = null;
             }
             if (Lat != null && Long != null) {
-                return new String[] {Lat,Long,polyDump};
-            }
-            else {
+                return new String[]{Lat, Long, polyDump};
+            } else {
                 return null;
             }
-        }
-        catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
             //e.printStackTrace();
-        }
-        catch (IOException e) {
-        // TODO Auto-generated catch block
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
         }
 
         // TODO Auto-generated method stub

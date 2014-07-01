@@ -1,20 +1,19 @@
 // Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
 package com.odo.kcl.mobileminer;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.pm.ServiceInfo;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
+
+import com.odo.kcl.mobileminer.miner.MinerData;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class NotificationService extends AccessibilityService {
 
@@ -33,17 +32,16 @@ public class NotificationService extends AccessibilityService {
                 permissions = pm.getPackageInfo(appInfo.packageName, PackageManager.GET_PERMISSIONS).requestedPermissions;
 
                 if (permissions != null) {
-                    for (String permission: permissions) {
+                    for (String permission : permissions) {
                         if (permission.equals("android.permission.INTERNET")) {
                             netEnabledPackageNames.add(appInfo.packageName);
-                            Log.i("NotificationService",appInfo.packageName);
+                            Log.i("NotificationService", appInfo.packageName);
                             break;
                         }
                     }
                 }
 
-            }
-            catch (NameNotFoundException e) {
+            } catch (NameNotFoundException e) {
 
             }
 
@@ -61,7 +59,7 @@ public class NotificationService extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         MinerData helper = new MinerData(this);
-        helper.putNotification(helper.getWritableDatabase(), (String) event.getPackageName(),new Date());
+        helper.putNotification(helper.getWritableDatabase(), (String) event.getPackageName(), new Date());
         // None of our business...
 //        helper.putNotification(helper.getWritableDatabase(), (String) event.getPackageName(),
 //            TextUtils.join(" ", event.getText()),new Date());

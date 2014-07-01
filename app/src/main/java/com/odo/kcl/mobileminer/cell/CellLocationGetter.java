@@ -1,9 +1,12 @@
 // Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
-package com.odo.kcl.mobileminer;
+package com.odo.kcl.mobileminer.cell;
 
 //import java.util.Date;
 //import java.util.concurrent.ExecutionException;
+
 import android.content.Context;
+
+import com.odo.kcl.mobileminer.miner.MinerData;
 //import android.database.sqlite.SQLiteDatabase;
 
 public class CellLocationGetter {
@@ -14,7 +17,7 @@ public class CellLocationGetter {
     }
 
     public String[] getCell(CountedCell cell) {
-        return this.getCell(cell.getMcc(),cell.getMnc(),cell.getLac(),cell.getCellId());
+        return this.getCell(cell.getMcc(), cell.getMnc(), cell.getLac(), cell.getCellId());
     }
 
     public String[] getCell(String Mcc, String Mnc, String Lac, String Id) {
@@ -27,7 +30,7 @@ public class CellLocationGetter {
         //Log.i("MinerData","Looking for cell...");
 
         CellData helper = new CellData(context);
-        String[] location = MinerData.getCellLocation(helper.getReadableDatabase(),Mcc,Mnc,Lac,Id);
+        String[] location = MinerData.getCellLocation(helper.getReadableDatabase(), Mcc, Mnc, Lac, Id);
 
         return location;
 

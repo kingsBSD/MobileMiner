@@ -1,6 +1,6 @@
-package com.odo.kcl.mobileminer;
+package com.odo.kcl.mobileminer.ckan;
 
-import java.io.IOException;
+import android.os.AsyncTask;
 
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
@@ -11,7 +11,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.AsyncTask;
+import java.io.IOException;
 //import android.util.Log;
 
 public class CkanUrlRequest extends AsyncTask {
@@ -31,14 +31,11 @@ public class CkanUrlRequest extends AsyncTask {
             //Log.i("MobileMiner","URL request.");
             response = EntityUtils.toString(client.execute(get).getEntity());
             //Log.i("MobileMiner",response);
-        }
-        catch (ParseException e) {
+        } catch (ParseException e) {
             response = null;
-        }
-        catch (ClientProtocolException e) {
+        } catch (ClientProtocolException e) {
             response = null;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             response = null;
         }
 
@@ -47,8 +44,7 @@ public class CkanUrlRequest extends AsyncTask {
                 jsonDump = new JSONObject(response);
                 //Log.i("MobileMiner",jsonDump.getString("ckan_url"));
                 return jsonDump.getString("ckan_url");
-            }
-            catch (JSONException e) {
+            } catch (JSONException e) {
                 return null;
             }
         }

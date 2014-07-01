@@ -1,10 +1,6 @@
 // Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
 package com.odo.kcl.mobileminer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -12,6 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 //import android.util.Log;
 
 public class SocketAdapter extends android.widget.BaseExpandableListAdapter {
@@ -20,7 +20,7 @@ public class SocketAdapter extends android.widget.BaseExpandableListAdapter {
     private List<String> listDataHeader;
     private ArrayList<Boolean> processStatus;
 
-    public SocketAdapter(Context ctxt, List<String> dataHeader,HashMap<String, List<String>> childData, ArrayList<Boolean> procStatus) {
+    public SocketAdapter(Context ctxt, List<String> dataHeader, HashMap<String, List<String>> childData, ArrayList<Boolean> procStatus) {
         this.context = ctxt;
         this.listDataHeader = dataHeader;
         this.listDataChild = childData;
@@ -38,7 +38,7 @@ public class SocketAdapter extends android.widget.BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int groupPosition, final int childPosition,boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         final String childText = (String) getChild(groupPosition, childPosition);
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -50,8 +50,7 @@ public class SocketAdapter extends android.widget.BaseExpandableListAdapter {
         if (processStatus != null) {
             if (processStatus.get(groupPosition)) {
                 txtListChild.setTextColor(Color.GREEN);
-            }
-            else {
+            } else {
                 txtListChild.setTextColor(Color.RED);
             }
         }
@@ -79,7 +78,7 @@ public class SocketAdapter extends android.widget.BaseExpandableListAdapter {
     }
 
     @Override
-    public View getGroupView(int groupPosition, boolean isExpanded,View convertView, ViewGroup parent) {
+    public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         String headerTitle = (String) getGroup(groupPosition);
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

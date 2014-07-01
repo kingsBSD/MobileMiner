@@ -2,12 +2,7 @@
 
 // This is the service that grabs most of the data.
 
-package com.odo.kcl.mobileminer;
-
-import java.util.ArrayList;
-import java.util.Date;
-
-import com.odo.kcl.mobileminer.MinerData.WifiData;
+package com.odo.kcl.mobileminer.miner;
 
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -21,31 +16,42 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-//import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-//import android.telephony.CellInfo;
-//import android.telephony.CellInfoGsm;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-//import android.util.Log;
 import android.widget.Toast;
+
+import com.odo.kcl.mobileminer.ProcSocketSet;
+import com.odo.kcl.mobileminer.R;
+import com.odo.kcl.mobileminer.ckan.CkanUidGetter;
+import com.odo.kcl.mobileminer.ckan.CkanUpdater;
+import com.odo.kcl.mobileminer.ckan.CkanUrlGetter;
+import com.odo.kcl.mobileminer.miner.MinerData.WifiData;
+
+import java.util.ArrayList;
+import java.util.Date;
+
+//import android.os.Build;
+//import android.telephony.CellInfo;
+//import android.telephony.CellInfoGsm;
+//import android.util.Log;
 
 /**
  * An Android service that logs connections to mobile and wireless networks, changes in cell location,
  * and the opening and closing of network sockets.
-*/
+ */
 public class MinerService extends Service {
 
     private Date startTime;
     private ProcSocketSet socketSet;
     private IntentFilter filter;
-    private Handler scanHandle,updateHandle;
-    private boolean scanning,updating;
-    private Runnable mineWorker,ckanWorker;
+    private Handler scanHandle, updateHandle;
+    private boolean scanning, updating;
+    private Runnable mineWorker, ckanWorker;
     private Context context;
     private String networkName;
     private String cellLocation;
@@ -62,13 +68,13 @@ public class MinerService extends Service {
                 connectivityChanged();
                 //Log.i("MinerService","CONNECTIVITY_CHANGE");
             }
-   
+
             if (action.equals("com.odo.kcl.mobileminer.updatequery")) { // The MainActivity wants an update.
                 socketSet.broadcast();
                 cellBroadcast();
                 networkBroadcast();
                 //Log.i("MinerService","RECEIVED SOCKET QUERY");
-             }
+            }
 
             if (action.equals("com.odo.kcl.mobileminer.stopmining")) {
                 scanning = false;
@@ -85,8 +91,7 @@ public class MinerService extends Service {
             if (direction != TelephonyManager.DATA_ACTIVITY_NONE || direction != TelephonyManager.DATA_ACTIVITY_DORMANT) {
                 //Log.i("MinerService","DATA_ACTIVE");
                 startScan();
-            }
-            else {
+            } else {
                 scanning = false;
             }
         }
@@ -97,46 +102,45 @@ public class MinerService extends Service {
         // It would be nice if we could get a set of active cell towers and their signal strengths with the newer API. Oh well.
 
         /**
-        @Override
-        public void onCellInfoChanged (List<CellInfo> cellInfo) {
-            ArrayList<CellInfoGsm> cellInfoGsm = new ArrayList<CellInfoGsm>();
-            ArrayList<String> activeCells = new ArrayList<String>();
-            MinerLocation newLocation;
-            Boolean newCell = false;
-            String cellId;
-            if (cellInfo != null) {
-                cells = new ArrayList<MinerLocation>();
-                for (CellInfo info: cellInfo) cellInfoGsm.add((CellInfoGsm) info);
-                cells = new ArrayList<MinerLocation>();
-                for (CellInfoGsm info: cellInfoGsm) {
-                    newLocation = new MinerLocation(info);
-                    cells.add(newLocation);
-                    cellId = newLocation.dump();
-                    activeCells.add(cellId);
-                    if (!cellIds.contains(cellId)) newCell = true;
-                    cells.add(new MinerLocation(info));
-                }
-                cellIds = activeCells;
-            }
+         @Override public void onCellInfoChanged (List<CellInfo> cellInfo) {
+         ArrayList<CellInfoGsm> cellInfoGsm = new ArrayList<CellInfoGsm>();
+         ArrayList<String> activeCells = new ArrayList<String>();
+         MinerLocation newLocation;
+         Boolean newCell = false;
+         String cellId;
+         if (cellInfo != null) {
+         cells = new ArrayList<MinerLocation>();
+         for (CellInfo info: cellInfo) cellInfoGsm.add((CellInfoGsm) info);
+         cells = new ArrayList<MinerLocation>();
+         for (CellInfoGsm info: cellInfoGsm) {
+         newLocation = new MinerLocation(info);
+         cells.add(newLocation);
+         cellId = newLocation.dump();
+         activeCells.add(cellId);
+         if (!cellIds.contains(cellId)) newCell = true;
+         cells.add(new MinerLocation(info));
+         }
+         cellIds = activeCells;
+         }
 
-            if (newCell) {
-                MinerData helper = new MinerData(context);
-                SQLiteDatabase db = helper.getWritableDatabase();
-                for (MinerLocation cell: cells) helper.putGSMCell(db,cell,new Date());
-                helper.close();
-            }
-            cellBroadcast();
-        }
-        **/
+         if (newCell) {
+         MinerData helper = new MinerData(context);
+         SQLiteDatabase db = helper.getWritableDatabase();
+         for (MinerLocation cell: cells) helper.putGSMCell(db,cell,new Date());
+         helper.close();
+         }
+         cellBroadcast();
+         }
+         **/
 
         @Override
-        public void onCellLocationChanged (CellLocation location) {
+        public void onCellLocationChanged(CellLocation location) {
             cells = new ArrayList<MinerLocation>();
             if (location != null) {
-                cells.add(new MinerLocation(location,context));
+                cells.add(new MinerLocation(location, context));
                 MinerData helper = new MinerData(context);
-                 helper.putGSMCell(helper.getWritableDatabase(), cells.get(0), new Date());
-                 helper.close();
+                helper.putGSMCell(helper.getWritableDatabase(), cells.get(0), new Date());
+                helper.close();
             }
             cellBroadcast();
             //Log.i("MinerService","CELL_LOCATION_CHANGED");
@@ -168,30 +172,28 @@ public class MinerService extends Service {
             public void run() {
                 try {
                     socketSet.scan();
-                }
-                catch (Exception e) {}
-                finally {
+                } catch (Exception e) {
+                } finally {
                     if (scanning) {
                         scanHandle.postDelayed(this, 500);
-                    }
-                    else {
+                    } else {
                         socketSet.close();
                     }
                 }
             }
-         };
+        };
 
         ckanWorker = new Runnable() {
             @Override
             public void run() {
                 new CkanUrlGetter(context).getUrl();
                 new CkanUidGetter(context).getUid();
-                new CkanUpdater().execute(new Context[] {context});
+                new CkanUpdater().execute(new Context[]{context});
                 if (updating) updateHandle.postDelayed(this, 600000);
             }
         };
 
-     }
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -199,21 +201,21 @@ public class MinerService extends Service {
         //Log.i("MinerService","started mining");
         int phoneFlags;
 
-        phoneFlags = PhoneStateListener.LISTEN_DATA_ACTIVITY|PhoneStateListener.LISTEN_CELL_LOCATION;
+        phoneFlags = PhoneStateListener.LISTEN_DATA_ACTIVITY | PhoneStateListener.LISTEN_CELL_LOCATION;
 
         /**
-        if (Build.VERSION.SDK_INT >= 17) {
-            // http://code.google.com/p/android/issues/detail?id=43467
-            // http://stackoverflow.com/questions/20049510/oncellinfochanged-callback-is-always-null
-            phoneFlags = PhoneStateListener.LISTEN_DATA_ACTIVITY|PhoneStateListener.LISTEN_CELL_INFO
-                |PhoneStateListener.LISTEN_SIGNAL_STRENGTHS;
-        }
-        else {
-            phoneFlags = PhoneStateListener.LISTEN_DATA_ACTIVITY|PhoneStateListener.LISTEN_CELL_LOCATION;
-        }
-        **/
+         if (Build.VERSION.SDK_INT >= 17) {
+         // http://code.google.com/p/android/issues/detail?id=43467
+         // http://stackoverflow.com/questions/20049510/oncellinfochanged-callback-is-always-null
+         phoneFlags = PhoneStateListener.LISTEN_DATA_ACTIVITY|PhoneStateListener.LISTEN_CELL_INFO
+         |PhoneStateListener.LISTEN_SIGNAL_STRENGTHS;
+         }
+         else {
+         phoneFlags = PhoneStateListener.LISTEN_DATA_ACTIVITY|PhoneStateListener.LISTEN_CELL_LOCATION;
+         }
+         **/
 
-        ((TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE)).listen(phoneListener,phoneFlags);
+        ((TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE)).listen(phoneListener, phoneFlags);
         Toast.makeText(this, "Started Mining...", Toast.LENGTH_SHORT).show();
         moveToForeground();
         return START_STICKY;
@@ -239,7 +241,7 @@ public class MinerService extends Service {
         // https://github.com/commonsguy/cw-android/blob/master/Notifications/FakePlayer/src/com/commonsware/android/fakeplayerfg/PlayerService.java
         // http://developer.android.com/reference/android/support/v4/app/NotificationCompat.Builder.html
         Intent minerIntent = new Intent(this, MinerService.class);
-        PendingIntent pendingMinerIntent = PendingIntent.getActivity(this,0,minerIntent,0);
+        PendingIntent pendingMinerIntent = PendingIntent.getActivity(this, 0, minerIntent, 0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.addAction(R.drawable.ic_launcher, "Started mining", pendingMinerIntent);
         Notification note = builder.build();
@@ -251,62 +253,61 @@ public class MinerService extends Service {
         ConnectivityManager manager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = manager.getActiveNetworkInfo();
         if (netInfo != null) {
-            if (netInfo.getState() ==  NetworkInfo.State.CONNECTED ) {
+            if (netInfo.getState() == NetworkInfo.State.CONNECTED) {
                 switch (netInfo.getType()) {
                     case ConnectivityManager.TYPE_WIFI:
                         wifiData = true;
                         mobileData = false;
                         if (!updating) startUpdating();
                         WifiManager wifiMgr = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
-                         WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
-                         name = wifiInfo.getSSID();
-                         if (!networkName.equals(name)) {
-                             wirelessData = new WifiData(wifiInfo);
-                             MinerData helper = new MinerData(context);
-                             helper.putWifiNetwork(helper.getWritableDatabase(), wirelessData, new Date());
-                             helper.close();
-                            networkName = name; networkBroadcast();
-                         }
-                         startScan(); // Always scan when we've got WIFI.
-                         //Log.i("MinerService","CONNECTED: WIFI");
-                         break;
-                     case ConnectivityManager.TYPE_MOBILE:
+                        WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+                        name = wifiInfo.getSSID();
+                        if (!networkName.equals(name)) {
+                            wirelessData = new WifiData(wifiInfo);
+                            MinerData helper = new MinerData(context);
+                            helper.putWifiNetwork(helper.getWritableDatabase(), wirelessData, new Date());
+                            helper.close();
+                            networkName = name;
+                            networkBroadcast();
+                        }
+                        startScan(); // Always scan when we've got WIFI.
+                        //Log.i("MinerService","CONNECTED: WIFI");
+                        break;
+                    case ConnectivityManager.TYPE_MOBILE:
                         wifiData = false;
                         mobileData = true;
                         if ("goldfish".equals(Build.HARDWARE)) {
                             if (!updating) startUpdating();
-                        }
-                        else {
+                        } else {
                             updating = false;
                         }
 
-                         // https://code.google.com/p/android/issues/detail?id=24227
-                         //String name; Cursor c;
-                         //c = this.getContentResolver().query(Uri.parse("content://telephony/carriers/preferapn"), null, null, null, null);
-                         //name = c.getString(c.getColumnIndex("name"));
-                         TelephonyManager telephonyManager = ((TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE));
-                         name = telephonyManager.getNetworkOperatorName();
-                         if (!networkName.equals(name)) {
-                             MinerData helper = new MinerData(context);
-                             helper.putMobileNetwork(helper.getWritableDatabase(), telephonyManager, new Date());
-                             helper.close();
-                            networkName = name; networkBroadcast();
-                         }
-                         //startScan();
-                         //Log.i("MinerService","CONNECTED MOBILE: "+name);
-                         break;
-                     default:
-                         //Log.i("MinerService",netInfo.getTypeName());
-                         break;
-                 }
-             }
-             else {
-                 scanning = false;
-             }
-        }
-        else {
-             scanning = false;
-             networkName = "null";
+                        // https://code.google.com/p/android/issues/detail?id=24227
+                        //String name; Cursor c;
+                        //c = this.getContentResolver().query(Uri.parse("content://telephony/carriers/preferapn"), null, null, null, null);
+                        //name = c.getString(c.getColumnIndex("name"));
+                        TelephonyManager telephonyManager = ((TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE));
+                        name = telephonyManager.getNetworkOperatorName();
+                        if (!networkName.equals(name)) {
+                            MinerData helper = new MinerData(context);
+                            helper.putMobileNetwork(helper.getWritableDatabase(), telephonyManager, new Date());
+                            helper.close();
+                            networkName = name;
+                            networkBroadcast();
+                        }
+                        //startScan();
+                        //Log.i("MinerService","CONNECTED MOBILE: "+name);
+                        break;
+                    default:
+                        //Log.i("MinerService",netInfo.getTypeName());
+                        break;
+                }
+            } else {
+                scanning = false;
+            }
+        } else {
+            scanning = false;
+            networkName = "null";
         }
 
     }
@@ -333,11 +334,16 @@ public class MinerService extends Service {
         Intent intent = new Intent("com.odo.kcl.mobileminer.cellupdate");
 
         switch (cells.size()) {
-            case 0: cellValid = false; break;
-            case 1: cell = cells.get(0); break;
+            case 0:
+                cellValid = false;
+                break;
+            case 1:
+                cell = cells.get(0);
+                break;
             default:
                 cell = cells.get(0);
-                for (MinerLocation location: cells.subList(1,cells.size())) cell = cell.compare(location);
+                for (MinerLocation location : cells.subList(1, cells.size()))
+                    cell = cell.compare(location);
         }
 
         if (cell != null) {
@@ -357,10 +363,9 @@ public class MinerService extends Service {
     private void networkBroadcast() {
         Intent intent = new Intent("com.odo.kcl.mobileminer.networkupdate");
         if (!networkName.equals("null")) {
-            intent.putExtra("networktext",networkName);
-        }
-        else {
-            intent.putExtra("networktext","None");
+            intent.putExtra("networktext", networkName);
+        } else {
+            intent.putExtra("networktext", "None");
         }
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }

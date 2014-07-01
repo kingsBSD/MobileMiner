@@ -1,78 +1,81 @@
 // Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
-package com.odo.kcl.mobileminer;
+package com.odo.kcl.mobileminer.activities;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+import android.webkit.WebView;
+
+import com.odo.kcl.mobileminer.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.os.Bundle;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 //import android.util.Log;
-import android.view.Menu;
-import android.webkit.WebView;
 
 public class MapActivity extends Activity {
     WebView mapWebView;
-    String lat,lon,zoom;
+    String lat, lon, zoom;
     boolean noCentre;
-    ArrayList<String> redLat,redLong,yellowLat,yellowLong,greenLat,greenLong,blueLat,blueLong;
+    ArrayList<String> redLat, redLong, yellowLat, yellowLong, greenLat, greenLong, blueLat, blueLong;
 
     public class MapInterface {
-         Context context;
+        Context context;
 
-            public MapInterface() {
-
-            }
-
-            public MapInterface(Context c) {
-                context = c;
-            }
-
-         @android.webkit.JavascriptInterface
-         public String mapDump() {
-
-                JSONObject JSONdump = new JSONObject();
-
-                try {
-                    JSONdump.put("long",lon);
-                    JSONdump.put("lat",lat);
-                    JSONdump.put("zoom",zoom);
-                    JSONdump.put("nocentre",noCentre);
-                    if (redLat != null) {
-                        JSONdump.put("redlat",redLat);
-                        JSONdump.put("redlong",redLong);
-                    }
-                    if (yellowLat != null) {
-                        JSONdump.put("yellowlat",yellowLat);
-                        JSONdump.put("yellowlong",yellowLong);
-                    }
-                    if (greenLat != null) {
-                        JSONdump.put("greenlat",greenLat);
-                        JSONdump.put("greenlong",greenLong);
-                    }
-                    if (blueLat != null) {
-                        JSONdump.put("bluelat",blueLat);
-                        JSONdump.put("bluelong",blueLong);
-                    }
-
-                    //Log.i("MinerMap",JSONdump.toString());
-
-                    return JSONdump.toString();
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    return null;
-                }
-
-         }
-
+        public MapInterface() {
 
         }
+
+        public MapInterface(Context c) {
+            context = c;
+        }
+
+        @android.webkit.JavascriptInterface
+        public String mapDump() {
+
+            JSONObject JSONdump = new JSONObject();
+
+            try {
+                JSONdump.put("long", lon);
+                JSONdump.put("lat", lat);
+                JSONdump.put("zoom", zoom);
+                JSONdump.put("nocentre", noCentre);
+                if (redLat != null) {
+                    JSONdump.put("redlat", redLat);
+                    JSONdump.put("redlong", redLong);
+                }
+                if (yellowLat != null) {
+                    JSONdump.put("yellowlat", yellowLat);
+                    JSONdump.put("yellowlong", yellowLong);
+                }
+                if (greenLat != null) {
+                    JSONdump.put("greenlat", greenLat);
+                    JSONdump.put("greenlong", greenLong);
+                }
+                if (blueLat != null) {
+                    JSONdump.put("bluelat", blueLat);
+                    JSONdump.put("bluelong", blueLong);
+                }
+
+                //Log.i("MinerMap",JSONdump.toString());
+
+                return JSONdump.toString();
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                return null;
+            }
+
+        }
+
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +83,7 @@ public class MapActivity extends Activity {
         Intent mapIntent = this.getIntent();
 
         setContentView(R.layout.activity_map);
-        mapWebView = (WebView)findViewById(R.id.mapWebView);
+        mapWebView = (WebView) findViewById(R.id.mapWebView);
         mapWebView.addJavascriptInterface(new MapInterface(), "MapActivity");
         mapWebView.getSettings().setJavaScriptEnabled(true);
         mapWebView.loadUrl("file:///android_asset/viewer.html");
@@ -88,7 +91,7 @@ public class MapActivity extends Activity {
         lat = mapIntent.getStringExtra("lat");
         lon = mapIntent.getStringExtra("long");
         zoom = mapIntent.getStringExtra("zoom");
-        noCentre = mapIntent.getBooleanExtra("nocentre",false);
+        noCentre = mapIntent.getBooleanExtra("nocentre", false);
         redLat = mapIntent.getStringArrayListExtra("redlat");
         redLong = mapIntent.getStringArrayListExtra("redlong");
         yellowLat = mapIntent.getStringArrayListExtra("yellowlat");
@@ -109,7 +112,6 @@ public class MapActivity extends Activity {
     }
 
 
-
     private String readHtml(String remoteUrl) {
         String out = "";
         BufferedReader in = null;
@@ -121,9 +123,10 @@ public class MapActivity extends Activity {
                 out += str;
             }
             return out;
+        } catch (Exception e) {
+            return null;
         }
-        catch (Exception e) {return null;}
-}
+    }
 
 }
 
