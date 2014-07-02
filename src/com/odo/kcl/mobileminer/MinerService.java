@@ -31,6 +31,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 //import android.util.Log;
 import android.widget.Toast;
 
@@ -42,6 +43,7 @@ public class MinerService extends Service {
 
 	private Date startTime;
 	private ProcSocketSet socketSet;
+	private TrafficWatcher watcher;
 	private IntentFilter filter;
 	private Handler scanHandle,updateHandle;
 	private boolean scanning,updating;
@@ -154,6 +156,7 @@ public class MinerService extends Service {
 		cells = new ArrayList<MinerLocation>();
 		cellIds = new ArrayList<String>();
 		socketSet = new ProcSocketSet(this);
+		watcher = new TrafficWatcher(this);
 		scanHandle = new Handler();
 		updateHandle = new Handler();
 		
@@ -167,7 +170,9 @@ public class MinerService extends Service {
 			@Override
 			public void run() {
 				try {
+					Log.i("MobileMiner","Tick...");
 					socketSet.scan();
+					watcher.scan();
 				}
 				catch (Exception e) {}
 				finally {
@@ -176,6 +181,7 @@ public class MinerService extends Service {
 					}
 					else {
 						socketSet.close();
+						watcher.closeAll();
 					}
 				}
 			}	 
@@ -196,7 +202,7 @@ public class MinerService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		startTime = new Date();
-		//Log.i("MinerService","started mining");
+		Log.i("MinerService","started mining");
 		int phoneFlags;
 		
 		phoneFlags = PhoneStateListener.LISTEN_DATA_ACTIVITY|PhoneStateListener.LISTEN_CELL_LOCATION;

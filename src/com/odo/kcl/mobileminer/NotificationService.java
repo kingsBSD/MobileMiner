@@ -26,9 +26,9 @@ public class NotificationService extends AccessibilityService {
 		PackageManager pm = getPackageManager();
 		List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
 		ArrayList<String> netEnabledPackageNames = new ArrayList<String>();
+		String[] permissions;
 				
 		for (ApplicationInfo appInfo : packages) {	
-			String[] permissions;
 			try {
 				permissions = pm.getPackageInfo(appInfo.packageName, PackageManager.GET_PERMISSIONS).requestedPermissions;
 				
@@ -36,7 +36,7 @@ public class NotificationService extends AccessibilityService {
 					for (String permission: permissions) {
 						if (permission.equals("android.permission.INTERNET")) {
 							netEnabledPackageNames.add(appInfo.packageName);
-							Log.i("NotificationService",appInfo.packageName);
+							//Log.i("NotificationService",appInfo.packageName);
 							break;
 						}	
 					}

@@ -18,6 +18,7 @@ import com.odo.kcl.mobileminer.MinerTables.GSMCellTable;
 import com.odo.kcl.mobileminer.MinerTables.GSMLocationTable;
 import com.odo.kcl.mobileminer.MinerTables.MinerLogTable;
 import com.odo.kcl.mobileminer.MinerTables.MobileNetworkTable;
+import com.odo.kcl.mobileminer.MinerTables.NetworkTrafficTable;
 import com.odo.kcl.mobileminer.MinerTables.NotificationTable;
 import com.odo.kcl.mobileminer.MinerTables.SocketTable;
 import com.odo.kcl.mobileminer.MinerTables.WifiNetworkTable;
@@ -91,7 +92,17 @@ public class MinerData extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// TODO Auto-generated method stub
+//		if (oldVersion == 1) {
+//			for (String table: MinerTables.ExpirableTables) {
+//				try {
+//					db.execSQL("DROP TABLE "+table+";");
+//				}
+//				catch (Exception e) {
+//					
+//				}
+//			}
+//			onCreate(db);
+//		}
 		
 	}
 
@@ -181,15 +192,32 @@ public class MinerData extends SQLiteOpenHelper {
 		putRow(db,NotificationTable.TABLE_NAME,values);
 	}	
 
-	// None of our business...
+// None of our business...
 //	public void putNotification(SQLiteDatabase db, String packageName, String text, Date time) {
 //		ContentValues values = new ContentValues();
 //		values.put(NotificationTable.COLUMN_NAME_PACKAGE,packageName);
 //		values.put(NotificationTable.COLUMN_NAME_TEXT,text);
 //		values.put(NotificationTable.COLUMN_NAME_TIME,df.format(time));
 //		putRow(db,NotificationTable.TABLE_NAME,values);
-//	}
+//	}	
 	
+	public void putNetworkTraffic(SQLiteDatabase db, boolean tx, String packageName, Date start, Date stop, long bytes) {
+		ContentValues values = new ContentValues();
+		if (tx) {
+			values.put(NetworkTrafficTable.COLUMN_NAME_TX,"1");
+		}
+		else {
+			values.put(NetworkTrafficTable.COLUMN_NAME_TX,"0");
+		}
+		values.put(NetworkTrafficTable.COLUMN_NAME_PROCESS,packageName);
+		values.put(NetworkTrafficTable.COLUMN_NAME_START,df.format(start));
+		values.put(NetworkTrafficTable.COLUMN_NAME_STOP,df.format(stop));
+		values.put(NetworkTrafficTable.COLUMN_NAME_DAY,dayGetter.format(start));
+		values.put(NetworkTrafficTable.COLUMN_NAME_BYTES,Long.toString(bytes));
+		putRow(db,NetworkTrafficTable.TABLE_NAME,values);
+		
+	}
+		
 	private void putRow(SQLiteDatabase db, String table, ContentValues values ) {
 		// http://developer.android.com/training/basics/data-storage/databases.html#WriteDbRow
 		try {

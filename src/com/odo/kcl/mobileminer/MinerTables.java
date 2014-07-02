@@ -181,6 +181,29 @@ public final class MinerTables {
 	
 	static final String NOTIFICATION_TABLE_TIMESTAMP = NotificationTable.COLUMN_NAME_TIME;
 	
+	public static abstract class NetworkTrafficTable implements BaseColumns {
+		public static final String TABLE_NAME = "networktraffic";
+		public static final String COLUMN_NAME_TX = "tx";
+		public static final String COLUMN_NAME_PROCESS = "process";
+		public static final String COLUMN_NAME_START = "start";
+		public static final String COLUMN_NAME_STOP = "stop";
+		public static final String COLUMN_NAME_DAY = "day";
+		public static final String COLUMN_NAME_BYTES = "bytes";
+	}
+
+	public static final String CREATE_NETWORKTRAFFIC_TABLE =
+			"CREATE TABLE " + NetworkTrafficTable.TABLE_NAME + " (" +
+			INTEGER_PRIMARY_KEY +
+			NetworkTrafficTable.COLUMN_NAME_TX + "TEXT, " +
+			NetworkTrafficTable.COLUMN_NAME_PROCESS + "TEXT, " +
+			NetworkTrafficTable.COLUMN_NAME_START + "TEXT, " +
+			NetworkTrafficTable.COLUMN_NAME_STOP + "TEXT, " +
+			NetworkTrafficTable.COLUMN_NAME_DAY + "TEXT, " +
+			NetworkTrafficTable.COLUMN_NAME_BYTES + "TEXT, );";
+			
+	
+	static final String NETWORKTRAFFIC_TABLE_TIMESTAMP = NetworkTrafficTable.COLUMN_NAME_START;
+	
 	public static abstract class BookKeepingTable implements BaseColumns {
 		public static final String TABLE_NAME = "bookkeeping";
 		public static final String COLUMN_NAME_KEY = "key";
@@ -205,20 +228,22 @@ public final class MinerTables {
 		MinerTables.CREATE_WIFINETWORK_TABLE,
 		MinerTables.CREATE_MINERLOG_TABLE,
 		MinerTables.CREATE_NOTIFICATION_TABLE,
+		MinerTables.CREATE_NETWORKTRAFFIC_TABLE,
 		MinerTables.CREATE_BOOKKEEPING_TABLE};
 	
 	public static final String[] ExpirableTables = {
 		SocketTable.TABLE_NAME, GSMCellTable.TABLE_NAME, GSMLocationTable.TABLE_NAME, GSMCellPolygonTable.TABLE_NAME,
-		MobileNetworkTable.TABLE_NAME, WifiNetworkTable.TABLE_NAME, MinerLogTable.TABLE_NAME, NotificationTable.TABLE_NAME};
+		MobileNetworkTable.TABLE_NAME, WifiNetworkTable.TABLE_NAME, MinerLogTable.TABLE_NAME, NotificationTable.TABLE_NAME,
+		NetworkTrafficTable.TABLE_NAME};
 
 	public static final String[] ExpirableTimeStamps = {SOCKET_TABLE_TIMESTAMP, GSMCELL_TABLE_TIMESTAMP, 
 		GSMLOCATION_TABLE_TIMESTAMP, GSMCELLPOLYGON_TABLE_TIMESTAMP, MOBILENETWORK_TABLE_TIMESTAMP,
 		WIFINETWORK_TABLE_TIMESTAMP, MINER_TABLE_TIMESTAMP, 
-		NOTIFICATION_TABLE_TIMESTAMP
+		NOTIFICATION_TABLE_TIMESTAMP, NETWORKTRAFFIC_TABLE_TIMESTAMP
 	};
 	
 	public static final Object[] tableClasses = {SocketTable.class, GSMCellTable.class, MobileNetworkTable.class, WifiNetworkTable.class,
-		MinerLogTable.class, NotificationTable.class};
+		MinerLogTable.class, NotificationTable.class, NetworkTrafficTable.class};
 	
 }	
 
