@@ -24,7 +24,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.odo.kcl.mobileminer.MainActivity"
+            android:name="uk.ac.kcl.odo.mobileminer.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,13 +37,13 @@
         </activity>
         
         <activity
-            android:name="com.odo.kcl.mobileminer.DataActivity"
+            android:name="uk.ac.kcl.odo.mobileminer.DataActivity"
             android:label="MyData" >
         </activity>
 
-        <service android:name="com.odo.kcl.mobileminer.MinerService" />
+        <service android:name="uk.ac.kcl.odo.mobileminer.miner.MinerService" />
         <service
-            android:name="com.odo.kcl.mobileminer.NotificationService"
+            android:name="uk.ac.kcl.odo.mobileminer.miner.NotificationService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" >
             <meta-data
                 android:name="android.accessibilityservice"
@@ -55,7 +55,7 @@
         </service>
 
         <activity
-            android:name="com.odo.kcl.mobileminer.MapActivity"
+            android:name="uk.ac.kcl.odo.mobileminer.MapActivity"
             android:label="@string/title_activity_map" >
         </activity>
         
