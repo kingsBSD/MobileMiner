@@ -137,7 +137,7 @@ public class MainActivity extends Activity {
     	//stopService(miningIntent);
     	getApplicationContext().sendBroadcast(new Intent("com.odo.kcl.mobileminer.stopmining"));
     	enableMiningButton(false);
-    }
+    } 
     
     public void launchData(View buttonView) {
     	startActivity(new Intent(this, DataActivity.class));

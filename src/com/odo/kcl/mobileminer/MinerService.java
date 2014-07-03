@@ -170,7 +170,7 @@ public class MinerService extends Service {
 			@Override
 			public void run() {
 				try {
-					Log.i("MobileMiner","Tick...");
+					//Log.i("MobileMiner","Tick...");
 					socketSet.scan();
 					watcher.scan();
 				}
@@ -190,8 +190,8 @@ public class MinerService extends Service {
 		ckanWorker = new Runnable() {
 			@Override
 			public void run() {
-				new CkanUrlGetter(context).getUrl();
-				new CkanUidGetter(context).getUid();
+				//new CkanUrlGetter(context).getUrl();
+				//new CkanUidGetter(context).getUid();
 				new CkanUpdater().execute(new Context[] {context});
 				if (updating) updateHandle.postDelayed(this, 600000);				
 			}				
@@ -236,7 +236,7 @@ public class MinerService extends Service {
 		MinerData helper = new MinerData(context);
 		helper.putMinerLog(helper.getWritableDatabase(), startTime, new Date());
 		helper.close();
-		//Log.i("MinerService","stopped mining");
+		Log.i("MinerService","stopped mining");
 		unregisterReceiver(receiver);
 	    Toast.makeText(this, "Stopped Mining...", Toast.LENGTH_SHORT).show();
 	}
