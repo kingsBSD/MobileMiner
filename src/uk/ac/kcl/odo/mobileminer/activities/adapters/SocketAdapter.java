@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.odo.kcl.mobileminer.R;
+import uk.ac.kcl.odo.mobileminer.R;
 
 import android.content.Context;
 import android.graphics.Color;

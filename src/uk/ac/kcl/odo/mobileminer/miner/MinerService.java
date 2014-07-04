@@ -12,7 +12,7 @@ import uk.ac.kcl.odo.mobileminer.ckan.CkanUpdater;
 import uk.ac.kcl.odo.mobileminer.data.MinerData;
 import uk.ac.kcl.odo.mobileminer.data.MinerData.WifiData;
 
-import com.odo.kcl.mobileminer.R;
+import uk.ac.kcl.odo.mobileminer.R;
 
 import android.app.Notification;
 import android.app.PendingIntent;

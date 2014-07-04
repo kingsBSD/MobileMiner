@@ -44,7 +44,7 @@ public class CellData extends SQLiteOpenHelper {
 	public void init() {
 		//Log.i("CellData","CREATING");
 		File dataDir = Environment.getDataDirectory();
-		String dbPath = "/data/"+ "com.odo.kcl.mobileminer" +"/databases/"+DATABASE_NAME;
+		String dbPath = "/data/"+ "uk.ac.kcl.odo.mobileminer" +"/databases/"+DATABASE_NAME;
 		File dbFile = new File(dataDir, dbPath);
 		GZIPInputStream sourceStream;
 		FileOutputStream destStream;

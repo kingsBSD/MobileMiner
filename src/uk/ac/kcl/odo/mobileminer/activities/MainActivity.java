@@ -11,7 +11,7 @@ import uk.ac.kcl.odo.mobileminer.data.CellData;
 import uk.ac.kcl.odo.mobileminer.data.MinerData;
 import uk.ac.kcl.odo.mobileminer.miner.MinerService;
 
-import com.odo.kcl.mobileminer.R;
+import uk.ac.kcl.odo.mobileminer.R;
 
 import android.os.Build;
 import android.os.Bundle;

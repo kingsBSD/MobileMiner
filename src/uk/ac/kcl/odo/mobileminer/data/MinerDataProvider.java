@@ -8,7 +8,7 @@ import android.net.Uri;
 
 public class MinerDataProvider extends ContentProvider {
 
-	public static final String PROVIDER_NAME = "com.odo.kcl.mobileminer.minerdata"; 
+	public static final String PROVIDER_NAME = "uk.ac.kcl.odo.mobileminer"; 
     public static final Uri SOCKETPROC_URI = Uri.parse("content://" + PROVIDER_NAME + "/socketsbyproc" );
     
     private static final int SOCKETPROC = 1;

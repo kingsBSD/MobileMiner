@@ -1,26 +1,28 @@
 // Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
-package uk.ac.kcl.odo.mobileminer.activities;
+package com.odo.kcl.mobileminer.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import uk.ac.kcl.odo.mobileminer.R;
+import com.odo.kcl.mobileminer.R;
+import com.odo.kcl.mobileminer.cell.CellLocationGetter;
+import com.odo.kcl.mobileminer.cell.CountedCell;
+import com.odo.kcl.mobileminer.miner.MinerData;
+import com.odo.kcl.mobileminer.util.ODOUtil;
 
-import uk.ac.kcl.odo.mobileminer.cells.CellLocationGetter;
-import uk.ac.kcl.odo.mobileminer.cells.CountedCell;
-import uk.ac.kcl.odo.mobileminer.data.MinerData;
-
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -30,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 //import android.annotation.SuppressLint;
 //import android.util.Log;
@@ -38,7 +41,7 @@ import java.util.HashMap;
 public class DataActivity extends Activity {
     private Context context;
     private TextView dataText;
-    //private ListView lv;
+    private ListView lv;
 
 
     @Override
@@ -48,17 +51,17 @@ public class DataActivity extends Activity {
         context = this;
         dataText = (TextView) findViewById(R.id.dataText);
         setDbSizeLegend();
-        //lv = (ListView) findViewById(R.id.usedApps);
+        lv = (ListView) findViewById(R.id.usedApps);
 
-        //List<String> topAppsData = new ArrayList<>();
+        List<String> topAppsData = new ArrayList<>();
 
-        //MinerData mdata = new MinerData(this);
-        //SQLiteDatabase db = mdata.getReadableDatabase();
+        MinerData mdata = new MinerData(this);
+        SQLiteDatabase db = mdata.getReadableDatabase();
 
-        //topAppsData = mdata.topApps(db);
+        topAppsData = mdata.topApps(db);
 
-        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, topAppsData);
-      //  //lv.setAdapter(adapter);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, topAppsData);
+        lv.setAdapter(adapter);
     }
 
     @Override
@@ -93,16 +96,6 @@ public class DataActivity extends Activity {
         myAlertDialog.show();
     }
 
-    private static void closeResourceGracefully(Closeable closeMe) {
-        if (closeMe != null) {
-            try {
-                closeMe.close();
-            } catch (IOException e) {
-                // It was already closed, ignore.
-            }
-        }
-    }    
-    
     public void expireData(View buttonView) {
         AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(context);
         myAlertDialog.setTitle("Expire Data");
@@ -169,8 +162,8 @@ public class DataActivity extends Activity {
             e.printStackTrace();
             Toast.makeText(this, "Couldn't Export Data!", Toast.LENGTH_LONG).show();
         } finally { // We don't want to be leaky
-            closeResourceGracefully(sourceStream);
-            closeResourceGracefully(destStream);
+            ODOUtil.closeResourceGracefully(sourceStream);
+            ODOUtil.closeResourceGracefully(destStream);
         }
 
         // http://stackoverflow.com/questions/13737261/nexus-4-not-showing-files-via-mtp
