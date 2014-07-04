@@ -11,12 +11,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-
+import uk.ac.kcl.odo.mobileminer.cells.CountedCell;
 import uk.ac.kcl.odo.mobileminer.data.MinerData;
-
-
-import com.odo.kcl.mobileminer.R;
-
+import uk.ac.kcl.odo.mobileminer.R;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Environment;
@@ -30,7 +27,6 @@ import android.content.Intent;
 //import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -160,7 +156,7 @@ public class DataActivity extends Activity {
     public void myLocations(View buttonView) {
     	buttonView.setEnabled(false);
     	MinerData helper = new MinerData(context);
-    	ArrayList<CountedCell> cells = MinerData.getMyCells(helper.getReadableDatabase());
+    	ArrayList<uk.ac.kcl.odo.mobileminer.cells.CountedCell> cells = MinerData.getMyCells(helper.getReadableDatabase());
     	
     	CellLocationGetter cellGetter = new CellLocationGetter(this);
     	ArrayList<String[]> locations = new ArrayList<String[]>();

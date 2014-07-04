@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.odo.kcl.mobileminer.R;
+import uk.ac.kcl.odo.mobileminer.R;
 
 import android.os.Bundle;
 import android.app.Activity;

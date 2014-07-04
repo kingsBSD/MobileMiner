@@ -56,6 +56,8 @@ public class TrafficWatcher {
 							namesByUid.put(appInfo.uid,appInfo.processName);
 							trafficTxByUid.put(appInfo.uid, TrafficStats.getUidTxBytes(appInfo.uid));
 							trafficRxByUid.put(appInfo.uid, TrafficStats.getUidRxBytes(appInfo.uid));
+							Log.i("TrafficWatcher",appInfo.processName);
+							Log.i("TrafficWatcher",new Long(TrafficStats.getUidRxBytes(appInfo.uid)).toString());
 							break;
 						}	
 					}

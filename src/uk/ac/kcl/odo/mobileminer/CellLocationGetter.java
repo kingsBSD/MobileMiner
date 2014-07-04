@@ -1,6 +1,7 @@
 // Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
 package uk.ac.kcl.odo.mobileminer;
 
+import uk.ac.kcl.odo.mobileminer.cells.CountedCell;
 import uk.ac.kcl.odo.mobileminer.data.CellData;
 import uk.ac.kcl.odo.mobileminer.data.MinerData;
 //import java.util.Date;
