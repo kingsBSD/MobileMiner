@@ -7,7 +7,7 @@ package uk.ac.kcl.odo.mobileminer.miner;
 import java.util.ArrayList;
 import java.util.Date;
 
-import uk.ac.kcl.odo.mobileminer.MinerLocation;
+import uk.ac.kcl.odo.mobileminer.cells.MinerLocation;
 import uk.ac.kcl.odo.mobileminer.ckan.CkanUpdater;
 import uk.ac.kcl.odo.mobileminer.data.MinerData;
 import uk.ac.kcl.odo.mobileminer.data.MinerData.WifiData;

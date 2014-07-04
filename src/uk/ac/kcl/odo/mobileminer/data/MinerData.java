@@ -12,8 +12,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import uk.ac.kcl.odo.mobileminer.CountedCell;
-import uk.ac.kcl.odo.mobileminer.MinerLocation;
+import uk.ac.kcl.odo.mobileminer.cells.CountedCell;
+import uk.ac.kcl.odo.mobileminer.cells.MinerLocation;
 import uk.ac.kcl.odo.mobileminer.data.MinerTables.BookKeepingTable;
 import uk.ac.kcl.odo.mobileminer.data.MinerTables.GSMCellPolygonTable;
 import uk.ac.kcl.odo.mobileminer.data.MinerTables.GSMCellTable;
