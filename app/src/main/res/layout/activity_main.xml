@@ -1,0 +1,128 @@
+<!-- Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity" >
+
+        <LinearLayout
+            android:id="@+id/outerLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/buttonLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                style="?android:attr/buttonBarStyle">
+
+                <Button
+                    android:id="@+id/startButton"
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:onClick="startMining"
+                    android:text="@string/start_mining_button"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:gravity="center" />
+
+                <Button
+                    android:id="@+id/stopButton"
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:onClick="stopMining"
+                    android:text="@string/stop_mining_button"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:gravity="center" />
+
+                <Button
+                    android:id="@+id/dataButton"
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:onClick="launchData"
+                    android:text="@string/my_data_button"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:gravity="center" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/networkName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/network_button_default"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <Button
+            android:id="@+id/cellLocation"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:onClick="cellMap"
+            android:text="@string/no_cell_text"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_marginTop="2.5dp"
+            android:layout_marginBottom="2.5dp" />
+
+           <LinearLayout
+              android:id="@+id/socketLinearLayout"
+               android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+               android:layout_marginBottom="2.5dp"
+               android:layout_marginTop="2.5dp">
+
+                <TextView
+                    android:id="@+id/socketLegend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/network_sockets_text"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:gravity="left" />
+                <LinearLayout
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent">
+                    <TextView
+                        android:id="@+id/openView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/open_text"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#00FF00"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="1"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:id="@+id/closedView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/closed_text"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#FF0000"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="1"
+                        android:gravity="center" />
+                </LinearLayout>
+        </LinearLayout>
+
+        <ExpandableListView
+            android:id="@+id/socketView"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="2.5dp" />
+
+
+    </LinearLayout>
+
+</RelativeLayout>
