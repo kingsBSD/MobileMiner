@@ -1,10 +1,8 @@
 // Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
 package uk.ac.kcl.odo.mobileminer.miner;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -15,7 +13,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.TrafficStats;
-import android.util.Log;
+//import android.util.Log;
 
 public class TrafficWatcher {
 	MinerData helper;
@@ -45,6 +43,8 @@ public class TrafficWatcher {
 		List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
 		String[] permissions;
 		
+		long txBytes,rxBytes;
+		
 		for (ApplicationInfo appInfo : packages) {	
 			try {
 				permissions = pm.getPackageInfo(appInfo.packageName, PackageManager.GET_PERMISSIONS).requestedPermissions;
@@ -52,12 +52,20 @@ public class TrafficWatcher {
 				if (permissions != null) {
 					for (String permission: permissions) {
 						if (permission.equals("android.permission.INTERNET")) {
-							uids.add(appInfo.uid);
-							namesByUid.put(appInfo.uid,appInfo.processName);
-							trafficTxByUid.put(appInfo.uid, TrafficStats.getUidTxBytes(appInfo.uid));
-							trafficRxByUid.put(appInfo.uid, TrafficStats.getUidRxBytes(appInfo.uid));
-							Log.i("TrafficWatcher",appInfo.processName);
-							Log.i("TrafficWatcher",new Long(TrafficStats.getUidRxBytes(appInfo.uid)).toString());
+							
+							txBytes = TrafficStats.getUidTxBytes(appInfo.uid);
+							rxBytes = TrafficStats.getUidRxBytes(appInfo.uid);
+									
+							if (txBytes != -1 && rxBytes != -1) {
+								uids.add(appInfo.uid);
+								namesByUid.put(appInfo.uid,appInfo.processName);
+								trafficTxByUid.put(appInfo.uid, txBytes);
+								trafficRxByUid.put(appInfo.uid, rxBytes);
+								//Log.i("TrafficWatcher",appInfo.processName);
+								//Log.i("TrafficWatcher",new Long(rxBytes).toString());
+								
+							}
+							
 							break;
 						}	
 					}
@@ -71,20 +79,25 @@ public class TrafficWatcher {
 		
 	}
 	
-	private void close(SQLiteDatabase db, boolean tx, Integer uid) {
+	private void close(SQLiteDatabase db, boolean tx, Integer uid, Date stop) {
 		long delta,bytes;
+		Date start;
+
 		if (tx) {
 			bytes = txBytesByUid.get(uid);
-			delta = bytes - trafficTxByUid.get(uid);
-			trafficTxByUid.put(uid, bytes);
+			delta = trafficTxByUid.get(uid) - bytes;
+			start = txStartByUid.get(uid);
 			txStartByUid.remove(uid);
 		}
 		else {
 			bytes = rxBytesByUid.get(uid);
-			delta = bytes - trafficRxByUid.get(uid);
-			trafficRxByUid.put(uid, bytes);
+			delta = trafficRxByUid.get(uid) - bytes;
+			start = rxStartByUid.get(uid);
 			rxStartByUid.remove(uid);
 		}
+		
+		//Log.i("TrafficWatcher","Writing...");
+		helper.putNetworkTraffic(db, tx, namesByUid.get(uid), start, stop, delta);
 		
 	}
 	
@@ -94,57 +107,73 @@ public class TrafficWatcher {
 		ArrayList<Integer> closedTx = new ArrayList<Integer>();
 		ArrayList<Integer> closedRx = new ArrayList<Integer>();
 		Long bytes;
+		Date closeTime; 
+		
+		//Log.i("TrafficWatcher","Tick...");
 		
 		for (Integer uid: uids) {
-			bytes = trafficTxByUid.get(uid);
+			bytes = TrafficStats.getUidTxBytes(uid);
 			if (bytes > trafficTxByUid.get(uid)) {
-				txBytesByUid.put(uid, bytes);
-				if (txStartByUid.get(uid) == null) {
+				//Log.i("TrafficWatcher","tx: "+namesByUid.get(uid));
+				if (!txStartByUid.containsKey(uid)) {
+					//Log.i("TrafficWatcher","New TX socket: "+namesByUid.get(uid));
 					txStartByUid.put(uid, new Date());
+					txBytesByUid.put(uid, trafficTxByUid.get(uid));
 				}
+				trafficTxByUid.put(uid, bytes);
 				discoveredTx.add(uid);
 			}
+			
 			bytes = TrafficStats.getUidRxBytes(uid);
 			if (bytes > trafficRxByUid.get(uid)) {
-				rxBytesByUid.put(uid, bytes);
-				if (rxStartByUid.get(uid) == null) {
+				//Log.i("TrafficWatcher","rx: "+namesByUid.get(uid));
+				if (!rxStartByUid.containsKey(uid)) {
+					//Log.i("TrafficWatcher","New RX socket: "+namesByUid.get(uid));
 					rxStartByUid.put(uid, new Date());
+					rxBytesByUid.put(uid, trafficRxByUid.get(uid));
 				}
+				trafficRxByUid.put(uid, bytes);
+
 				discoveredRx.add(uid);
 			}	
 		}
 		
 		for (Integer uid: txStartByUid.keySet()) {
 			if (!discoveredTx.contains(uid)) {
+				//Log.i("TrafficWatcher","Closed TX socket: "+namesByUid.get(uid));
 				closedTx.add(uid);
 			}
 		}
 
 		for (Integer uid: rxStartByUid.keySet()) {
 			if (!discoveredRx.contains(uid)) {
+				//Log.i("TrafficWatcher","Closed RX socket: "+namesByUid.get(uid));
 				closedRx.add(uid);
 			}
 		}
 		
 		if (closedTx.size() + closedRx.size() > 0) {
+			//Log.i("TrafficWatcher","Closing...");
+			closeTime = new Date();
 			SQLiteDatabase db = helper.getWritableDatabase();
 			for (Integer uid: closedTx) {
-				close(db,true,uid);
+				close(db,true,uid,closeTime);
 			}
 			for (Integer uid: closedRx) {
-				close(db,false,uid);
+				close(db,false,uid,closeTime);
 			}
 			db.close();
 		}
 	}
 	
 	public void closeAll() {
+		Date closeTime = new Date();
 		SQLiteDatabase db = helper.getWritableDatabase();
 		for (Integer uid: txStartByUid.keySet()) {
-			close(db,true,uid);
+			close(db,true,uid,closeTime);
 		}
 		for (Integer uid: rxStartByUid.keySet()) {
-			close(db,false,uid);
+			close(db,false,uid,closeTime);
 		}
 		db.close();
 		

@@ -63,18 +63,19 @@
             android:id="@+id/TopAppLegend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/myLocationsButton"
-            android:layout_below="@+id/myLocationsButton"
-            android:layout_marginTop="16dp"
+            android:layout_alignBaseline="@+id/dataText"
+            android:layout_alignBottom="@+id/dataText"
+            android:layout_marginLeft="14dp"
+            android:layout_toRightOf="@+id/expireButton"
             android:text="Most Active Apps:"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <fragment
             android:id="@+id/activeApps"
             android:name="uk.ac.kcl.odo.mobileminer.activities.fragments.ActiveAppFragment"
-            android:layout_width="match_parent"
-            android:layout_height="236dp"
+            android:layout_width="216dp"
+            android:layout_height="196dp"
             android:layout_alignLeft="@+id/TopAppLegend"
-            android:layout_alignParentBottom="true" />
+            android:layout_below="@+id/dataText" />
 		
 </RelativeLayout>

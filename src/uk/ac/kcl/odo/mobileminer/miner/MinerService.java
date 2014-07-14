@@ -8,12 +8,12 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import uk.ac.kcl.odo.mobileminer.cells.MinerLocation;
+import uk.ac.kcl.odo.mobileminer.ckan.CkanUidGetter;
 import uk.ac.kcl.odo.mobileminer.ckan.CkanUpdater;
+import uk.ac.kcl.odo.mobileminer.ckan.CkanUrlGetter;
 import uk.ac.kcl.odo.mobileminer.data.MinerData;
 import uk.ac.kcl.odo.mobileminer.data.MinerData.WifiData;
-
 import uk.ac.kcl.odo.mobileminer.R;
-
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -36,9 +36,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-import android.util.Log;
-//import android.util.Log;
 import android.widget.Toast;
+//import android.util.Log;
 
 /**
  * An Android service that logs connections to mobile and wireless networks, changes in cell location,
@@ -55,10 +54,10 @@ public class MinerService extends Service {
 	private Runnable mineWorker,ckanWorker;
 	private Context context;
 	private String networkName;
-	private String cellLocation;
+	//private String cellLocation;
 	private ArrayList<MinerLocation> cells;
-	private ArrayList<String> cellIds;
-	private Boolean mobileData, wifiData;
+	//private ArrayList<String> cellIds;
+	//private Boolean mobileData, wifiData;
 	private WifiData wirelessData;
 	
 	private final BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -154,12 +153,12 @@ public class MinerService extends Service {
 	public void onCreate() {
 		startTime = new Date();
 		networkName = "null";
-		mobileData = false;
-		wifiData = false;
+		//mobileData = false;
+		//wifiData = false;
 		context = this;
 		wirelessData = new WifiData();
 		cells = new ArrayList<MinerLocation>();
-		cellIds = new ArrayList<String>();
+		//cellIds = new ArrayList<String>();
 		socketSet = new ProcSocketSet(this);
 		watcher = new TrafficWatcher(this);
 		scanHandle = new Handler();
@@ -195,8 +194,7 @@ public class MinerService extends Service {
 		ckanWorker = new Runnable() {
 			@Override
 			public void run() {
-				//new CkanUrlGetter(context).getUrl();
-				//new CkanUidGetter(context).getUid();
+				//Log.i("MinerService","Updating...");
 				new CkanUpdater().execute(new Context[] {context});
 				if (updating) updateHandle.postDelayed(this, 600000);				
 			}				
@@ -207,7 +205,7 @@ public class MinerService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		startTime = new Date();
-		Log.i("MinerService","started mining");
+		//Log.i("MinerService","started mining");
 		int phoneFlags;
 		
 		phoneFlags = PhoneStateListener.LISTEN_DATA_ACTIVITY|PhoneStateListener.LISTEN_CELL_LOCATION;
@@ -241,7 +239,7 @@ public class MinerService extends Service {
 		MinerData helper = new MinerData(context);
 		helper.putMinerLog(helper.getWritableDatabase(), startTime, new Date());
 		helper.close();
-		Log.i("MinerService","stopped mining");
+		//Log.i("MinerService","stopped mining");
 		unregisterReceiver(receiver);
 	    Toast.makeText(this, "Stopped Mining...", Toast.LENGTH_SHORT).show();
 	}
@@ -265,9 +263,8 @@ public class MinerService extends Service {
 			if (netInfo.getState() ==  NetworkInfo.State.CONNECTED ) {
 				switch (netInfo.getType()) {
 					case ConnectivityManager.TYPE_WIFI:
-						wifiData = true;
-						mobileData = false;
-						if (!updating) startUpdating();
+						//wifiData = true;
+						//mobileData = false;
 						WifiManager wifiMgr = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
 				 		WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
 				 		name = wifiInfo.getSSID();
@@ -279,11 +276,12 @@ public class MinerService extends Service {
 							networkName = name; networkBroadcast();	
 				 		}
 				 		startScan(); // Always scan when we've got WIFI.
+				 		startUpdating();
 				 		//Log.i("MinerService","CONNECTED: WIFI");
 				 		break;
 				 	case ConnectivityManager.TYPE_MOBILE:
-						wifiData = false;
-						mobileData = true;
+						//wifiData = false;
+						//mobileData = true;
 						if ("goldfish".equals(Build.HARDWARE)) {
 							if (!updating) startUpdating();
 						}
@@ -331,6 +329,8 @@ public class MinerService extends Service {
 	
 	private void startUpdating() {
 		if (!updating) {
+			new CkanUrlGetter(context).getUrl();
+			new CkanUidGetter(context).getUid();
 			updating = true;
 			updateHandle.post(ckanWorker);
 		}

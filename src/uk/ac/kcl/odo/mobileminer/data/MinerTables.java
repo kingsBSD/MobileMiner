@@ -11,7 +11,7 @@ public final class MinerTables {
 	public MinerTables() {}
 
 	public static final String APP_VERSION = "0.5";
-	static final String INTEGER_PRIMARY_KEY = "_id INTEGER PRIMARY KEY AUTOINCREMENT,";
+	static final String INTEGER_PRIMARY_KEY = "_id INTEGER PRIMARY KEY AUTOINCREMENT, ";
 	
 	public static abstract class SocketTable implements BaseColumns {
 		public static final String TABLE_NAME = "socket";
@@ -194,12 +194,12 @@ public final class MinerTables {
 	public static final String CREATE_NETWORKTRAFFIC_TABLE =
 			"CREATE TABLE " + NetworkTrafficTable.TABLE_NAME + " (" +
 			INTEGER_PRIMARY_KEY +
-			NetworkTrafficTable.COLUMN_NAME_TX + "TEXT, " +
-			NetworkTrafficTable.COLUMN_NAME_PROCESS + "TEXT, " +
-			NetworkTrafficTable.COLUMN_NAME_START + "TEXT, " +
-			NetworkTrafficTable.COLUMN_NAME_STOP + "TEXT, " +
-			NetworkTrafficTable.COLUMN_NAME_DAY + "TEXT, " +
-			NetworkTrafficTable.COLUMN_NAME_BYTES + "TEXT, );";
+			NetworkTrafficTable.COLUMN_NAME_TX + " TEXT, " +
+			NetworkTrafficTable.COLUMN_NAME_PROCESS + " TEXT, " +
+			NetworkTrafficTable.COLUMN_NAME_START + " TEXT, " +
+			NetworkTrafficTable.COLUMN_NAME_STOP + " TEXT, " +
+			NetworkTrafficTable.COLUMN_NAME_DAY + " TEXT, " +
+			NetworkTrafficTable.COLUMN_NAME_BYTES + " TEXT );";
 			
 	
 	static final String NETWORKTRAFFIC_TABLE_TIMESTAMP = NetworkTrafficTable.COLUMN_NAME_START;

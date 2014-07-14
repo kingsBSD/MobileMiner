@@ -154,7 +154,7 @@ public class DataActivity extends Activity {
         File source = Environment.getDataDirectory();
 
         FileChannel sourceStream = null, destStream = null;
-        String dbPath = "/data/com.odo.kcl.mobileminer/databases/" + MinerData.DATABASE_NAME;
+        String dbPath = "/data/uk.ac.kcl.odo.mobileminer/databases/" + MinerData.DATABASE_NAME;
         Date rightNow = new Date();
 
         String exportPath = "MobileMiner" + df.format(rightNow) + ".sqlite";

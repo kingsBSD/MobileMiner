@@ -30,12 +30,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.net.Uri;
 import android.net.wifi.WifiInfo;
-import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-//import android.util.Log;
+import android.util.Log;
 
 public class MinerData extends SQLiteOpenHelper {
 
@@ -87,12 +85,14 @@ public class MinerData extends SQLiteOpenHelper {
 				db.execSQL(sql);
 			}
 			catch (Exception e) {
+				Log.i("MinerData",sql);
 			}
 		}
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		onCreate(db);
 //		if (oldVersion == 1) {
 //			for (String table: MinerTables.ExpirableTables) {
 //				try {

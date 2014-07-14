@@ -21,14 +21,11 @@ import org.json.JSONObject;
 
 import uk.ac.kcl.odo.mobileminer.data.MinerData;
 import uk.ac.kcl.odo.mobileminer.data.MinerTables;
-import uk.ac.kcl.odo.mobileminer.data.MinerTables.BookKeepingTable;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.provider.Settings;
-import android.text.TextUtils;
 //import android.util.Log;
 
 public class CkanUpdater extends AsyncTask {
@@ -56,18 +53,22 @@ public class CkanUpdater extends AsyncTask {
 		HttpPost post;
 		HttpClient client = new DefaultHttpClient();
 		
+		//Log.i("MobileMiner","CKAN update...");
+		
 		timeStamps = new HashMap<String,String>();
 		for (int i=0;i<MinerTables.ExpirableTables.length;i++) {
 			timeStamps.put(MinerTables.ExpirableTables[i], MinerTables.ExpirableTimeStamps[i]);
 		}
 				
 		url = helper.getBookKeepingKey(dbReader, "ckanurl");
+		
 		// http://stackoverflow.com/questions/2799097/how-can-i-detect-when-an-android-application-is-running-in-the-emulator
 		if ("goldfish".equals(Build.HARDWARE)) url = "http://10.0.2.2:5000";
 		
 		uid = helper.getBookKeepingKey(dbReader, "ckanuid");
 		
 		if (url == null) return null; 
+		//Log.i("MobileMiner",url);
 		
 		if (uid == null) return null;
 		
@@ -127,6 +128,7 @@ public class CkanUpdater extends AsyncTask {
 						things += 1;
 					}
 					catch (Exception e) {
+						//Log.i("MobileMiner","Cursor exception.");
 						searching = false;
 					}
 					c.moveToNext();
@@ -144,6 +146,7 @@ public class CkanUpdater extends AsyncTask {
 					}
 					catch (JSONException e) {
 						jsonDump = null;
+						//Log.i("MobileMiner","JSON exception");
 					}
 					
 					post = new HttpPost(url+"/api/action/miner_update");
@@ -161,6 +164,7 @@ public class CkanUpdater extends AsyncTask {
 					response = null;
 					if (post != null) {
 						try {
+							//Log.i("MobileMiner","Making Request to "+url);
 							response = EntityUtils.toString(client.execute(post).getEntity());
 						}
 						catch (ParseException e) {
@@ -196,6 +200,7 @@ public class CkanUpdater extends AsyncTask {
 							
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
+							//Log.i("MobileMiner","No response!");
 							e.printStackTrace();
 						}
 						
