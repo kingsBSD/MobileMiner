@@ -35,7 +35,6 @@ public class NotificationService extends AccessibilityService {
                     for (String permission : permissions) {
                         if (permission.equals("android.permission.INTERNET")) {
                             netEnabledPackageNames.add(appInfo.packageName);
-                            Log.i("NotificationService", appInfo.packageName);
                             break;
                         }
                     }
