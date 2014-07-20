@@ -58,9 +58,8 @@ public class DataActivity extends Activity {
         MinerData mdata = new MinerData(this);
         SQLiteDatabase db = mdata.getReadableDatabase();
 
-        topAppsData = mdata.topApps(db);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, topAppsData);
+        topAppsData = mdata.getTopApps(db);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, topAppsData);
         lv.setAdapter(adapter);
     }
 
