@@ -2,7 +2,7 @@
 <!-- Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.odo.kcl.mobileminer"
-    android:installLocation="preferExternal">
+    android:installLocation="preferExternal" >
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -29,15 +30,13 @@
                 <category android:name="com.odo.kcl.mobileminer.networkupdate" />
             </intent-filter>
         </activity>
-        
         <activity
             android:name=".activities.DataActivity"
-            android:label="@string/my_data_actionbar_title" >
-        </activity>
+            android:label="@string/my_data_actionbar_title" />
 
         <service android:name=".miner.MinerService" />
         <service
-            android:name="com.odo.kcl.mobileminer.NotificationService"
+            android:name=".NotificationService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" >
             <meta-data
                 android:name="android.accessibilityservice"
@@ -50,8 +49,19 @@
 
         <activity
             android:name=".activities.MapActivity"
-            android:label="@string/title_activity_map" >
-        </activity>
+            android:label="@string/title_activity_map" />
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:label="@string/title_activity_settings" />
+
+        <receiver
+            android:name=".receivers.BootReceiver"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

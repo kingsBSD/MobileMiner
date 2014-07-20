@@ -6,9 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.webkit.WebView;
 
 import com.odo.kcl.mobileminer.R;
+import com.odo.kcl.mobileminer.util.ODOUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -105,12 +107,20 @@ public class MapActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.map, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
-
-
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_settings:
+                this.startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     private String readHtml(String remoteUrl) {
         String out = "";

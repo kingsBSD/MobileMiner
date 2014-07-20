@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
@@ -39,7 +40,6 @@ import java.util.List;
 
 public class MainActivity extends Activity {
     private boolean miningButtonState = false, cellValid = false;
-    private Intent miningIntent;
     private ExpandableListView socketView;
     private SocketAdapter socketAdapter;
     private List<String> processHeader = new ArrayList<String>();
@@ -79,6 +79,17 @@ public class MainActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_settings:
+                this.startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -171,8 +182,7 @@ public class MainActivity extends Activity {
         if (this.miningButtonState) {
             // Are we not mining?
             if (!miningActive()) {
-                miningIntent = new Intent(this, MinerService.class);
-                this.startService(miningIntent);
+                this.startService(new Intent(this, MinerService.class));
             }
         }
     }
