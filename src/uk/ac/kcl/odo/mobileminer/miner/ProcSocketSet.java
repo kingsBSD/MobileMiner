@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import uk.ac.kcl.odo.mobileminer.data.MinerData;
+import uk.ac.kcl.odo.mobileminer.data.WriteCache;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
@@ -73,9 +74,20 @@ public class ProcSocketSet {
 		* Close the socket for the given protocol and address, then dump it to the db.
 		*/
 		private void closeSocket(String protocol, String addr) {
-			MinerData helper = new MinerData(context);
-			helper.putSocket(helper.getWritableDatabase(),name,protocol,addr,openingTimes.get(protocol+addr),new Date());
-			helper.close();
+			
+			//MinerData helper = new MinerData(context);
+			//helper.putSocket(helper.getWritableDatabase(),name,protocol,addr,openingTimes.get(protocol+addr),new Date());
+			//helper.close();
+			
+			Intent intent = new Intent(WriteCache.CACHE_SOCKET);
+			intent.putExtra(WriteCache.SOCKET_NAME, name);
+			intent.putExtra(WriteCache.SOCKET_PROTOCOL, protocol);
+			intent.putExtra(WriteCache.SOCKET_ADDRESS, addr);
+			intent.putExtra(WriteCache.SOCKET_OPENED, MinerData.df.format(openingTimes.get(protocol+addr)));
+			intent.putExtra(WriteCache.SOCKET_CLOSED, MinerData.df.format(new Date()));
+			intent.putExtra(WriteCache.SOCKET_DAY, MinerData.dayGetter.format(openingTimes.get(protocol+addr)));
+			LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+			
 			sockets.get(protocol).remove(addr);
 			//openingTimes.remove(protocol+addr);
 			updated = true;

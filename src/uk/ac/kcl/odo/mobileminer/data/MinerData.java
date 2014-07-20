@@ -107,30 +107,35 @@ public class MinerData extends SQLiteOpenHelper {
 		
 	}
 
-	public void putSocket(SQLiteDatabase db, String proc, String prot, String addr, Date opened, Date closed) {
+	public static ContentValues getSocketValues(String proc, String prot, String addr, String opened, String closed, String day) {
 		String[] chunks;
 		ContentValues values = new ContentValues();
+		
+		values.put(SocketTable.COLUMN_NAME_PROCESS,proc);
 		values.put(SocketTable.COLUMN_NAME_PROCESS,proc);
 		values.put(SocketTable.COLUMN_NAME_PROTOCOL,prot);
 		chunks = addr.split(":");
 		values.put(SocketTable.COLUMN_NAME_IP,chunks[0]);
 		values.put(SocketTable.COLUMN_NAME_PORT,chunks[1]);
-		values.put(SocketTable.COLUMN_NAME_OPENED,df.format(opened));
-		values.put(SocketTable.COLUMN_NAME_CLOSED,df.format(closed));
-		values.put(SocketTable.COLUMN_NAME_DAY,dayGetter.format(opened));
-		putRow(db,SocketTable.TABLE_NAME,values);
+		values.put(SocketTable.COLUMN_NAME_OPENED,opened);
+		values.put(SocketTable.COLUMN_NAME_CLOSED,closed);
+		values.put(SocketTable.COLUMN_NAME_DAY,day);
+		
+		return values;
+		
 	}
-
-	public void putGSMCell(SQLiteDatabase db, MinerLocation location, Date time) {
+	
+	public static ContentValues getGSMCellValues(String mcc, String mnc, String lac, String cellid, String strength, String time, String day) {
 		ContentValues values = new ContentValues();
-		values.put(GSMCellTable.COLUMN_NAME_MCC,location.getMcc());
-		values.put(GSMCellTable.COLUMN_NAME_MNC,location.getMnc());
-		values.put(GSMCellTable.COLUMN_NAME_LAC,location.getLac());
-		values.put(GSMCellTable.COLUMN_NAME_CELLID,location.getId());
-		values.put(GSMCellTable.COLUMN_NAME_STRENGTH,location.getStrength());
-		values.put(GSMCellTable.COLUMN_NAME_TIME,df.format(time));
-		values.put(SocketTable.COLUMN_NAME_DAY,dayGetter.format(time));
-		putRow(db,GSMCellTable.TABLE_NAME,values);
+		
+		values.put(GSMCellTable.COLUMN_NAME_MCC,mcc);
+		values.put(GSMCellTable.COLUMN_NAME_MNC,mnc);
+		values.put(GSMCellTable.COLUMN_NAME_LAC,lac);
+		values.put(GSMCellTable.COLUMN_NAME_CELLID,cellid);
+		values.put(GSMCellTable.COLUMN_NAME_STRENGTH,strength);
+		values.put(GSMCellTable.COLUMN_NAME_TIME,time);
+		values.put(SocketTable.COLUMN_NAME_DAY,day);		
+		return values;
 	}
 
 	public void putGSMLocation(SQLiteDatabase db, String Mcc, String Mnc, String Lac, String Id, String Lat, String Long,
@@ -149,33 +154,34 @@ public class MinerData extends SQLiteOpenHelper {
 	
 	public void putGSMCellPolygon(SQLiteDatabase db, String Mcc, String Mnc, String Lac, String Id, String Json, 
 		String Source,Date time) {
-			ContentValues values = new ContentValues();
-			values.put(GSMCellPolygonTable.COLUMN_NAME_MCC,Mcc);
-			values.put(GSMCellPolygonTable.COLUMN_NAME_MNC,Mnc);
-			values.put(GSMCellPolygonTable.COLUMN_NAME_LAC,Lac);
-			values.put(GSMCellPolygonTable.COLUMN_NAME_CELLID,Id);
-			values.put(GSMCellPolygonTable.COLUMN_NAME_JSON,Json);
-			values.put(GSMCellPolygonTable.COLUMN_NAME_SOURCE,Source);
-			values.put(GSMCellPolygonTable.COLUMN_NAME_TIME,df.format(time));
-			putRow(db,GSMCellPolygonTable.TABLE_NAME,values);
-		}
-	
-	public void putMobileNetwork(SQLiteDatabase db, TelephonyManager manager, Date time) {
 		ContentValues values = new ContentValues();
-		values.put(MobileNetworkTable.COLUMN_NAME_NETWORKNAME, manager.getNetworkOperatorName());
-		values.put(MobileNetworkTable.COLUMN_NAME_NETWORK, manager.getNetworkOperator());
-		values.put(MobileNetworkTable.COLUMN_NAME_TIME,df.format(time));
-		putRow(db,MobileNetworkTable.TABLE_NAME,values);	
+		values.put(GSMCellPolygonTable.COLUMN_NAME_MCC,Mcc);
+		values.put(GSMCellPolygonTable.COLUMN_NAME_MNC,Mnc);
+		values.put(GSMCellPolygonTable.COLUMN_NAME_LAC,Lac);
+		values.put(GSMCellPolygonTable.COLUMN_NAME_CELLID,Id);
+		values.put(GSMCellPolygonTable.COLUMN_NAME_JSON,Json);
+		values.put(GSMCellPolygonTable.COLUMN_NAME_SOURCE,Source);
+		values.put(GSMCellPolygonTable.COLUMN_NAME_TIME,df.format(time));
+		putRow(db,GSMCellPolygonTable.TABLE_NAME,values);
 	}
 	
-	public void putWifiNetwork(SQLiteDatabase db, WifiData data, Date time ) {
+	public static ContentValues getMobileNetworkValues(String name, String network, String time) {
 		ContentValues values = new ContentValues();
-		values.put(WifiNetworkTable.COLUMN_NAME_SSID,data.getSSID());
-		values.put(WifiNetworkTable.COLUMN_NAME_BSSID,data.getBSSID());
-		values.put(WifiNetworkTable.COLUMN_NAME_IP,data.getIP());
-		values.put(WifiNetworkTable.COLUMN_NAME_TIME,df.format(time));
-		values.put(SocketTable.COLUMN_NAME_DAY,dayGetter.format(time));
-		putRow(db,WifiNetworkTable.TABLE_NAME,values);
+		values.put(MobileNetworkTable.COLUMN_NAME_NETWORKNAME, name);
+		values.put(MobileNetworkTable.COLUMN_NAME_NETWORK, network);
+		values.put(MobileNetworkTable.COLUMN_NAME_TIME,time);
+		
+		return values;
+	}
+		
+	public static ContentValues getWiFiNetworkValues(String ssid, String bssid, String ip, String time, String day) {
+		ContentValues values = new ContentValues();
+		values.put(WifiNetworkTable.COLUMN_NAME_SSID,ssid);
+		values.put(WifiNetworkTable.COLUMN_NAME_BSSID,bssid);
+		values.put(WifiNetworkTable.COLUMN_NAME_IP,ip);
+		values.put(WifiNetworkTable.COLUMN_NAME_TIME,time);
+		values.put(SocketTable.COLUMN_NAME_DAY,day);
+		return values;
 	}
 	
 	public void putMinerLog(SQLiteDatabase db, Date start, Date stop) {

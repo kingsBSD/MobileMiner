@@ -13,6 +13,7 @@ import uk.ac.kcl.odo.mobileminer.ckan.CkanUpdater;
 import uk.ac.kcl.odo.mobileminer.ckan.CkanUrlGetter;
 import uk.ac.kcl.odo.mobileminer.data.MinerData;
 import uk.ac.kcl.odo.mobileminer.data.MinerData.WifiData;
+import uk.ac.kcl.odo.mobileminer.data.WriteCache;
 import uk.ac.kcl.odo.mobileminer.R;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -46,12 +47,13 @@ import android.widget.Toast;
 public class MinerService extends Service {
 
 	private Date startTime;
+	private WriteCache cache;
 	private ProcSocketSet socketSet;
 	private TrafficWatcher watcher;
 	private IntentFilter filter;
-	private Handler scanHandle,updateHandle;
+	private Handler cacheHandle,scanHandle,updateHandle;
 	private boolean scanning,updating;
-	private Runnable mineWorker,ckanWorker;
+	private Runnable cacheWorker,mineWorker,ckanWorker;
 	private Context context;
 	private String networkName;
 	//private String cellLocation;
@@ -139,10 +141,21 @@ public class MinerService extends Service {
 		public void onCellLocationChanged (CellLocation location) {
 			cells = new ArrayList<MinerLocation>();
 			if (location != null) {
-				cells.add(new MinerLocation(location,context));
-				MinerData helper = new MinerData(context);
-	 			helper.putGSMCell(helper.getWritableDatabase(), cells.get(0), new Date());
-	 			helper.close();
+				Date rightNow = new Date();
+				MinerLocation loc = new MinerLocation(location,context);
+				cells.add(loc);
+								
+				Intent intent = new Intent(WriteCache.CACHE_GSMCELL);
+				intent.putExtra(WriteCache.GSMCELL_MCC, loc.getMcc());
+				intent.putExtra(WriteCache.GSMCELL_MNC, loc.getMnc());
+				intent.putExtra(WriteCache.GSMCELL_LAC, loc.getLac());
+				intent.putExtra(WriteCache.GSMCELL_CELLID, loc.getId());
+				intent.putExtra(WriteCache.GSMCELL_STRENGTH, loc.getStrength());
+				intent.putExtra(WriteCache.GSMCELL_STRENGTH, MinerData.df.format(rightNow));
+				intent.putExtra(WriteCache.GSMCELL_STRENGTH, MinerData.dayGetter.format(rightNow));
+				LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+				
+				
 			}
 			cellBroadcast();
 			//Log.i("MinerService","CELL_LOCATION_CHANGED");
@@ -159,8 +172,10 @@ public class MinerService extends Service {
 		wirelessData = new WifiData();
 		cells = new ArrayList<MinerLocation>();
 		//cellIds = new ArrayList<String>();
+		cache = new WriteCache(this);
 		socketSet = new ProcSocketSet(this);
 		watcher = new TrafficWatcher(this);
+		cacheHandle = new Handler(); 
 		scanHandle = new Handler();
 		updateHandle = new Handler();
 		
@@ -170,6 +185,18 @@ public class MinerService extends Service {
 		filter.addAction("com.odo.kcl.mobileminer.stopmining");
 		registerReceiver(receiver, filter);
 	 
+		cacheWorker = new Runnable() {
+
+			@Override
+			public void run() {
+				cache.flush();
+				cacheHandle.postDelayed(this, 120000);
+			}
+			
+		};
+		
+		
+		
 		mineWorker = new Runnable() { // Check for new network sockets every half-second.
 			@Override
 			public void run() {
@@ -205,6 +232,9 @@ public class MinerService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		startTime = new Date();
+		
+		cacheHandle.post(cacheWorker);
+		
 		//Log.i("MinerService","started mining");
 		int phoneFlags;
 		
@@ -236,11 +266,13 @@ public class MinerService extends Service {
 	@Override
 	public void onDestroy() {
 		scanning = false;
+		updating = false;
 		MinerData helper = new MinerData(context);
 		helper.putMinerLog(helper.getWritableDatabase(), startTime, new Date());
 		helper.close();
 		//Log.i("MinerService","stopped mining");
 		unregisterReceiver(receiver);
+		cache.ShutDown();
 	    Toast.makeText(this, "Stopped Mining...", Toast.LENGTH_SHORT).show();
 	}
 	
@@ -254,7 +286,7 @@ public class MinerService extends Service {
 		Notification note = builder.build();
 		startForeground(23, note);
 	}
-	
+	Intent intent = new Intent(WriteCache.CACHE_GSMCELL);
 	private void connectivityChanged() {
 		String name = "None";
 		ConnectivityManager manager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -269,10 +301,15 @@ public class MinerService extends Service {
 				 		WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
 				 		name = wifiInfo.getSSID();
 				 		if (!networkName.equals(name)) {
+				 			Date rightNow = new Date();
 				 			wirelessData = new WifiData(wifiInfo);
-				 			MinerData helper = new MinerData(context);
-				 			helper.putWifiNetwork(helper.getWritableDatabase(), wirelessData, new Date());
-				 			helper.close();
+				 			Intent intent = new Intent(WriteCache.CACHE_WIFINETWORK);
+				 			intent.putExtra(WriteCache.WIFINETWORK_SSID,wirelessData.getSSID());
+				 			intent.putExtra(WriteCache.WIFINETWORK_BSSID,wirelessData.getBSSID());
+				 			intent.putExtra(WriteCache.WIFINETWORK_IP,wirelessData.getIP());
+				 			intent.putExtra(WriteCache.WIFINETWORK_TIME,MinerData.df.format(rightNow));
+				 			intent.putExtra(WriteCache.WIFINETWORK_TIME,MinerData.dayGetter.format(rightNow));
+				 			LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 							networkName = name; networkBroadcast();	
 				 		}
 				 		startScan(); // Always scan when we've got WIFI.
@@ -296,12 +333,17 @@ public class MinerService extends Service {
 				 		TelephonyManager telephonyManager = ((TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE));
 				 		name = telephonyManager.getNetworkOperatorName();
 				 		if (!networkName.equals(name)) {
-				 			MinerData helper = new MinerData(context);
-				 			helper.putMobileNetwork(helper.getWritableDatabase(), telephonyManager, new Date());
-				 			helper.close();
-							networkName = name; networkBroadcast();	
+				 					
+				 			Intent intent = new Intent(WriteCache.CACHE_MOBILENETWORK);
+				 			intent.putExtra(WriteCache.MOBILENETWORK_NAME,name);
+				 			intent.putExtra(WriteCache.MOBILENETWORK_NETWORK,telephonyManager.getNetworkOperator());
+				 			intent.putExtra(WriteCache.MOBILENETWORK_TIME,MinerData.df.format(new Date()));
+				 			LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
+							networkName = name;
+							networkBroadcast();	
 				 		}
-				 		//startScan();
+				 		startScan();
 				 		//Log.i("MinerService","CONNECTED MOBILE: "+name);
 				 		break;
 				 	default:
@@ -311,10 +353,12 @@ public class MinerService extends Service {
 			 }
 			 else {
 				 scanning = false;
+				 updating = false;
 			 }	 
 		}
 		else {
 			 scanning = false;
+			 updating = false;
 			 networkName = "null";
 		}
 		
