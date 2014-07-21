@@ -1,3 +1,4 @@
+// Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
 package uk.ac.kcl.odo.mobileminer.ckan;
 
 import java.io.IOException;
@@ -78,7 +79,6 @@ public class CkanUpdater extends AsyncTask {
 			tableName = null;
 			for (Field tableField: tableClassFields) {
 				thisName = tableField.getName();
-				//Log.i("MobileMiner",thisName);
 				try {
 					thisValue = (String) tableField.get(table);
 				}
@@ -90,7 +90,6 @@ public class CkanUpdater extends AsyncTask {
 				}
 				
 				if (thisValue != null && !thisName.startsWith("_")) {
-					//Log.i("MobileMiner",thisValue);
 					if ("TABLE_NAME".equals(thisName)) {
 						tableName = thisValue;
 					}
@@ -101,126 +100,120 @@ public class CkanUpdater extends AsyncTask {
 			
 			}
 			
-			if (true) {
-				things = 0;
-				allTheThings = new JSONArray();
-				retColumns = tableFields.toArray(new String[tableFields.size()]);
-				dateKey = tableName+"update";
-				date = helper.getBookKeepingDate(dbReader,dateKey);
-				rightNow = new Date();
-				if (date == null) {
-					c = dbReader.query(tableName,retColumns,null,null,null,null,null);
-				}
-				else {
-					c = dbReader.query(tableName,retColumns,timeStamps.get(tableName)+" >= ? ",new String[]{df.format(date)},null,null,null);
-				}
+
+			things = 0;
+			allTheThings = new JSONArray();
+			retColumns = tableFields.toArray(new String[tableFields.size()]);
+			dateKey = tableName+"update";
+			date = helper.getBookKeepingDate(dbReader,dateKey);
+			rightNow = new Date();
+			if (date == null) {
+				c = dbReader.query(tableName,retColumns,null,null,null,null,null);
+			}
+			else {
+				c = dbReader.query(tableName,retColumns,timeStamps.get(tableName)+" >= ? ",new String[]{df.format(date)},null,null,null);
+			}
 				
-				c.moveToFirst();
-				searching = true;
-				while (searching) {
-					searching = !c.isLast();
-					try {
-						thisItem = new JSONObject();
-						for (String thisCol: retColumns) {
-							thisItem.put(thisCol, c.getString(c.getColumnIndex(thisCol)));
-						}
-						allTheThings.put(thisItem);
-						things += 1;
+			c.moveToFirst();
+			searching = true;
+			while (searching) {
+				searching = !c.isLast();
+				try {
+					thisItem = new JSONObject();
+					for (String thisCol: retColumns) {
+						thisItem.put(thisCol, c.getString(c.getColumnIndex(thisCol)));
 					}
-					catch (Exception e) {
-						//Log.i("MobileMiner","Cursor exception.");
-						searching = false;
-					}
-					c.moveToNext();
+					allTheThings.put(thisItem);
+					things += 1;
 				}
+				catch (Exception e) {
+					//Log.i("MobileMiner","Cursor exception.");
+					searching = false;
+				}
+				c.moveToNext();
+			}
 				
 				//if (things == 0) Log.i("MobileMiner","No new records.");
 				
-				if (things > 0) {
-					jsonDump = new JSONObject();
-					try {
-						jsonDump.put("uid", uid);
-						jsonDump.put("table",tableName);
-						jsonDump.put("records", allTheThings);
+			if (things > 0) {
+				jsonDump = new JSONObject();
+				try {
+					jsonDump.put("uid", uid);
+					jsonDump.put("table",tableName);
+					jsonDump.put("records", allTheThings);
 						//Log.i("MobileMiner",jsonDump.toString());
-					}
-					catch (JSONException e) {
-						jsonDump = null;
-						//Log.i("MobileMiner","JSON exception");
-					}
+				}
+				catch (JSONException e) {
+					jsonDump = null;
+					//Log.i("MobileMiner","JSON exception");
+				}
 					
-					post = new HttpPost(url+"/api/action/miner_update");
-					post.setHeader("content-type", "application/x-www-form-urlencoded");
+				post = new HttpPost(url+"/api/action/miner_update");
+				post.setHeader("content-type", "application/x-www-form-urlencoded");
 					
-					if (jsonDump != null) {
-						try {
-							post.setEntity(new ByteArrayEntity(jsonDump.toString().getBytes("UTF8")));
-						}
-						catch (UnsupportedEncodingException e) {
-							post = null;
-						}
+				if (jsonDump != null) {
+					try {
+						post.setEntity(new ByteArrayEntity(jsonDump.toString().getBytes("UTF8")));
 					}
+					catch (UnsupportedEncodingException e) {
+						post = null;
+					}
+				}
 					
-					response = null;
-					if (post != null) {
-						try {
-							//Log.i("MobileMiner","Making Request to "+url);
-							response = EntityUtils.toString(client.execute(post).getEntity());
-						}
-						catch (ParseException e) {
-							helper.deleteBookKeepingKey(dbWriter, "ckanurl");
+				response = null;
+				if (post != null) {
+					try {
+						//Log.i("MobileMiner","Making Request to "+url);
+						response = EntityUtils.toString(client.execute(post).getEntity());
+					}
+					catch (ParseException e) {
+						helper.deleteBookKeepingKey(dbWriter, "ckanurl");
+						return null;
+					}
+					catch (ClientProtocolException e) {
+						helper.deleteBookKeepingKey(dbWriter, "ckanurl");
+						return null;
+					}
+					catch (IOException e) {
 							return null;
-						}
-						catch (ClientProtocolException e) {
-							helper.deleteBookKeepingKey(dbWriter, "ckanurl");
-							return null;
-						}
-						catch (IOException e) {
-							return null;
-						}	
-					}
+					}	
+				}
 					
-					if (response != null) {
-						//Log.i("MobileMiner",response);
-						try {
-							jsonResponse = new JSONObject(response);
+				if (response != null) {
+					//Log.i("MobileMiner",response);
+					try {
+						jsonResponse = new JSONObject(response);
 							
-							if (jsonResponse.getBoolean("success")) {
-								helper.setBookKeepingDate(dbWriter, dateKey, rightNow);
+						if (jsonResponse.getBoolean("success")) {
+							helper.setBookKeepingDate(dbWriter, dateKey, rightNow);
+						}
+						else {
+							error = jsonResponse.getJSONObject("error");
+							if (error.getString("message").equals("No such user.")) {
+								//Log.i("MobileMiner","No such user.");
+								helper.deleteBookKeepingKey(dbWriter, "ckanuid");
+								return null;				
 							}
-							else {
-								error = jsonResponse.getJSONObject("error");
-								if (error.getString("message").equals("No such user.")) {
-									//Log.i("MobileMiner","No such user.");
-									helper.deleteBookKeepingKey(dbWriter, "ckanuid");
-									return null;				
-								}
-							}
-							
-							
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							//Log.i("MobileMiner","No response!");
-							e.printStackTrace();
 						}
+							
+							
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						//Log.i("MobileMiner","No response!");
+						e.printStackTrace();
+					}
 						
 						//return Integer.toString(new JSONObject(response).getInt("result"));
 						
-					}
-					
-					
-					
 				}
-				
-				
-
+					
 					
 					
 			}
 				
+				
 
-			
-			
+					
 		}
 		
 		

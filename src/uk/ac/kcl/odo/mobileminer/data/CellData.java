@@ -11,8 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.os.Environment;
-import android.util.Log;
-
+//import android.util.Log;
 
 public class CellData extends SQLiteOpenHelper {
 
@@ -75,10 +74,10 @@ public class CellData extends SQLiteOpenHelper {
 				int len;
 			    try {
 					while ((len = sourceStream.read(buffer)) > 0) destStream.write(buffer, 0, len);
-					Log.i("MinerData","Writing data..."); 			
+					//Log.i("MinerData","Writing data..."); 			
 				} 
 			    catch (IOException e) {
-			    	 Log.i("MinerData","Can't copy source stream.");
+			    	 //Log.i("MinerData","Can't copy source stream.");
 				}
 			    
 				try {

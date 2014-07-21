@@ -23,7 +23,7 @@ public final class MinerTables {
 		public static final String COLUMN_NAME_CLOSED = "closed";
 		public static final String COLUMN_NAME_DAY = "day";
 	}
-	
+			
 	static final String CREATE_SOCKET_TABLE =
 		"CREATE TABLE " + SocketTable.TABLE_NAME + " (" +
 		INTEGER_PRIMARY_KEY +
@@ -36,6 +36,26 @@ public final class MinerTables {
 		SocketTable.COLUMN_NAME_DAY + " TEXT );";
 	
 	static final String SOCKET_TABLE_TIMESTAMP = SocketTable.COLUMN_NAME_CLOSED;
+	
+	public static abstract class GeoIpTable implements BaseColumns {
+		public static final String TABLE_NAME = "geoip";
+		public static final String COLUMN_NAME_IP = "ip";
+		public static final String COLUMN_NAME_COUNTRY = "country";
+		public static final String COLUMN_NAME_REGION = "region";
+		public static final String COLUMN_NAME_CITY = "city";
+		public static final String COLUMN_NAME_LAT = "lat";
+		public static final String COLUMN_NAME_LONG = "long";
+		
+	}
+	
+	static final String CREATE_GEOIP_TABLE =
+		"CREATE TABLE " + GeoIpTable.TABLE_NAME + " (" +
+		GeoIpTable.COLUMN_NAME_IP + " TEXT, " +
+		GeoIpTable.COLUMN_NAME_COUNTRY + " TEXT, " +
+		GeoIpTable.COLUMN_NAME_REGION + " TEXT, " +
+		GeoIpTable.COLUMN_NAME_CITY + " TEXT, " +
+		GeoIpTable.COLUMN_NAME_LAT + " TEXT, " +
+		GeoIpTable.COLUMN_NAME_LONG + " TEXT );";
 	
 	public static abstract class GSMCellTable implements BaseColumns {
 		public static final String TABLE_NAME = "gsmcell";
@@ -147,6 +167,21 @@ public final class MinerTables {
 	
 	static final String WIFINETWORK_TABLE_TIMESTAMP = WifiNetworkTable.COLUMN_NAME_TIME;
 	
+	public static abstract class WifiGeoDataTable implements BaseColumns {
+		public static final String TABLE_NAME = "wifigeodata";
+		public static final String COLUMN_NAME_SSID = "ssid";
+		public static final String COLUMN_NAME_BSSID = "bssid";
+		public static final String COLUMN_NAME_LAT = "lat";
+		public static final String COLUMN_NAME_LONG = "long";
+	}
+	
+	public static final String CREATE_WIFIGEODATA_TABLE =
+		"CREATE TABLE " + WifiGeoDataTable.TABLE_NAME + " (" +
+		WifiGeoDataTable.COLUMN_NAME_SSID + " TEXT, " +
+		WifiGeoDataTable.COLUMN_NAME_BSSID + " TEXT, " +
+		WifiGeoDataTable.COLUMN_NAME_LAT + " TEXT, " +
+		WifiGeoDataTable.COLUMN_NAME_LONG + " TEXT );";
+		
 	public static abstract class MinerLogTable implements BaseColumns {
 		public static final String TABLE_NAME = "minerlog";
 		public static final String COLUMN_NAME_START = "start";
@@ -220,16 +255,18 @@ public final class MinerTables {
 		BookKeepingTable.COLUMN_NAME_VALUE + " TEXT );";
 	
 	public static final String[] CreateTables = {
-		MinerTables.CREATE_SOCKET_TABLE,
-		MinerTables.CREATE_GSMCELL_TABLE,
-		MinerTables.CREATE_GSMLOCATION_TABLE,
-		MinerTables.CREATE_GSMCELLPOLYGON_TABLE,
-		MinerTables.CREATE_MOBILENETWORK_TABLE,
-		MinerTables.CREATE_WIFINETWORK_TABLE,
-		MinerTables.CREATE_MINERLOG_TABLE,
-		MinerTables.CREATE_NOTIFICATION_TABLE,
-		MinerTables.CREATE_NETWORKTRAFFIC_TABLE,
-		MinerTables.CREATE_BOOKKEEPING_TABLE};
+		CREATE_SOCKET_TABLE,
+		CREATE_GEOIP_TABLE,
+		CREATE_GSMCELL_TABLE,
+		CREATE_GSMLOCATION_TABLE,
+		CREATE_GSMCELLPOLYGON_TABLE,
+		CREATE_MOBILENETWORK_TABLE,
+		CREATE_WIFINETWORK_TABLE,
+		CREATE_WIFIGEODATA_TABLE,
+		CREATE_MINERLOG_TABLE,
+		CREATE_NOTIFICATION_TABLE,
+		CREATE_NETWORKTRAFFIC_TABLE,
+		CREATE_BOOKKEEPING_TABLE};
 	
 	public static final String[] ExpirableTables = {
 		SocketTable.TABLE_NAME, GSMCellTable.TABLE_NAME, GSMLocationTable.TABLE_NAME, GSMCellPolygonTable.TABLE_NAME,

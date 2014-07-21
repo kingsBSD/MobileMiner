@@ -1,10 +1,10 @@
+// Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
 package uk.ac.kcl.odo.mobileminer.ckan;
 
 import java.util.concurrent.ExecutionException;
 
 import uk.ac.kcl.odo.mobileminer.data.MinerData;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 //import android.util.Log;
 

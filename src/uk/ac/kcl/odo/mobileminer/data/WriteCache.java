@@ -1,3 +1,4 @@
+// Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
 package uk.ac.kcl.odo.mobileminer.data;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -16,7 +17,7 @@ import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
+//import android.util.Log;
 
 public class WriteCache {
 	private Context context;
@@ -149,7 +150,7 @@ public class WriteCache {
 						intent.getStringExtra(SOCKET_ADDRESS),
 						intent.getStringExtra(SOCKET_OPENED), intent.getStringExtra(SOCKET_CLOSED),
 						intent.getStringExtra(SOCKET_DAY)));
-					Log.i("MinerCache","Socket received...");
+					//Log.i("MinerCache","Socket received...");
 					break;
 				case CACHE_GSMCELL:
 					gsmCellQueue.offer(new CachedGSMCell(intent.getStringExtra(GSMCELL_MCC),
@@ -159,13 +160,13 @@ public class WriteCache {
 						intent.getStringExtra(GSMCELL_STRENGTH),
 						intent.getStringExtra(GSMCELL_TIME),
 						intent.getStringExtra(GSMCELL_DAY)));
-					Log.i("MinerCache","GSM cell received...");
+					//Log.i("MinerCache","GSM cell received...");
 					break;
 				case CACHE_MOBILENETWORK:
 					mobileNetworkQueue.offer(new CachedMobileNetwork(intent.getStringExtra(MOBILENETWORK_NAME),
 						intent.getStringExtra(MOBILENETWORK_NETWORK),
 						intent.getStringExtra(MOBILENETWORK_TIME)));
-					Log.i("MinerCache","Mobile network received...");
+					//Log.i("MinerCache","Mobile network received...");
 					break;
 				case CACHE_WIFINETWORK:
 					wifiNetworkQueue.offer(new CachedWiFiNetwork(intent.getStringExtra(WIFINETWORK_SSID),
@@ -173,11 +174,12 @@ public class WriteCache {
 						intent.getStringExtra(WIFINETWORK_IP),
 						intent.getStringExtra(WIFINETWORK_TIME),
 						intent.getStringExtra(WIFINETWORK_DAY)));
-					Log.i("MinerCache","WiFi network received...");
+					//Log.i("MinerCache","WiFi network received...")
 					break;
 				case CACHE_NOTIFICATION:
 					notificationQueue.offer(new CachedNotification(intent.getStringExtra(NOTIFICATION_NAME),
 						intent.getStringExtra(NOTIFICATION_TIME),intent.getStringExtra(NOTIFICATION_DAY)));
+					//Log.i("MinerCache","Notification received...")
 					break;
 				case CACHE_TRAFFIC:
 					trafficQueue.offer(new CachedTraffic(intent.getStringExtra(TRAFFIC_PACKAGE),
@@ -187,6 +189,7 @@ public class WriteCache {
 					intent.getBooleanExtra(TRAFFIC_TX,false),
 					intent.getLongExtra(TRAFFIC_BYTES,0)));
 					break;
+					//Log.i("MinerCache","Network traffic received...")
 			}
 			
 		}
@@ -252,11 +255,11 @@ public class WriteCache {
 				}
 				
 				db.setTransactionSuccessful();
-				Log.i("MinerCache","Flushed...");
+				//Log.i("MinerCache","Flushed...");
 			
 			}
 			catch (SQLiteException e) {
-				Log.i("MinerCache","SQLite error!");
+				//Log.i("MinerCache","SQLite error!");
 			}
 			finally {
 				db.endTransaction();

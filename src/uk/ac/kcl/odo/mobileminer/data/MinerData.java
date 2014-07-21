@@ -9,11 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import uk.ac.kcl.odo.mobileminer.cells.CountedCell;
-import uk.ac.kcl.odo.mobileminer.cells.MinerLocation;
 import uk.ac.kcl.odo.mobileminer.data.MinerTables.BookKeepingTable;
 import uk.ac.kcl.odo.mobileminer.data.MinerTables.GSMCellPolygonTable;
 import uk.ac.kcl.odo.mobileminer.data.MinerTables.GSMCellTable;
@@ -31,9 +28,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.wifi.WifiInfo;
-import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.util.Log;
+//import android.util.Log;
 
 public class MinerData extends SQLiteOpenHelper {
 

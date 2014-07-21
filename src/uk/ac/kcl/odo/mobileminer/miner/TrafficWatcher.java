@@ -106,6 +106,7 @@ public class TrafficWatcher {
 		intent.putExtra(WriteCache.TRAFFIC_START,MinerData.df.format(start));
 		intent.putExtra(WriteCache.TRAFFIC_STOP,MinerData.df.format(stop));
 		intent.putExtra(WriteCache.TRAFFIC_DAY,MinerData.dayGetter.format(start));
+		intent.putExtra(WriteCache.TRAFFIC_TX,tx);
 		intent.putExtra(WriteCache.TRAFFIC_BYTES,delta);
 		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 		

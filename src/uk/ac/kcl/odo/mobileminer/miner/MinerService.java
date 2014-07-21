@@ -37,6 +37,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.widget.Toast;
 //import android.util.Log;
 
@@ -314,7 +315,8 @@ public class MinerService extends Service {
 				 		}
 				 		startScan(); // Always scan when we've got WIFI.
 				 		startUpdating();
-				 		//Log.i("MinerService","CONNECTED: WIFI");
+				 		Log.i("MinerService","CONNECTED: WIFI");
+				 		Log.i("MinerService",wirelessData.getSSID());
 				 		break;
 				 	case ConnectivityManager.TYPE_MOBILE:
 						//wifiData = false;
