@@ -308,7 +308,7 @@ public class MinerService extends Service {
 				 			intent.putExtra(WriteCache.WIFINETWORK_BSSID,wirelessData.getBSSID());
 				 			intent.putExtra(WriteCache.WIFINETWORK_IP,wirelessData.getIP());
 				 			intent.putExtra(WriteCache.WIFINETWORK_TIME,MinerData.df.format(rightNow));
-				 			intent.putExtra(WriteCache.WIFINETWORK_TIME,MinerData.dayGetter.format(rightNow));
+				 			intent.putExtra(WriteCache.WIFINETWORK_DAY,MinerData.dayGetter.format(rightNow));
 				 			LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 							networkName = name; networkBroadcast();	
 				 		}

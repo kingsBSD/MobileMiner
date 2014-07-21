@@ -1,9 +1,11 @@
 package uk.ac.kcl.odo.mobileminer.data;
 
-import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
 import uk.ac.kcl.odo.mobileminer.data.MinerTables.GSMCellTable;
 import uk.ac.kcl.odo.mobileminer.data.MinerTables.MobileNetworkTable;
+import uk.ac.kcl.odo.mobileminer.data.MinerTables.NetworkTrafficTable;
+import uk.ac.kcl.odo.mobileminer.data.MinerTables.NotificationTable;
 import uk.ac.kcl.odo.mobileminer.data.MinerTables.SocketTable;
 import uk.ac.kcl.odo.mobileminer.data.MinerTables.WifiNetworkTable;
 import android.content.BroadcastReceiver;
@@ -15,7 +17,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-
 
 public class WriteCache {
 	private Context context;
@@ -49,12 +50,27 @@ public class WriteCache {
 	public final static String WIFINETWORK_TIME = "wifinetwork_time";
 	public final static String WIFINETWORK_DAY = "wifinetwork_day";
 	
-	private final String[] filters = {CACHE_SOCKET,CACHE_GSMCELL,CACHE_MOBILENETWORK,CACHE_WIFINETWORK};
+	public final static String CACHE_NOTIFICATION = "uk.ac.kcl.odo.mobileminer.notification";
+	public final static String NOTIFICATION_NAME = "notification_name";
+	public final static String NOTIFICATION_TIME = "notification_time";
+	public final static String NOTIFICATION_DAY = "notification_day";
+	
+	public final static String CACHE_TRAFFIC = "uk.ac.kcl.odo.mobileminer.traffic";
+	public final static String TRAFFIC_PACKAGE = "traffic_package";
+	public final static String TRAFFIC_TX = "traffic_tx";
+	public final static String TRAFFIC_START = "traffic_start";
+	public final static String TRAFFIC_STOP = "traffic_stop";
+	public final static String TRAFFIC_DAY = "traffic_day";
+	public final static String TRAFFIC_BYTES = "traffic_bytes";
+	
+	private final String[] filters = {CACHE_SOCKET,CACHE_GSMCELL,CACHE_MOBILENETWORK,CACHE_WIFINETWORK,CACHE_NOTIFICATION,CACHE_TRAFFIC};
 	
 	private ConcurrentLinkedQueue<CachedSocket> socketQueue;
 	private ConcurrentLinkedQueue<CachedGSMCell> gsmCellQueue;
 	private ConcurrentLinkedQueue<CachedMobileNetwork> mobileNetworkQueue;
 	private ConcurrentLinkedQueue<CachedWiFiNetwork> wifiNetworkQueue;
+	private ConcurrentLinkedQueue<CachedNotification> notificationQueue;
+	private ConcurrentLinkedQueue<CachedTraffic> trafficQueue;
 	
 	
 	private class CachedSocket {
@@ -97,6 +113,27 @@ public class WriteCache {
 		}
 	}
 	
+	private class CachedNotification {
+		String name, time, day;
+		CachedNotification(String nm, String tm, String dy) {
+			name = nm; time = tm; day = dy;
+		}
+		private ContentValues getValues() {
+			return MinerData.getNotifcationValues(name,time,day);			
+		}
+	}
+	
+	private class CachedTraffic {
+		String name, start, stop, day;
+		boolean tx;
+		long bytes;
+		CachedTraffic(String nm, String st, String sp, String dy, boolean trans, long by) {
+			name = nm; start = st; stop = sp; day = dy; tx = trans; bytes = by;
+		}
+		private ContentValues getValues() {
+			return MinerData.getTrafficValues(tx, name, start, stop, day, bytes);
+		}
+	}
 	
 	private final BroadcastReceiver receiver = new BroadcastReceiver() {
 
@@ -128,7 +165,7 @@ public class WriteCache {
 					mobileNetworkQueue.offer(new CachedMobileNetwork(intent.getStringExtra(MOBILENETWORK_NAME),
 						intent.getStringExtra(MOBILENETWORK_NETWORK),
 						intent.getStringExtra(MOBILENETWORK_TIME)));
-					Log.i("MinerCache","WiFi network received...");
+					Log.i("MinerCache","Mobile network received...");
 					break;
 				case CACHE_WIFINETWORK:
 					wifiNetworkQueue.offer(new CachedWiFiNetwork(intent.getStringExtra(WIFINETWORK_SSID),
@@ -136,10 +173,21 @@ public class WriteCache {
 						intent.getStringExtra(WIFINETWORK_IP),
 						intent.getStringExtra(WIFINETWORK_TIME),
 						intent.getStringExtra(WIFINETWORK_DAY)));
+					Log.i("MinerCache","WiFi network received...");
 					break;
-					
+				case CACHE_NOTIFICATION:
+					notificationQueue.offer(new CachedNotification(intent.getStringExtra(NOTIFICATION_NAME),
+						intent.getStringExtra(NOTIFICATION_TIME),intent.getStringExtra(NOTIFICATION_DAY)));
+					break;
+				case CACHE_TRAFFIC:
+					trafficQueue.offer(new CachedTraffic(intent.getStringExtra(TRAFFIC_PACKAGE),
+					intent.getStringExtra(TRAFFIC_START),
+					intent.getStringExtra(TRAFFIC_STOP),
+					intent.getStringExtra(TRAFFIC_DAY),	
+					intent.getBooleanExtra(TRAFFIC_TX,false),
+					intent.getLongExtra(TRAFFIC_BYTES,0)));
+					break;
 			}
-			
 			
 		}
 		
@@ -157,6 +205,8 @@ public class WriteCache {
 		gsmCellQueue = new ConcurrentLinkedQueue<CachedGSMCell>(); 
 		mobileNetworkQueue = new ConcurrentLinkedQueue<CachedMobileNetwork>();
 		wifiNetworkQueue = new ConcurrentLinkedQueue<CachedWiFiNetwork>();
+		notificationQueue = new ConcurrentLinkedQueue<CachedNotification>();
+		trafficQueue = new ConcurrentLinkedQueue<CachedTraffic>();
 		
 		for (String filter: filters) {
 			manager.registerReceiver(receiver,new IntentFilter(filter));
@@ -166,8 +216,8 @@ public class WriteCache {
 	
 	public void flush() {
 		
-		
-		int queueTotal = socketQueue.size() + gsmCellQueue.size() + mobileNetworkQueue.size();
+		int queueTotal = socketQueue.size() + gsmCellQueue.size() + mobileNetworkQueue.size() + wifiNetworkQueue.size() +
+			notificationQueue.size() + trafficQueue.size();
 				
 		if (queueTotal > 0) {
 		
@@ -193,6 +243,14 @@ public class WriteCache {
 					db.insert(WifiNetworkTable.TABLE_NAME, null, wifiNetworkQueue.poll().getValues());
 				}
 				
+				while (notificationQueue.size() != 0) {
+					db.insert(NotificationTable.TABLE_NAME, null, notificationQueue.poll().getValues());
+				}
+				
+				while (trafficQueue.size() != 0) {
+					db.insert(NetworkTrafficTable.TABLE_NAME, null, trafficQueue.poll().getValues());
+				}
+				
 				db.setTransactionSuccessful();
 				Log.i("MinerCache","Flushed...");
 			
@@ -211,6 +269,7 @@ public class WriteCache {
 	}
 	
 	public void ShutDown() {
+		flush();
 		LocalBroadcastManager manager;
 		manager = LocalBroadcastManager.getInstance(context);
 		manager.unregisterReceiver(receiver);

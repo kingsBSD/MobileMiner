@@ -6,13 +6,16 @@ import java.util.Date;
 import java.util.List;
 
 import uk.ac.kcl.odo.mobileminer.data.MinerData;
+import uk.ac.kcl.odo.mobileminer.data.WriteCache;
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ServiceInfo;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
@@ -60,13 +63,13 @@ public class NotificationService extends AccessibilityService {
 	}
 	
 	@Override
-	public void onAccessibilityEvent(AccessibilityEvent event) {		
-		MinerData helper = new MinerData(this);
-		helper.putNotification(helper.getWritableDatabase(), (String) event.getPackageName(),new Date());
-		// None of our business...
-//		helper.putNotification(helper.getWritableDatabase(), (String) event.getPackageName(),
-//			TextUtils.join(" ", event.getText()),new Date());
-		helper.close();
+	public void onAccessibilityEvent(AccessibilityEvent event) {
+		Date rightNow = new Date();
+		Intent intent = new Intent(WriteCache.CACHE_NOTIFICATION);
+		intent.putExtra(WriteCache.NOTIFICATION_NAME, (String) event.getPackageName());
+		intent.putExtra(WriteCache.NOTIFICATION_TIME, MinerData.df.format(rightNow));
+		intent.putExtra(WriteCache.NOTIFICATION_DAY, MinerData.dayGetter.format(rightNow));
+		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);			
 	}
 
 	@Override

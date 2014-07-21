@@ -7,16 +7,19 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import uk.ac.kcl.odo.mobileminer.data.MinerData;
+import uk.ac.kcl.odo.mobileminer.data.WriteCache;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.database.sqlite.SQLiteDatabase;
+//import android.database.sqlite.SQLiteDatabase;
 import android.net.TrafficStats;
 //import android.util.Log;
+import android.support.v4.content.LocalBroadcastManager;
 
 public class TrafficWatcher {
-	MinerData helper;
+	Context context;
 	ArrayList<Integer> uids;
 	ConcurrentHashMap<Integer,String> namesByUid;
 	ConcurrentHashMap<Integer,Long> trafficTxByUid;
@@ -29,7 +32,7 @@ public class TrafficWatcher {
 	ConcurrentHashMap<Integer,Long> rxBytesByUid;
 	
 	public TrafficWatcher(Context ctx) {
-		helper = new MinerData(ctx);
+		
 		uids = new ArrayList<Integer>();
 		namesByUid = new ConcurrentHashMap<Integer,String>();
 		trafficTxByUid = new ConcurrentHashMap<Integer,Long>();
@@ -79,7 +82,7 @@ public class TrafficWatcher {
 		
 	}
 	
-	private void close(SQLiteDatabase db, boolean tx, Integer uid, Date stop) {
+	private void close(boolean tx, Integer uid, Date stop) {
 		long delta,bytes;
 		Date start;
 
@@ -97,7 +100,14 @@ public class TrafficWatcher {
 		}
 		
 		//Log.i("TrafficWatcher","Writing...");
-		helper.putNetworkTraffic(db, tx, namesByUid.get(uid), start, stop, delta);
+		
+		Intent intent = new Intent(WriteCache.CACHE_TRAFFIC);
+		intent.putExtra(WriteCache.TRAFFIC_PACKAGE,namesByUid.get(uid));
+		intent.putExtra(WriteCache.TRAFFIC_START,MinerData.df.format(start));
+		intent.putExtra(WriteCache.TRAFFIC_STOP,MinerData.df.format(stop));
+		intent.putExtra(WriteCache.TRAFFIC_DAY,MinerData.dayGetter.format(start));
+		intent.putExtra(WriteCache.TRAFFIC_BYTES,delta);
+		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 		
 	}
 	
@@ -155,27 +165,23 @@ public class TrafficWatcher {
 		if (closedTx.size() + closedRx.size() > 0) {
 			//Log.i("TrafficWatcher","Closing...");
 			closeTime = new Date();
-			SQLiteDatabase db = helper.getWritableDatabase();
 			for (Integer uid: closedTx) {
-				close(db,true,uid,closeTime);
+				close(true,uid,closeTime);
 			}
 			for (Integer uid: closedRx) {
-				close(db,false,uid,closeTime);
+				close(false,uid,closeTime);
 			}
-			db.close();
 		}
 	}
 	
 	public void closeAll() {
 		Date closeTime = new Date();
-		SQLiteDatabase db = helper.getWritableDatabase();
 		for (Integer uid: txStartByUid.keySet()) {
-			close(db,true,uid,closeTime);
+			close(true,uid,closeTime);
 		}
 		for (Integer uid: rxStartByUid.keySet()) {
-			close(db,false,uid,closeTime);
+			close(false,uid,closeTime);
 		}
-		db.close();
 		
 	}
 	

@@ -180,7 +180,7 @@ public class MinerData extends SQLiteOpenHelper {
 		values.put(WifiNetworkTable.COLUMN_NAME_BSSID,bssid);
 		values.put(WifiNetworkTable.COLUMN_NAME_IP,ip);
 		values.put(WifiNetworkTable.COLUMN_NAME_TIME,time);
-		values.put(SocketTable.COLUMN_NAME_DAY,day);
+		values.put(WifiNetworkTable.COLUMN_NAME_DAY,day);
 		return values;
 	}
 	
@@ -191,24 +191,15 @@ public class MinerData extends SQLiteOpenHelper {
 		putRow(db,MinerLogTable.TABLE_NAME,values);
 	}	
 
-	public void putNotification(SQLiteDatabase db, String packageName, Date time) {
+	public static ContentValues getNotifcationValues(String name, String time, String day) {
 		ContentValues values = new ContentValues();
-		values.put(NotificationTable.COLUMN_NAME_PACKAGE,packageName);
-		values.put(NotificationTable.COLUMN_NAME_TIME,df.format(time));
-		values.put(SocketTable.COLUMN_NAME_DAY,dayGetter.format(time));
-		putRow(db,NotificationTable.TABLE_NAME,values);
-	}	
-
-// None of our business...
-//	public void putNotification(SQLiteDatabase db, String packageName, String text, Date time) {
-//		ContentValues values = new ContentValues();
-//		values.put(NotificationTable.COLUMN_NAME_PACKAGE,packageName);
-//		values.put(NotificationTable.COLUMN_NAME_TEXT,text);
-//		values.put(NotificationTable.COLUMN_NAME_TIME,df.format(time));
-//		putRow(db,NotificationTable.TABLE_NAME,values);
-//	}	
+		values.put(NotificationTable.COLUMN_NAME_PACKAGE,name);
+		values.put(NotificationTable.COLUMN_NAME_TIME,time);
+		values.put(SocketTable.COLUMN_NAME_DAY,day);
+		return values;
+	}
 	
-	public void putNetworkTraffic(SQLiteDatabase db, boolean tx, String packageName, Date start, Date stop, long bytes) {
+	public static ContentValues getTrafficValues( boolean tx, String packageName, String start, String stop, String day, long bytes) {
 		ContentValues values = new ContentValues();
 		if (tx) {
 			values.put(NetworkTrafficTable.COLUMN_NAME_TX,"1");
@@ -217,14 +208,13 @@ public class MinerData extends SQLiteOpenHelper {
 			values.put(NetworkTrafficTable.COLUMN_NAME_TX,"0");
 		}
 		values.put(NetworkTrafficTable.COLUMN_NAME_PROCESS,packageName);
-		values.put(NetworkTrafficTable.COLUMN_NAME_START,df.format(start));
-		values.put(NetworkTrafficTable.COLUMN_NAME_STOP,df.format(stop));
-		values.put(NetworkTrafficTable.COLUMN_NAME_DAY,dayGetter.format(start));
+		values.put(NetworkTrafficTable.COLUMN_NAME_START,start);
+		values.put(NetworkTrafficTable.COLUMN_NAME_STOP,stop);
+		values.put(NetworkTrafficTable.COLUMN_NAME_DAY,day);
 		values.put(NetworkTrafficTable.COLUMN_NAME_BYTES,Long.toString(bytes));
-		putRow(db,NetworkTrafficTable.TABLE_NAME,values);
-		
+		return values;
 	}
-		
+			
 	private void putRow(SQLiteDatabase db, String table, ContentValues values ) {
 		// http://developer.android.com/training/basics/data-storage/databases.html#WriteDbRow
 		try {
@@ -254,7 +244,6 @@ public class MinerData extends SQLiteOpenHelper {
 			return Long.toString(count)+" "+unit+"s ago";
 		}
 		
-
 	}
 	
 	public void deleteBookKeepingKey(SQLiteDatabase db, String key) {
