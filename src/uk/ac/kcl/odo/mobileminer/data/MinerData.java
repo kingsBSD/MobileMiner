@@ -81,7 +81,7 @@ public class MinerData extends SQLiteOpenHelper {
 				db.execSQL(sql);
 			}
 			catch (Exception e) {
-				Log.i("MinerData",sql);
+				//Log.i("MinerData",sql);
 			}
 		}
 	}
