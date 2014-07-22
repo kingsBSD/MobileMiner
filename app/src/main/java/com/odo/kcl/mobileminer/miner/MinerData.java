@@ -382,21 +382,19 @@ public class MinerData extends SQLiteOpenHelper {
         setBookKeepingDate(db, MinerTables.BookKeepingTable.DATA_LAST_EXPIRED, expiryDate);
     }
 
-    public ArrayList<String> topApps(SQLiteDatabase db) {
-        ArrayList<String> procs = new ArrayList<String>();
-        String mySocketsQuery = "SELECT process FROM socket GROUP BY process ORDER BY count(*) DESC";
+    public ArrayList<String> getTopApps(SQLiteDatabase db) {
+        ArrayList<String> procs = new ArrayList<>();
+        String mySocketsQuery = "SELECT process FROM socket GROUP BY process ORDER BY count(*) DESC LIMIT 10";
         Cursor c = db.rawQuery(mySocketsQuery, null);
-        c.moveToFirst();
-        Boolean searching = true;
-        while (searching) {
-            searching = !c.isLast();
+        while (c.moveToNext()) {
             try {
                 procs.add(c.getString(c.getColumnIndex("process")));
             } catch (Exception E) {
+                c.close();
                 return procs;
             }
         }
-
+        c.close();
         return procs;
     }
 
