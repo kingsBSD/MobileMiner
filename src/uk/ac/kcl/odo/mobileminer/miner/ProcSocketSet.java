@@ -158,7 +158,7 @@ public class ProcSocketSet {
 	*/
 	public void broadcast() {
 		HashMap<String, List<String>> socketMap = new HashMap<String, List<String>>(); // Map that will form the ExpandableListView.
-		Intent intent = new Intent("com.odo.kcl.mobileminer.socketupdate");
+		Intent intent = new Intent(MinerService.MINER_SOCKET_UPDATE_INTENT);
 		ArrayList<Boolean> processStatus = new ArrayList<Boolean>(); // Are each of the sockets still open?
 		for (String name: processes.keySet()) {
 			List<String> socketList = processes.get(name).dump();
@@ -265,7 +265,7 @@ public class ProcSocketSet {
     					remote = tokens[3].split(":"); // Maybe the fourth token is the remote address...
     					remoteAddr = remote[0];
 		            	
-    					if (remote.length>1) { // ...if there are two tokens seperated by a ":".
+    					if (remote.length>1) { // ...if there are two tokens separated by a ":".
     						thisUid = tokens[8];
     						thisPid = pidsByUid.get(thisUid);
     						thisName = namesByUid.get(thisUid);

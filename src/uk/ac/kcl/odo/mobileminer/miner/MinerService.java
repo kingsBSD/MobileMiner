@@ -47,6 +47,12 @@ import android.widget.Toast;
 */
 public class MinerService extends Service {
 
+	public final static String STOP_MINING_INTENT = "uk.ac.kcl.odo.mobileminer.stopmining";
+	public final static String MINER_UPDATE_QUERY_INTENT = "uk.ac.kcl.odo.mobileminer.updatequery";
+	public final static String MINER_SOCKET_UPDATE_INTENT = "uk.ac.kcl.odo.mobileminer.socketupdate";
+	public final static String MINER_CELL_UPDATE_INTENT = "uk.ac.kcl.odo.mobileminer.cellupdate";
+	public final static String MINER_NETWORK_UPDATE_INTENT = "uk.ac.kcl.odo.mobileminer.networkupdate";
+	
 	private Date startTime;
 	private WriteCache cache;
 	private ProcSocketSet socketSet;
@@ -72,14 +78,14 @@ public class MinerService extends Service {
 		    	//Log.i("MinerService","CONNECTIVITY_CHANGE");
 		    }
    
-		    if (action.equals("com.odo.kcl.mobileminer.updatequery")) { // The MainActivity wants an update.
+		    if (action.equals(MINER_UPDATE_QUERY_INTENT)) { // The MainActivity wants an update.
 		        socketSet.broadcast();
 		        cellBroadcast();
 		        networkBroadcast();
 		        //Log.i("MinerService","RECEIVED SOCKET QUERY");
 		     }
 
-		    if (action.equals("com.odo.kcl.mobileminer.stopmining")) {
+		    if (action.equals(STOP_MINING_INTENT)) {
 		    	scanning = false;
 		    	stopForeground(true);
 		    	stopSelf();
@@ -156,7 +162,6 @@ public class MinerService extends Service {
 				intent.putExtra(WriteCache.GSMCELL_STRENGTH, MinerData.dayGetter.format(rightNow));
 				LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 				
-				
 			}
 			cellBroadcast();
 			//Log.i("MinerService","CELL_LOCATION_CHANGED");
@@ -182,8 +187,8 @@ public class MinerService extends Service {
 		
 		filter = new IntentFilter();
 		filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-		filter.addAction("com.odo.kcl.mobileminer.updatequery");
-		filter.addAction("com.odo.kcl.mobileminer.stopmining");
+		filter.addAction(MINER_UPDATE_QUERY_INTENT);
+		filter.addAction(STOP_MINING_INTENT);
 		registerReceiver(receiver, filter);
 	 
 		cacheWorker = new Runnable() {
@@ -387,7 +392,7 @@ public class MinerService extends Service {
 		MinerLocation cell = null;
 		String cellText = "No Cell";
 		Boolean cellValid = false;
-		Intent intent = new Intent("com.odo.kcl.mobileminer.cellupdate");
+		Intent intent = new Intent(MINER_CELL_UPDATE_INTENT);
 			
 		switch (cells.size()) {
 			case 0: cellValid = false; break;
@@ -412,7 +417,7 @@ public class MinerService extends Service {
 	}
 	
     private void networkBroadcast() {
-    	Intent intent = new Intent("com.odo.kcl.mobileminer.networkupdate");
+    	Intent intent = new Intent(MINER_NETWORK_UPDATE_INTENT);
     	if (!networkName.equals("null")) {
     		intent.putExtra("networktext",networkName);
     	}

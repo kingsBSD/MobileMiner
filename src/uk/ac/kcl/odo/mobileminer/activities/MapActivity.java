@@ -10,13 +10,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import uk.ac.kcl.odo.mobileminer.R;
-
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 //import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.webkit.WebView;
 
 public class MapActivity extends Activity {
@@ -107,11 +107,19 @@ public class MapActivity extends Activity {
 		getMenuInflater().inflate(R.menu.map, menu);
 		return true;
 		
-
 	}
+	
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                this.startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
-	
-	
 	private String readHtml(String remoteUrl) {
 	    String out = "";
 	    BufferedReader in = null;
@@ -125,7 +133,7 @@ public class MapActivity extends Activity {
 	        return out;
 	    }
 	    catch (Exception e) {return null;}
-}
+	}
 
 }
 	

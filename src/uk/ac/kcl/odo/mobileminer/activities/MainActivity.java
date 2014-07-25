@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
@@ -38,7 +39,8 @@ import android.widget.Toast;
 //import android.util.Log;
 
 public class MainActivity extends Activity {
-	Boolean miningButtonState,cellValid;
+	
+	Boolean cellValid;
 	Intent miningIntent;
 	ExpandableListView socketView;
 	SocketAdapter socketAdapter;
@@ -50,10 +52,8 @@ public class MainActivity extends Activity {
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-    	//Log.i("MobileMiner","CREATING");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        miningButtonState = false;
         cellValid = false;
         processHeader = new ArrayList<String>();
     	socketChild = new HashMap<String, List<String>>();
@@ -65,13 +65,13 @@ public class MainActivity extends Activity {
         networkText = (TextView) findViewById(R.id.networkName);
         
         LocalBroadcastManager.getInstance(this).registerReceiver(
-                socketReceiver, new IntentFilter("com.odo.kcl.mobileminer.socketupdate"));
+                socketReceiver, new IntentFilter(MinerService.MINER_SOCKET_UPDATE_INTENT));
         
         LocalBroadcastManager.getInstance(this).registerReceiver(
-                cellReceiver, new IntentFilter("com.odo.kcl.mobileminer.cellupdate"));
+                cellReceiver, new IntentFilter(MinerService.MINER_CELL_UPDATE_INTENT));
         
         LocalBroadcastManager.getInstance(this).registerReceiver(
-                networkReceiver, new IntentFilter("com.odo.kcl.mobileminer.networkupdate"));
+                networkReceiver, new IntentFilter(MinerService.MINER_NETWORK_UPDATE_INTENT));
         
         MinerData minerHelper = new MinerData(this);
         minerHelper.getReadableDatabase();
@@ -79,8 +79,6 @@ public class MainActivity extends Activity {
         CellData cellHelper = new CellData(this);
         cellHelper.init();
         cellHelper.close();
-        
-        //new UidGetter(this).getUid();
          
     }
 
@@ -92,10 +90,20 @@ public class MainActivity extends Activity {
     }
     
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                this.startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    
+    @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
     	//Log.i("MobileMiner","SAVING");
     	super.onSaveInstanceState(savedInstanceState);
-    	savedInstanceState.putBoolean("miningButtonState", miningButtonState);
     	savedInstanceState.putString("cellText",cellButton.getText().toString());
     	savedInstanceState.putStringArrayList("processHeader",(ArrayList<String>)processHeader);
     	for (String key: processHeader) savedInstanceState.putStringArrayList(key,(ArrayList<String>)socketChild.get(key));
@@ -105,13 +113,11 @@ public class MainActivity extends Activity {
     public void onRestoreInstanceState(Bundle savedInstanceState) {
     	//Log.i("MobileMiner","RESTORING");
     	super.onRestoreInstanceState(savedInstanceState);
-    	miningButtonState = savedInstanceState.getBoolean("miningButtonState", false);
     	if (savedInstanceState.getString("cellText") != null) cellButton.setText(savedInstanceState.getString("cellText"));
     	if (savedInstanceState.getStringArrayList("processHeader") != null) {
     		processHeader = savedInstanceState.getStringArrayList("processHeader");
     		for (String key: processHeader) socketChild.put(key,savedInstanceState.getStringArrayList(key));
     	}
-    	enableMiningButton(miningButtonState);
     }
         
     @Override public void onRestart() {
@@ -123,25 +129,27 @@ public class MainActivity extends Activity {
     	//Log.i("MobileMiner","RESUMING");
     	super.onResume();
     	if (miningActive()) {
-    		getApplicationContext().sendBroadcast(new Intent("com.odo.kcl.mobileminer.updatequery"));
-    		miningButtonState = true;
+    		getApplicationContext().sendBroadcast(new Intent(MinerService.MINER_UPDATE_QUERY_INTENT));
+    		enableMiningButton(true);
     	}
     	else {
-    		miningButtonState = false;
+    		enableMiningButton(false);
     	}
-    	enableMiningButton(miningButtonState);
     }
     
     public void startMining(View buttonView) {
     	if (!isAccessibilityEnabled()) accessibilityNag();
-    	if (miningActive()) getApplicationContext().sendBroadcast(new Intent("com.odo.kcl.mobileminer.updatequery"));
+    	if (!miningActive()) {
+    		miningIntent = new Intent(this, MinerService.class);
+	    	startService(miningIntent);	
+    		getApplicationContext().sendBroadcast(new Intent(MinerService.MINER_UPDATE_QUERY_INTENT));
+    	}
+    	
     	enableMiningButton(true);
     }
     
     public void stopMining(View buttonView) {
-    	//miningIntent = new Intent(this, MinerService.class);
-    	//stopService(miningIntent);
-    	getApplicationContext().sendBroadcast(new Intent("com.odo.kcl.mobileminer.stopmining"));
+    	getApplicationContext().sendBroadcast(new Intent(MinerService.STOP_MINING_INTENT));
     	enableMiningButton(false);
     } 
     
@@ -171,17 +179,6 @@ public class MainActivity extends Activity {
     	}
     }
     
-    private void checkMining() {
-    	// Should we be mining?
-    	if (miningButtonState) {
-    		// Are we not mining?
-    		if (!miningActive()) {
-    	    	miningIntent = new Intent(this, MinerService.class);
-    	    	startService(miningIntent);
-    		}
-    	}
-    }
-    
     // http://stackoverflow.com/questions/600207/how-to-check-if-a-service-is-running-in-android
     private boolean miningActive() {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -192,13 +189,12 @@ public class MainActivity extends Activity {
         }
         return false;
     }
+    
     private void enableMiningButton(boolean mining) {
     	Button startButton = (Button)this.findViewById(R.id.startButton);
     	Button stopButton = (Button)this.findViewById(R.id.stopButton);
     	startButton.setEnabled(!mining);
     	stopButton.setEnabled(mining);
-    	miningButtonState = mining;
-    	checkMining();
     }
 
     private BroadcastReceiver socketReceiver = new BroadcastReceiver() {

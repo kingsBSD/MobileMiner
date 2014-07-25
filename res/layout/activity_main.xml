@@ -28,7 +28,7 @@
             		android:layout_width="90dp"
             		android:layout_height="70dp"
             		android:onClick="startMining"
-            		android:text="Start Mining" />
+            		android:text="@string/start_mining_button" />
 
         		<Button
             		android:id="@+id/stopButton"
@@ -36,7 +36,7 @@
             		android:layout_width="90dp"
             		android:layout_height="70dp"
             		android:onClick="stopMining"
-            		android:text="Stop Mining" />
+            		android:text="@string/stop_mining_button" />
 
         		<Button
             		android:id="@+id/dataButton"
@@ -44,7 +44,7 @@
             		android:layout_height="70dp"
             		android:layout_marginTop="0dp"
             		android:onClick="launchData"
-            		android:text="My Data" />
+            		android:text="@string/my_data_button" />
 
     	</LinearLayout>
 
@@ -52,7 +52,7 @@
         	android:id="@+id/networkName"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
-        	android:text="Network: None"
+        	android:text="@string/network_default"
         	android:textAppearance="?android:attr/textAppearanceLarge" />
 
 		<Button
@@ -60,7 +60,7 @@
 		    android:layout_width="fill_parent"
         	android:layout_height="35dp"
         	android:onClick="cellMap"
-        	android:text="No Cell"
+        	android:text="@string/no_cell_text"
         	android:textAppearance="?android:attr/textAppearanceSmall" />
     	 	
    		<LinearLayout
@@ -73,7 +73,7 @@
             	android:id="@+id/socketLegend"
             	android:layout_width="wrap_content"
             	android:layout_height="wrap_content"
-            	android:text="Network Sockets:"
+            	android:text="@string/network_sockets_text"
             	android:textAppearance="?android:attr/textAppearanceMedium" />
 
         	<TextView
@@ -81,7 +81,7 @@
             	android:layout_width="wrap_content"
             	android:layout_height="wrap_content"
             	android:layout_marginLeft="20dp"
-            	android:text="Open"
+            	android:text="@string/open_text"
             	android:textAppearance="?android:attr/textAppearanceMedium"
             	android:textColor="#00FF00" />
 
@@ -90,7 +90,7 @@
             	android:layout_width="wrap_content"
             	android:layout_height="wrap_content"
             	android:layout_marginLeft="20dp"
-            	android:text="Closed"
+            	android:text="@string/closed_text"
             	android:textAppearance="?android:attr/textAppearanceMedium"
             	android:textColor="#FF0000" />
 		</LinearLayout>  		    

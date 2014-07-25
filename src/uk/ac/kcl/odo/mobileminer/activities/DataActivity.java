@@ -10,12 +10,11 @@ import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import uk.ac.kcl.odo.mobileminer.R;
-
 import uk.ac.kcl.odo.mobileminer.cells.CellLocationGetter;
 import uk.ac.kcl.odo.mobileminer.cells.CountedCell;
 import uk.ac.kcl.odo.mobileminer.data.MinerData;
@@ -67,6 +66,17 @@ public class DataActivity extends Activity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                this.startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    
     public void exportData(View buttonView) {
         AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(context);
         myAlertDialog.setTitle("Export Data");

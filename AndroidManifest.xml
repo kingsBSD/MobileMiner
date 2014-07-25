@@ -2,9 +2,11 @@
 <!-- Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="uk.ac.kcl.odo.mobileminer"
-    android:installLocation="preferExternal"
+    android:installLocation="internalOnly"
     android:versionCode="1"
     android:versionName="1.0" >
+    
+    <!-- android:installLocation="preferExternal" -->
 
     <uses-sdk
         android:minSdkVersion="11"
@@ -17,6 +19,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -59,11 +62,25 @@
             android:label="@string/title_activity_map" >
         </activity>
         
+         <activity
+            android:name="uk.ac.kcl.odo.mobileminer.activities.SettingsActivity"
+            android:label="@string/app_name" >
+        </activity>
+        
         <provider
             android:name=".data.MinerDataProvider"
             android:authorities="uk.ac.kcl.odo.mobileminer"
             android:exported="false" />
         
+		<receiver
+        	android:name="uk.ac.kcl.odo.mobileminer.miner.BootReceiver"
+        	android:enabled="true"
+            android:exported="true" >
+				<intent-filter>
+                	<action android:name="android.intent.action.BOOT_COMPLETED" />
+                	<action android:name="android.intent.action.QUICKBOOT_POWERON" />
+             </intent-filter>
+         </receiver>
         
     </application>
 

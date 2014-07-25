@@ -246,7 +246,7 @@ public class MainActivity extends Activity {
     		AccessibilityManager am = (AccessibilityManager) this.getSystemService(Context.ACCESSIBILITY_SERVICE);
     		List<AccessibilityServiceInfo> runningServices = am.getEnabledAccessibilityServiceList(AccessibilityEvent.TYPES_ALL_MASK);
     		for (AccessibilityServiceInfo service : runningServices) {
-    			if ("com.odo.kcl.mobileminer/.NotificationService".equals(service.getId())) return true;
+    			if ("uk.ac.kcl.odo.mobileminer/.miner.NotificationService".equals(service.getId())) return true;
     		}
     	}
     	return false;
