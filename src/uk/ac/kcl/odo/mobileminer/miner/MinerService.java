@@ -200,9 +200,7 @@ public class MinerService extends Service {
 			}
 			
 		};
-		
-		
-		
+				
 		mineWorker = new Runnable() { // Check for new network sockets every half-second.
 			@Override
 			public void run() {
@@ -350,7 +348,7 @@ public class MinerService extends Service {
 							networkName = name;
 							networkBroadcast();	
 				 		}
-				 		startScan();
+				 		//startScan();
 				 		//Log.i("MinerService","CONNECTED MOBILE: "+name);
 				 		break;
 				 	default:
