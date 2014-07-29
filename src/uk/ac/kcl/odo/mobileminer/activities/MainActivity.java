@@ -40,7 +40,7 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	
-	Boolean cellValid;
+	boolean cellValid;
 	Intent miningIntent;
 	ExpandableListView socketView;
 	SocketAdapter socketAdapter;
@@ -200,6 +200,7 @@ public class MainActivity extends Activity {
     private BroadcastReceiver socketReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+        	enableMiningButton(true);
         	HashMap<String, List<String>> socketMap = (HashMap<String, List<String>>) intent.getSerializableExtra("socketmap");
         	processHeader = new ArrayList<String>();
         	socketChild = new HashMap<String, List<String>>();
@@ -216,6 +217,7 @@ public class MainActivity extends Activity {
     private BroadcastReceiver cellReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			enableMiningButton(true);
 			cellButton.setText((CharSequence) (intent.getSerializableExtra("celltext")));
 			cellValid = (Boolean) intent.getSerializableExtra("cellvalid");
 			cellButton.setEnabled(cellValid);
@@ -231,6 +233,7 @@ public class MainActivity extends Activity {
     private BroadcastReceiver networkReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			enableMiningButton(true);
 			networkText.setText((CharSequence) ("Network: "+intent.getSerializableExtra("networktext")));	
 		}
     };
