@@ -7,6 +7,8 @@ package com.odo.kcl.mobileminer;
 import java.util.ArrayList;
 import java.util.Date;
 
+import uk.ac.kcl.odo.mobileminer.R;
+
 import com.odo.kcl.mobileminer.MinerData.WifiData;
 
 import android.app.Notification;

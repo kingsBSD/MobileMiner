@@ -25,7 +25,7 @@ public final class R {
     }
     public static final class id {
         public static final int TopAppLegend=0x7f090005;
-        public static final int action_settings=0x7f090018;
+        public static final int action_settings=0x7f090019;
         public static final int activeApps=0x7f090006;
         public static final int buttonLinearLayout=0x7f090008;
         public static final int cellLocation=0x7f09000d;
@@ -34,14 +34,15 @@ public final class R {
         public static final int dataText=0x7f090002;
         public static final int expireButton=0x7f090000;
         public static final int exportButton=0x7f090001;
+        public static final int fragment1=0x7f090016;
         public static final int mapWebView=0x7f090015;
         public static final int myLocationsButton=0x7f090004;
         public static final int networkLinearLayout=0x7f090014;
         public static final int networkName=0x7f09000c;
         public static final int openView=0x7f090010;
         public static final int outerLinearLayout=0x7f090007;
-        public static final int processHeader=0x7f090017;
-        public static final int socketItem=0x7f090016;
+        public static final int processHeader=0x7f090018;
+        public static final int socketItem=0x7f090017;
         public static final int socketLegend=0x7f09000f;
         public static final int socketLinearLayout=0x7f09000e;
         public static final int socketView=0x7f090012;
@@ -55,8 +56,9 @@ public final class R {
         public static final int activity_data=0x7f030001;
         public static final int activity_main=0x7f030002;
         public static final int activity_map=0x7f030003;
-        public static final int socket_item=0x7f030004;
-        public static final int socket_list=0x7f030005;
+        public static final int activity_settings=0x7f030004;
+        public static final int socket_item=0x7f030005;
+        public static final int socket_list=0x7f030006;
     }
     public static final class menu {
         public static final int data=0x7f080000;
@@ -64,12 +66,28 @@ public final class R {
         public static final int map=0x7f080002;
     }
     public static final class string {
-        public static final int accessibility_service_description=0x7f060004;
+        public static final int accessibility_service_description=0x7f060002;
         public static final int action_settings=0x7f060001;
+        public static final int activity_settings_mine_on_boot=0x7f060014;
+        public static final int activity_settings_mine_on_boot_summary=0x7f060015;
         public static final int app_name=0x7f060000;
-        public static final int hello_world=0x7f060002;
-        public static final int title_activity_data=0x7f060003;
-        public static final int title_activity_map=0x7f060005;
+        public static final int closed_text=0x7f06000a;
+        public static final int my_data_actionbar_title=0x7f06000c;
+        public static final int my_data_active_apps=0x7f060011;
+        public static final int my_data_button=0x7f060005;
+        public static final int my_data_cell_locations=0x7f060010;
+        public static final int my_data_database_size=0x7f06000d;
+        public static final int my_data_expire_data=0x7f06000f;
+        public static final int my_data_export_data=0x7f06000e;
+        public static final int network_default=0x7f060006;
+        public static final int network_sockets_text=0x7f060008;
+        public static final int no_cell_text=0x7f060007;
+        public static final int open_text=0x7f060009;
+        public static final int start_mining_button=0x7f060003;
+        public static final int stop_mining_button=0x7f060004;
+        public static final int title_activity_data=0x7f06000b;
+        public static final int title_activity_map=0x7f060012;
+        public static final int title_activity_settings=0x7f060013;
     }
     public static final class style {
         /** 
@@ -101,5 +119,6 @@ public final class R {
     }
     public static final class xml {
         public static final int accessibilityservice=0x7f040000;
+        public static final int preferences=0x7f040001;
     }
 }

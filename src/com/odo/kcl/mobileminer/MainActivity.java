@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import uk.ac.kcl.odo.mobileminer.R;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;

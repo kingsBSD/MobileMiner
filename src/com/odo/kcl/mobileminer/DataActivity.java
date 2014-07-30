@@ -12,6 +12,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import uk.ac.kcl.odo.mobileminer.R;
+
 import com.odo.kcl.mobileminer.MinerTables.SocketTable;
 
 import android.media.MediaScannerConnection;
@@ -27,7 +29,6 @@ import android.view.LayoutInflater;
 //import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
