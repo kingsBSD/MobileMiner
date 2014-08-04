@@ -3,6 +3,7 @@ package uk.ac.kcl.odo.mobileminer.miner;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -112,6 +113,16 @@ public class TrafficWatcher {
 		
 	}
 	
+	private String renderBytes(long bytes) {
+		if (bytes < 1024) {
+			return Long.toString(bytes)+"B";
+		}
+		if (bytes >= 1024 && bytes < 1048576) {
+			return Long.toString(bytes/1024)+"KB";
+		}
+		return Long.toString(bytes/1048576)+"MB";
+	}
+	
 	public void scan() {
 		ArrayList<Integer> discoveredTx = new ArrayList<Integer>();
 		ArrayList<Integer> discoveredRx = new ArrayList<Integer>();
@@ -120,6 +131,9 @@ public class TrafficWatcher {
 		Long bytes;
 		Date closeTime; 
 		
+		HashMap<String,String> txByProc = new HashMap<String,String>();
+		HashMap<String,String> rxByProc = new HashMap<String,String>();
+
 		//Log.i("TrafficWatcher","Tick...");
 		
 		for (Integer uid: uids) {
@@ -133,6 +147,7 @@ public class TrafficWatcher {
 				}
 				trafficTxByUid.put(uid, bytes);
 				discoveredTx.add(uid);
+				txByProc.put(namesByUid.get(uid),renderBytes(bytes - txBytesByUid.get(uid)));
 			}
 			
 			bytes = TrafficStats.getUidRxBytes(uid);
@@ -144,8 +159,8 @@ public class TrafficWatcher {
 					rxBytesByUid.put(uid, trafficRxByUid.get(uid));
 				}
 				trafficRxByUid.put(uid, bytes);
-
 				discoveredRx.add(uid);
+				rxByProc.put(namesByUid.get(uid),renderBytes(bytes - rxBytesByUid.get(uid)));		
 			}	
 		}
 		
@@ -172,6 +187,13 @@ public class TrafficWatcher {
 			for (Integer uid: closedRx) {
 				close(false,uid,closeTime);
 			}
+		}
+		
+		if (txByProc.size() + rxByProc.size() > 0) {
+			Intent intent = new Intent(MinerService.MINER_TRAFFIC_UPDATE_INTENT);
+			intent.putExtra(MinerService.MINER_TRAFFIC_TXBYTES, txByProc);
+			intent.putExtra(MinerService.MINER_TRAFFIC_RXBYTES, rxByProc);
+			LocalBroadcastManager.getInstance(context).sendBroadcast(intent);	
 		}
 	}
 	

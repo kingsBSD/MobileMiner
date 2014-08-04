@@ -53,6 +53,10 @@ public class MinerService extends Service {
 	public final static String MINER_CELL_UPDATE_INTENT = "uk.ac.kcl.odo.mobileminer.cellupdate";
 	public final static String MINER_NETWORK_UPDATE_INTENT = "uk.ac.kcl.odo.mobileminer.networkupdate";
 	
+	public final static String MINER_TRAFFIC_UPDATE_INTENT = "uk.ac.kcl.odo.mobileminer.trafficupdate";
+	public final static String MINER_TRAFFIC_TXBYTES = "uk.ac.kcl.odo.mobileminer.traffictx";
+	public final static String MINER_TRAFFIC_RXBYTES = "uk.ac.kcl.odo.mobileminer.trafficrx";
+	
 	private Date startTime;
 	private WriteCache cache;
 	private ProcSocketSet socketSet;

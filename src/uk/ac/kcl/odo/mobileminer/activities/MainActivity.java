@@ -3,9 +3,11 @@ package uk.ac.kcl.odo.mobileminer.activities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import uk.ac.kcl.odo.mobileminer.activities.adapters.SocketAdapter;
+import uk.ac.kcl.odo.mobileminer.activities.adapters.TrafficAdapter;
 import uk.ac.kcl.odo.mobileminer.cells.CellLocationGetter;
 import uk.ac.kcl.odo.mobileminer.data.CellData;
 import uk.ac.kcl.odo.mobileminer.data.MinerData;
@@ -33,21 +35,28 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
-//import android.util.Log;
+import android.util.Log;
 
 public class MainActivity extends Activity {
 	
 	boolean cellValid;
 	Intent miningIntent;
+	ViewFlipper displayFlipper;
 	ExpandableListView socketView;
+	ListView trafficView;
 	SocketAdapter socketAdapter;
+	TrafficAdapter trafficAdapter;
 	List<String> processHeader;
 	HashMap<String, List<String>> socketChild;
+	HashMap<String,HashMap <String,String>> traffic;
 	TextView networkText;
-	Button cellButton;
+	Button cellButton, socketButton;
 	String Mcc,Mnc,Lac,Id;
 	
     @Override
@@ -57,12 +66,20 @@ public class MainActivity extends Activity {
         cellValid = false;
         processHeader = new ArrayList<String>();
     	socketChild = new HashMap<String, List<String>>();
+    	displayFlipper = (ViewFlipper) findViewById(R.id.mainFlipper);
         socketView = (ExpandableListView) findViewById(R.id.socketView);
         socketAdapter = new SocketAdapter(this,processHeader,socketChild,null);
         socketView.setAdapter(socketAdapter);
         cellButton = (Button) findViewById(R.id.cellLocation);
         cellButton.setEnabled(false);
+        socketButton = (Button) findViewById(R.id.socketButton);
         networkText = (TextView) findViewById(R.id.networkName);
+        
+        //trafficMaps = new ArrayList<HashMap<String, String>>();
+        //trafficAdapter = new TrafficAdapter(this, R.layout.traffic_item, trafficMaps);
+        trafficView = (ListView) findViewById(R.id.trafficView);
+        traffic = new HashMap<String,HashMap <String,String>>();
+        //trafficView.setAdapter(trafficAdapter);
         
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 socketReceiver, new IntentFilter(MinerService.MINER_SOCKET_UPDATE_INTENT));
@@ -73,6 +90,9 @@ public class MainActivity extends Activity {
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 networkReceiver, new IntentFilter(MinerService.MINER_NETWORK_UPDATE_INTENT));
         
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                trafficReceiver, new IntentFilter(MinerService.MINER_TRAFFIC_UPDATE_INTENT));
+            
         MinerData minerHelper = new MinerData(this);
         minerHelper.getReadableDatabase();
         minerHelper.close();
@@ -179,6 +199,10 @@ public class MainActivity extends Activity {
     	}
     }
     
+    public void flipSockets(View buttonView) {
+    	displayFlipper.showNext();
+    }
+    
     // http://stackoverflow.com/questions/600207/how-to-check-if-a-service-is-running-in-android
     private boolean miningActive() {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -237,6 +261,47 @@ public class MainActivity extends Activity {
 			networkText.setText((CharSequence) ("Network: "+intent.getSerializableExtra("networktext")));	
 		}
     };
+    
+    private BroadcastReceiver trafficReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			HashMap<String, String> thisProc;
+			String tx,rx;
+			
+			HashMap<String,String> txBytes = (HashMap<String,String>) intent.getSerializableExtra(MinerService.MINER_TRAFFIC_TXBYTES);
+			HashMap<String,String> rxBytes = (HashMap<String,String>) intent.getSerializableExtra(MinerService.MINER_TRAFFIC_RXBYTES);
+			
+			HashSet<String> procSet = new HashSet<String>(txBytes.keySet());
+			procSet.addAll(new HashSet<String>(rxBytes.keySet()));
+			
+			for (String proc: procSet) {
+				tx = txBytes.get(proc);
+				if (tx == null) tx = "0";
+				rx = rxBytes.get(proc);
+				if (rx == null) rx = "0";
+				thisProc = new HashMap<String, String>();
+				thisProc.put("proc", proc);
+				thisProc.put("tx", tx);
+				thisProc.put("rx", rx);
+				Log.i("MobileMiner",proc+" "+tx+" "+rx);
+				traffic.put(proc, thisProc);
+			}
+			
+			ArrayList<HashMap<String, String>> trafficMaps = new ArrayList<HashMap<String, String>>();
+			for (String proc: traffic.keySet()) {
+				trafficMaps.add(traffic.get(proc));
+			}
+			
+			if (trafficMaps.size()>0) {
+				trafficAdapter = new TrafficAdapter(context, R.layout.traffic_item, trafficMaps);
+				trafficView.setAdapter(trafficAdapter);
+			}	
+	
+		}
+    	
+    };
+    
+
     
     @SuppressLint("NewApi")
 	public boolean isAccessibilityEnabled() {

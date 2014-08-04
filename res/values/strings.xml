@@ -12,9 +12,12 @@
     <string name="my_data_button">My Data</string>
     <string name="network_default">Network: None</string>
     <string name="no_cell_text">No Cell</string>
+    
     <string name="network_sockets_text">Network Sockets:</string>
     <string name="open_text">Open</string>
     <string name="closed_text">Closed</string>
+    
+     <string name="network_traffic_text">Network Traffic:</string>
       
     <string name="title_activity_data">DataActivity</string>
     <string name="my_data_actionbar_title">My Data</string>
