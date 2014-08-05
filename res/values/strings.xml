@@ -17,8 +17,10 @@
     <string name="open_text">Open</string>
     <string name="closed_text">Closed</string>
     
-     <string name="network_traffic_text">Network Traffic:</string>
-      
+    <string name="network_traffic_text">Network Traffic:</string>
+    <string name="traffic_tx">TX:</string>
+    <string name="traffic_rx">RX:</string>
+    
     <string name="title_activity_data">DataActivity</string>
     <string name="my_data_actionbar_title">My Data</string>
     <string name="my_data_database_size">Database Size:</string>
