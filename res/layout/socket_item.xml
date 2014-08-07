@@ -9,6 +9,7 @@
     	android:id="@+id/socketItem"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:background="@android:drawable/list_selector_background"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"

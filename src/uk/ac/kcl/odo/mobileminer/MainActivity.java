@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import uk.ac.kcl.odo.mobileminer.activities.DataActivity;
+import uk.ac.kcl.odo.mobileminer.activities.MapActivity;
+import uk.ac.kcl.odo.mobileminer.activities.adapters.SocketAdapter;
+import uk.ac.kcl.odo.mobileminer.cells.CellLocationGetter;
 import uk.ac.kcl.odo.mobileminer.data.CellData;
+import uk.ac.kcl.odo.mobileminer.data.GeoIpGetter;
 import uk.ac.kcl.odo.mobileminer.data.MinerData;
 import uk.ac.kcl.odo.mobileminer.miner.MinerService;
-
 import uk.ac.kcl.odo.mobileminer.R;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -30,12 +33,12 @@ import android.view.Menu;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-//import android.util.Log;
+import android.util.Log;
 
 public class MainActivity extends Activity {
 	Boolean miningButtonState,cellValid;
@@ -65,10 +68,10 @@ public class MainActivity extends Activity {
         networkText = (TextView) findViewById(R.id.networkName);
         
         LocalBroadcastManager.getInstance(this).registerReceiver(
-                socketReceiver, new IntentFilter("com.odo.kcl.mobileminer.socketupdate"));
+        		socketReceiver, new IntentFilter("com.odo.kcl.mobileminer.socketupdate"));
         
         LocalBroadcastManager.getInstance(this).registerReceiver(
-                cellReceiver, new IntentFilter("com.odo.kcl.mobileminer.cellupdate"));
+        		cellReceiver, new IntentFilter("com.odo.kcl.mobileminer.cellupdate"));
         
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 networkReceiver, new IntentFilter("com.odo.kcl.mobileminer.networkupdate"));
@@ -78,10 +81,7 @@ public class MainActivity extends Activity {
         minerHelper.close();
         CellData cellHelper = new CellData(this);
         cellHelper.init();
-        cellHelper.close();
-        
-        //new UidGetter(this).getUid();
-         
+        cellHelper.close();      
     }
 
     @Override
@@ -271,6 +271,5 @@ public class MainActivity extends Activity {
    	 myAlertDialog.show();
     	
     }
-    
 
 }

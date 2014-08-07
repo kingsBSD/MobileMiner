@@ -6,15 +6,18 @@ import java.util.HashMap;
 import java.util.List;
 
 import uk.ac.kcl.odo.mobileminer.R;
-
+import uk.ac.kcl.odo.mobileminer.activities.MapActivity;
+import uk.ac.kcl.odo.mobileminer.data.GeoIpGetter;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-//import android.util.Log;
+import android.widget.Toast;
+import android.util.Log;
 
 public class SocketAdapter extends android.widget.BaseExpandableListAdapter {
 	private Context context;
@@ -57,6 +60,29 @@ public class SocketAdapter extends android.widget.BaseExpandableListAdapter {
 				txtListChild.setTextColor(Color.RED);
 			}
 		}
+		
+		// ExpandableListView.OnChildClickListener just doesn't want to fire in MainActivity, so override the onClick
+		// listener of each view instead. Yes, making every bit of the socket_item view non-clickable or foccusable
+		// has been tried;  no, it didn't work.
+		convertView.setOnClickListener(new View.OnClickListener() {
+
+	        @Override
+	        public void onClick(View v) {
+	        	Log.i("MobileMiner",childText);
+	        	
+	        	String ip = childText.split("\\s+")[1].split(":")[0];
+	        	Intent mapIntent = new GeoIpGetter(context).getMapIntent(ip);
+            	if (mapIntent == null) {
+            		Toast.makeText(context, "Can't get geoIP data...", Toast.LENGTH_SHORT).show();
+            	}
+            	else {
+            		Intent maapIntent = new Intent(context, MapActivity.class);
+            		mapIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            		context.startActivity(mapIntent);
+            	}                
+	        }
+	    });
+		
 		return convertView;
 	}
 
@@ -101,6 +127,11 @@ public class SocketAdapter extends android.widget.BaseExpandableListAdapter {
 
 	@Override
 	public boolean isChildSelectable(int groupPosition, int childPosition) {
+		return true;
+	}
+	
+	@Override
+	public boolean areAllItemsEnabled() {
 		return true;
 	}
 }
