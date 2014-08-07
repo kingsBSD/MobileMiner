@@ -1,6 +1,7 @@
 // Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
 package uk.ac.kcl.odo.mobileminer.data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
@@ -11,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 
 public class GeoIpGetter {
 	
@@ -75,6 +77,14 @@ public class GeoIpGetter {
 			mapIntent.putExtra("lat", geoData.get("lat"));
 			mapIntent.putExtra("long", geoData.get("long"));
 			mapIntent.putExtra("zoom", "15");
+			ArrayList<String> tokens = new ArrayList<String>();
+			tokens.add(ip);
+			String thisToken;
+			for (String key: new String [] {GeoIpTable.COLUMN_NAME_CITY,GeoIpTable.COLUMN_NAME_REGION,GeoIpTable.COLUMN_NAME_COUNTRY}) {
+				thisToken = geoData.get(key);
+				if (thisToken.length() > 0) tokens.add(thisToken);
+			}
+			mapIntent.putExtra("legend", TextUtils.join(", ", tokens));
 			return mapIntent;
 		}
 		return null;

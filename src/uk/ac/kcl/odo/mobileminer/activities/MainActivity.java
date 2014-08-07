@@ -74,12 +74,8 @@ public class MainActivity extends Activity {
         cellButton.setEnabled(false);
         socketButton = (Button) findViewById(R.id.socketButton);
         networkText = (TextView) findViewById(R.id.networkName);
-        
-        //trafficMaps = new ArrayList<HashMap<String, String>>();
-        //trafficAdapter = new TrafficAdapter(this, R.layout.traffic_item, trafficMaps);
         trafficView = (ListView) findViewById(R.id.trafficView);
         traffic = new HashMap<String,HashMap <String,String>>();
-        //trafficView.setAdapter(trafficAdapter);
         
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 socketReceiver, new IntentFilter(MinerService.MINER_SOCKET_UPDATE_INTENT));

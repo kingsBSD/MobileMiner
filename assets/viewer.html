@@ -40,11 +40,16 @@
                     markerLayer.addMarker(getMarker(mapSpec.lat,mapSpec.long,"red"));
                 }
                 
-                if (mapSpec.redlat != undefined) addMarkerList(markerLayer,mapSpec.redlat,mapSpec.redlong,'red');
-                if (mapSpec.yellowlat != undefined) addMarkerList(markerLayer,mapSpec.yellowlat,mapSpec.yellowlong,'yellow');
-                if (mapSpec.greenlat != undefined) addMarkerList(markerLayer,mapSpec.greenlat,mapSpec.greenlong,'green');
                 if (mapSpec.bluelat != undefined) addMarkerList(markerLayer,mapSpec.bluelat,mapSpec.bluelong,'blue');
+                if (mapSpec.greenlat != undefined) addMarkerList(markerLayer,mapSpec.greenlat,mapSpec.greenlong,'green');
+                if (mapSpec.yellowlat != undefined) addMarkerList(markerLayer,mapSpec.yellowlat,mapSpec.yellowlong,'yellow');
+                if (mapSpec.redlat != undefined) addMarkerList(markerLayer,mapSpec.redlat,mapSpec.redlong,'red');
                 
+                if (mapSpec.legend != undefined) {
+                    var legend = document.getElementById("legend");
+                    legend.innerHTML = mapSpec.legend;
+                }
+                 
                 map.addLayer(markerLayer);
                                 
                 if (mapSpec.nocentre != true) {
@@ -61,9 +66,12 @@
         </script>
         <style>
             #map { width: 100%; height: 100%; }
+            #legend {z-index: 9999; width: 50%; position: absolute; right: 0;top: 0;}
+            
         </style>
     </head>
     <body onLoad = "initMap()">
+        <div id = "legend"></div>
         <div id="map"></div>
     </body>
 </html>

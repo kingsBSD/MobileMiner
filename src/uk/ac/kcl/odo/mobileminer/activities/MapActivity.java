@@ -24,6 +24,7 @@ public class MapActivity extends Activity {
 	String lat,lon,zoom;
 	boolean noCentre;
 	ArrayList<String> redLat,redLong,yellowLat,yellowLong,greenLat,greenLong,blueLat,blueLong;
+	String legend;
 	
 	public class MapInterface {
 		 Context context;
@@ -62,6 +63,9 @@ public class MapActivity extends Activity {
 						JSONdump.put("bluelat",blueLat);
 						JSONdump.put("bluelong",blueLong);	
 					}
+					if (legend != null) {
+						JSONdump.put("legend",legend);
+					}
 					
 					//Log.i("MinerMap",JSONdump.toString());
 					
@@ -99,6 +103,7 @@ public class MapActivity extends Activity {
 		greenLong = mapIntent.getStringArrayListExtra("greenlong");
 		blueLat = mapIntent.getStringArrayListExtra("bluelat");
 		blueLong = mapIntent.getStringArrayListExtra("bluelong");
+		legend = mapIntent.getStringExtra("legend");
 	}
 
 	@Override
