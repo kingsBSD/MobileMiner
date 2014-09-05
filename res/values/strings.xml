@@ -28,6 +28,7 @@
     <string name="my_data_expire_data">Expire Data</string>
     <string name="my_data_cell_locations">My Cell Locations</string>
     <string name="my_data_active_apps">Most Active Apps:</string>
+    <string name="my_data_heat_map_dialog">Building a heat-map...</string>
     
     <string name="title_activity_map">MinerMap</string>
     
