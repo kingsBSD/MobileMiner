@@ -76,6 +76,6 @@
             android:layout_width="216dp"
             android:layout_height="196dp"
             android:layout_alignLeft="@+id/TopAppLegend"
-            android:layout_below="@+id/dataText" />
+            android:layout_below="@+id/dataText" tools:layout="@android:layout/list_content"/>
 		
 </RelativeLayout>

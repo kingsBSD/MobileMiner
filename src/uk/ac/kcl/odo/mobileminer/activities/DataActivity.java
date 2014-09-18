@@ -39,8 +39,6 @@ import java.util.HashMap;
 public class DataActivity extends Activity {
     private Context context;
     private TextView dataText;
-    //private ListView lv;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

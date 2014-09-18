@@ -48,6 +48,7 @@ public class MainActivity extends Activity {
 	boolean cellValid;
 	Intent miningIntent;
 	ViewFlipper displayFlipper;
+	Integer displayMode;
 	ExpandableListView socketView;
 	ListView trafficView;
 	SocketAdapter socketAdapter;
@@ -67,6 +68,7 @@ public class MainActivity extends Activity {
         processHeader = new ArrayList<String>();
     	socketChild = new HashMap<String, List<String>>();
     	displayFlipper = (ViewFlipper) findViewById(R.id.mainFlipper);
+    	displayMode = 0;
         socketView = (ExpandableListView) findViewById(R.id.socketView);
         socketAdapter = new SocketAdapter(this,processHeader,socketChild,null);
         socketView.setAdapter(socketAdapter);
@@ -88,7 +90,10 @@ public class MainActivity extends Activity {
         
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 trafficReceiver, new IntentFilter(MinerService.MINER_TRAFFIC_UPDATE_INTENT));
-            
+        
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+                minerReceiver, new IntentFilter(MinerService.STARTED_MINING_INTENT));
+                
         MinerData minerHelper = new MinerData(this);
         minerHelper.getReadableDatabase();
         minerHelper.close();
@@ -122,6 +127,7 @@ public class MainActivity extends Activity {
     	super.onSaveInstanceState(savedInstanceState);
     	savedInstanceState.putString("cellText",cellButton.getText().toString());
     	savedInstanceState.putStringArrayList("processHeader",(ArrayList<String>)processHeader);
+    	savedInstanceState.putInt("displayMode",displayMode);
     	for (String key: processHeader) savedInstanceState.putStringArrayList(key,(ArrayList<String>)socketChild.get(key));
     }
     
@@ -134,6 +140,7 @@ public class MainActivity extends Activity {
     		processHeader = savedInstanceState.getStringArrayList("processHeader");
     		for (String key: processHeader) socketChild.put(key,savedInstanceState.getStringArrayList(key));
     	}
+    	displayMode = savedInstanceState.getInt("displayMode");
     }
         
     @Override public void onRestart() {
@@ -151,6 +158,7 @@ public class MainActivity extends Activity {
     	else {
     		enableMiningButton(false);
     	}
+    	for (int i=0;i<displayMode;i++) displayFlipper.showNext();
     }
     
     public void startMining(View buttonView) {
@@ -196,6 +204,7 @@ public class MainActivity extends Activity {
     }
     
     public void flipSockets(View buttonView) {
+    	displayMode = (displayMode + 1) % 2;
     	displayFlipper.showNext();
     }
     
@@ -297,7 +306,12 @@ public class MainActivity extends Activity {
     	
     };
     
-
+    private BroadcastReceiver minerReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			enableMiningButton(true);
+		}
+    };
     
     @SuppressLint("NewApi")
 	public boolean isAccessibilityEnabled() {

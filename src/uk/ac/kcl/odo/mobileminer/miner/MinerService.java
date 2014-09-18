@@ -48,6 +48,7 @@ import android.widget.Toast;
 public class MinerService extends Service {
 
 	public final static String STOP_MINING_INTENT = "uk.ac.kcl.odo.mobileminer.stopmining";
+	public final static String STARTED_MINING_INTENT = "uk.ac.kcl.odo.mobileminer.startedmining";
 	public final static String MINER_UPDATE_QUERY_INTENT = "uk.ac.kcl.odo.mobileminer.updatequery";
 	public final static String MINER_SOCKET_UPDATE_INTENT = "uk.ac.kcl.odo.mobileminer.socketupdate";
 	public final static String MINER_CELL_UPDATE_INTENT = "uk.ac.kcl.odo.mobileminer.cellupdate";
@@ -261,6 +262,10 @@ public class MinerService extends Service {
 		**/
 		 
 		((TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE)).listen(phoneListener,phoneFlags);
+		
+		Intent msg = new Intent(STARTED_MINING_INTENT);
+		LocalBroadcastManager.getInstance(context).sendBroadcast(msg);
+		
 		Toast.makeText(this, "Started Mining...", Toast.LENGTH_SHORT).show();
 		moveToForeground();
 		return START_STICKY;

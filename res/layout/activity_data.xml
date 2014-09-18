@@ -75,6 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="236dp"
             android:layout_alignLeft="@+id/TopAppLegend"
-            android:layout_alignParentBottom="true" />
+            android:layout_below="@+id/TopAppLegend"
+            tools:layout="@android:layout/list_content" />
 		
 </RelativeLayout>
