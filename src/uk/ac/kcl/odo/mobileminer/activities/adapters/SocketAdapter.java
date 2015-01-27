@@ -68,18 +68,20 @@ public class SocketAdapter extends android.widget.BaseExpandableListAdapter {
 
 	        @Override
 	        public void onClick(View v) {
-	        	Log.i("MobileMiner",childText);
 	        	
-	        	String ip = childText.split("\\s+")[1].split(":")[0];
-	        	Intent mapIntent = new GeoIpGetter(context).getMapIntent(ip);
-            	if (mapIntent == null) {
-            		Toast.makeText(context, "Can't get geoIP data...", Toast.LENGTH_SHORT).show();
-            	}
-            	else {
-            		Intent maapIntent = new Intent(context, MapActivity.class);
-            		mapIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            		context.startActivity(mapIntent);
-            	}                
+	        	//Log.i("MobileMiner",childText);
+	        	
+	        	// Do away with this, the geoIps are somewhat misleading...
+	        	//String ip = childText.split("\\s+")[1].split(":")[0];
+	        	//Intent mapIntent = new GeoIpGetter(context).getMapIntent(ip);
+            	//if (mapIntent == null) {
+            	//	Toast.makeText(context, "Can't get geoIP data...", Toast.LENGTH_SHORT).show();
+            	//}
+            	//else {
+            	//	Intent mapIntent = new Intent(context, MapActivity.class);
+            	//	mapIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            	//	context.startActivity(mapIntent);
+            	//}                
 	        }
 	    });
 		
