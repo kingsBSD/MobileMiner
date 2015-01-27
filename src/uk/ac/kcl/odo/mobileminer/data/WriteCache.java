@@ -64,7 +64,7 @@ public class WriteCache {
 	public final static String TRAFFIC_DAY = "traffic_day";
 	public final static String TRAFFIC_BYTES = "traffic_bytes";
 	
-	private final String[] filters = {CACHE_SOCKET,CACHE_GSMCELL,CACHE_MOBILENETWORK,CACHE_WIFINETWORK,CACHE_NOTIFICATION,CACHE_TRAFFIC};
+	private final String[] filters = {CACHE_SOCKET, CACHE_GSMCELL, CACHE_MOBILENETWORK, CACHE_WIFINETWORK, CACHE_NOTIFICATION, CACHE_TRAFFIC};
 	
 	private ConcurrentLinkedQueue<CachedSocket> socketQueue;
 	private ConcurrentLinkedQueue<CachedGSMCell> gsmCellQueue;
@@ -143,53 +143,48 @@ public class WriteCache {
 
 			String action = intent.getAction();
 			
-			switch (action) {
-				case CACHE_SOCKET:
-					socketQueue.offer(new CachedSocket(intent.getStringExtra(SOCKET_NAME), 
-						intent.getStringExtra(SOCKET_PROTOCOL),
-						intent.getStringExtra(SOCKET_ADDRESS),
-						intent.getStringExtra(SOCKET_OPENED), intent.getStringExtra(SOCKET_CLOSED),
-						intent.getStringExtra(SOCKET_DAY)));
+			if (action.equals(CACHE_SOCKET)) {
+				socketQueue.offer(new CachedSocket(intent.getStringExtra(SOCKET_NAME), 
+					intent.getStringExtra(SOCKET_PROTOCOL),
+					intent.getStringExtra(SOCKET_ADDRESS),
+					intent.getStringExtra(SOCKET_OPENED), intent.getStringExtra(SOCKET_CLOSED),
+					intent.getStringExtra(SOCKET_DAY)));
 					//Log.i("MinerCache","Socket received...");
-					break;
-				case CACHE_GSMCELL:
-					gsmCellQueue.offer(new CachedGSMCell(intent.getStringExtra(GSMCELL_MCC),
-						intent.getStringExtra(GSMCELL_MNC),
-						intent.getStringExtra(GSMCELL_LAC),
-						intent.getStringExtra(GSMCELL_CELLID),
-						intent.getStringExtra(GSMCELL_STRENGTH),
-						intent.getStringExtra(GSMCELL_TIME),
-						intent.getStringExtra(GSMCELL_DAY)));
+			} else if (action.equals(CACHE_GSMCELL)) {
+				gsmCellQueue.offer(new CachedGSMCell(intent.getStringExtra(GSMCELL_MCC),
+					intent.getStringExtra(GSMCELL_MNC),
+					intent.getStringExtra(GSMCELL_LAC),
+					intent.getStringExtra(GSMCELL_CELLID),
+					intent.getStringExtra(GSMCELL_STRENGTH),
+					intent.getStringExtra(GSMCELL_TIME),
+					intent.getStringExtra(GSMCELL_DAY)));
 					//Log.i("MinerCache","GSM cell received...");
-					break;
-				case CACHE_MOBILENETWORK:
-					mobileNetworkQueue.offer(new CachedMobileNetwork(intent.getStringExtra(MOBILENETWORK_NAME),
-						intent.getStringExtra(MOBILENETWORK_NETWORK),
-						intent.getStringExtra(MOBILENETWORK_TIME)));
-					//Log.i("MinerCache","Mobile network received...");
-					break;
-				case CACHE_WIFINETWORK:
-					wifiNetworkQueue.offer(new CachedWiFiNetwork(intent.getStringExtra(WIFINETWORK_SSID),
-						intent.getStringExtra(WIFINETWORK_BSSID),
-						intent.getStringExtra(WIFINETWORK_IP),
-						intent.getStringExtra(WIFINETWORK_TIME),
-						intent.getStringExtra(WIFINETWORK_DAY)));
+			} else if (action.equals(CACHE_MOBILENETWORK)) {
+				mobileNetworkQueue.offer(new CachedMobileNetwork(intent.getStringExtra(MOBILENETWORK_NAME),
+				intent.getStringExtra(MOBILENETWORK_NETWORK),
+				intent.getStringExtra(MOBILENETWORK_TIME)));
+				//Log.i("MinerCache","Mobile network received...");
+			} else if (action.equals(CACHE_WIFINETWORK)) {
+				wifiNetworkQueue.offer(new CachedWiFiNetwork(intent.getStringExtra(WIFINETWORK_SSID),
+					intent.getStringExtra(WIFINETWORK_BSSID),
+					intent.getStringExtra(WIFINETWORK_IP),
+					intent.getStringExtra(WIFINETWORK_TIME),
+					intent.getStringExtra(WIFINETWORK_DAY)));
 					//Log.i("MinerCache","WiFi network received...")
-					break;
-				case CACHE_NOTIFICATION:
-					notificationQueue.offer(new CachedNotification(intent.getStringExtra(NOTIFICATION_NAME),
+			} else if (action.equals(CACHE_NOTIFICATION)) {
+				notificationQueue.offer(new CachedNotification(intent.getStringExtra(NOTIFICATION_NAME),
 						intent.getStringExtra(NOTIFICATION_TIME),intent.getStringExtra(NOTIFICATION_DAY)));
-					//Log.i("MinerCache","Notification received...")
-					break;
-				case CACHE_TRAFFIC:
-					trafficQueue.offer(new CachedTraffic(intent.getStringExtra(TRAFFIC_PACKAGE),
+						//Log.i("MinerCache","Notification received...")
+			} else if (action.equals(CACHE_TRAFFIC)) {
+				trafficQueue.offer(new CachedTraffic(intent.getStringExtra(TRAFFIC_PACKAGE),
 					intent.getStringExtra(TRAFFIC_START),
 					intent.getStringExtra(TRAFFIC_STOP),
 					intent.getStringExtra(TRAFFIC_DAY),	
 					intent.getBooleanExtra(TRAFFIC_TX,false),
 					intent.getLongExtra(TRAFFIC_BYTES,0)));
-					break;
 					//Log.i("MinerCache","Network traffic received...")
+			} else {
+				//Log.i("MinerCache","What the Hell's that?")
 			}
 			
 		}

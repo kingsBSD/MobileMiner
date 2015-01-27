@@ -52,6 +52,11 @@ public class CkanUidGetter {
 		}
 		
 		helper.close();
+		
+		if (uid == null) {
+			uid = "not found";
+		}
+		
 		return uid;
 		
 	}	

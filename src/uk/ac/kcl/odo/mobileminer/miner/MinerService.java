@@ -264,6 +264,7 @@ public class MinerService extends Service {
 		((TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE)).listen(phoneListener,phoneFlags);
 		
 		Intent msg = new Intent(STARTED_MINING_INTENT);
+		msg.putExtra("MINER_BUTTON", true);
 		LocalBroadcastManager.getInstance(context).sendBroadcast(msg);
 		
 		Toast.makeText(this, "Started Mining...", Toast.LENGTH_SHORT).show();
@@ -284,6 +285,11 @@ public class MinerService extends Service {
 		helper.putMinerLog(helper.getWritableDatabase(), startTime, new Date());
 		helper.close();
 		//Log.i("MinerService","stopped mining");
+		
+		Intent msg = new Intent(STARTED_MINING_INTENT);
+		msg.putExtra("MINER_BUTTON", false);
+		LocalBroadcastManager.getInstance(context).sendBroadcast(msg);
+		
 		unregisterReceiver(receiver);
 		cache.ShutDown();
 	    Toast.makeText(this, "Stopped Mining...", Toast.LENGTH_SHORT).show();

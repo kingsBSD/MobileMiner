@@ -44,6 +44,11 @@
             android:label="MyData" >
         </activity>
 
+        <activity
+            android:name="uk.ac.kcl.odo.mobileminer.activities.IdActivity"
+            android:label="MyId" >
+        </activity>
+        
         <service android:name="uk.ac.kcl.odo.mobileminer.miner.MinerService" />
         <service
             android:name="uk.ac.kcl.odo.mobileminer.miner.NotificationService"

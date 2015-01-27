@@ -8,45 +8,32 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".DataActivity" >
 
-        <Button
-            android:id="@+id/expireButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/exportButton"
-            android:layout_alignBottom="@+id/exportButton"
-            android:layout_toRightOf="@+id/exportButton"
-            android:onClick="expireData"
-            android:text="@string/my_data_export_data" />
-
         <TextView
             android:id="@+id/dataText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/expireButton"
-            android:layout_alignLeft="@+id/exportButton"
-            android:layout_marginBottom="14dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="15dp"
             android:text="@string/my_data_database_size"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <StackView
-            android:id="@+id/stackView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignRight="@+id/exportButton"
-            android:layout_marginBottom="112dp"
-            android:layout_marginRight="54dp" >
-        </StackView>
 
         <Button
             android:id="@+id/exportButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="18dp"
-            android:layout_marginTop="48dp"
+            android:layout_alignLeft="@+id/dataText"
+            android:layout_below="@+id/dataText"
             android:onClick="exportData"
+            android:text="@string/my_data_export_data" />
+
+        <Button
+            android:id="@+id/expireButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dataText"
+            android:layout_toRightOf="@+id/exportButton"
+            android:onClick="expireData"
             android:text="@string/my_data_expire_data" />
 
         <Button
@@ -55,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/exportButton"
             android:layout_alignRight="@+id/expireButton"
-            android:layout_below="@+id/expireButton"
+            android:layout_below="@+id/exportButton"
             android:onClick="myLocations"
             android:text="@string/my_data_cell_locations" />
 
@@ -65,7 +52,6 @@
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/myLocationsButton"
             android:layout_below="@+id/myLocationsButton"
-            android:layout_marginTop="16dp"
             android:text="@string/my_data_active_apps"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -77,5 +63,5 @@
             android:layout_alignLeft="@+id/TopAppLegend"
             android:layout_below="@+id/TopAppLegend"
             tools:layout="@android:layout/list_content" />
-		
+
 </RelativeLayout>

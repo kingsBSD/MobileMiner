@@ -1,7 +1,6 @@
 // Licensed under the Apache License Version 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
 package uk.ac.kcl.odo.mobileminer.activities;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -11,9 +10,7 @@ import android.media.MediaScannerConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+//import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,7 +33,7 @@ import java.util.HashMap;
 //import android.util.Log;
 
 
-public class DataActivity extends Activity {
+public class DataActivity extends BaseActivity {
     private Context context;
     private TextView dataText;
 
@@ -48,23 +45,6 @@ public class DataActivity extends Activity {
         dataText = (TextView) findViewById(R.id.dataText);
         setDbSizeLegend();
 
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.data, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                this.startActivity(new Intent(this, SettingsActivity.class));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
     
     public void exportData(View buttonView) {
@@ -298,7 +278,7 @@ public class DataActivity extends Activity {
 	        	String centreLat = String.valueOf(totalLat / totalCount);
 	        	String centreLong = String.valueOf(totalLong / totalCount);
 
-	        	HashMap<String, ArrayList<String>> markerLat = new HashMap<>(), markerLong = new HashMap<>();
+	        	HashMap<String, ArrayList<String>> markerLat = new HashMap<String, ArrayList<String>>(), markerLong = new HashMap<String, ArrayList<String>>();
 	        	String[] markerLists = {"red", "yellow", "green", "blue"};
 
 	        	for (String key : markerLists) {

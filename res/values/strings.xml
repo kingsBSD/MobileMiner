@@ -3,8 +3,6 @@
 
     <string name="app_name">MobileMiner</string>
     
-    <string name="action_settings">Settings</string>
-    
     <string name="accessibility_service_description">Enable this service to allow MobileMiner to record when net-enabled apps send notifications.</string>
     
     <string name="start_mining_button">Start Mining</string>
@@ -32,9 +30,13 @@
     
     <string name="title_activity_map">MinerMap</string>
     
-    <string name="title_activity_settings">Settings</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_my_id">My ID</string>
+    
     <string name="activity_settings_mine_on_boot">Mine on Boot</string>
-    <string name="activity_settings_mine_on_boot_summary">Start collecting data automatically when your device starts.</string>
-     
+    <string name="activity_settings_mine_on_boot_summary">Start collecting data automatically when your device is switched on.</string>
+
+    <string name="user_id_legend">Your user-ID is:</string>
+    <string name="user_id_clipboard">Copy to the clipboard.</string>
     
 </resources>

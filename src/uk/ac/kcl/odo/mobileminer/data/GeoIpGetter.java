@@ -50,9 +50,12 @@ public class GeoIpGetter {
 		if (geoData == null) {
 			try {
 				geoData = new FreeGeoIpRequest().execute(new String[]{ip}).get();
-			} catch (InterruptedException | ExecutionException e) {
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
 				e.printStackTrace();
 			}
+			
 		}
 		
 		if (geoData != null) {

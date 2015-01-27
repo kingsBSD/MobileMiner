@@ -43,7 +43,7 @@ import android.widget.ViewFlipper;
 
 import android.util.Log;
 
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity {
 	
 	boolean cellValid;
 	Intent miningIntent;
@@ -102,24 +102,6 @@ public class MainActivity extends Activity {
         cellHelper.close();
          
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                this.startActivity(new Intent(this, SettingsActivity.class));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
     
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -162,6 +144,7 @@ public class MainActivity extends Activity {
     }
     
     public void startMining(View buttonView) {
+    	enableMiningButton(true);
     	if (!isAccessibilityEnabled()) accessibilityNag();
     	if (!miningActive()) {
     		miningIntent = new Intent(this, MinerService.class);
@@ -169,12 +152,13 @@ public class MainActivity extends Activity {
     		getApplicationContext().sendBroadcast(new Intent(MinerService.MINER_UPDATE_QUERY_INTENT));
     	}
     	
-    	enableMiningButton(true);
     }
     
     public void stopMining(View buttonView) {
-    	getApplicationContext().sendBroadcast(new Intent(MinerService.STOP_MINING_INTENT));
     	enableMiningButton(false);
+    	if (miningActive()) {
+    		getApplicationContext().sendBroadcast(new Intent(MinerService.STOP_MINING_INTENT));
+    	}
     } 
     
     public void launchData(View buttonView) {
@@ -229,7 +213,6 @@ public class MainActivity extends Activity {
     private BroadcastReceiver socketReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-        	enableMiningButton(true);
         	HashMap<String, List<String>> socketMap = (HashMap<String, List<String>>) intent.getSerializableExtra("socketmap");
         	processHeader = new ArrayList<String>();
         	socketChild = new HashMap<String, List<String>>();
@@ -246,7 +229,6 @@ public class MainActivity extends Activity {
     private BroadcastReceiver cellReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			enableMiningButton(true);
 			cellButton.setText((CharSequence) (intent.getSerializableExtra("celltext")));
 			cellValid = (Boolean) intent.getSerializableExtra("cellvalid");
 			cellButton.setEnabled(cellValid);
@@ -262,7 +244,6 @@ public class MainActivity extends Activity {
     private BroadcastReceiver networkReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			enableMiningButton(true);
 			networkText.setText((CharSequence) ("Network: "+intent.getSerializableExtra("networktext")));	
 		}
     };
@@ -309,7 +290,7 @@ public class MainActivity extends Activity {
     private BroadcastReceiver minerReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			enableMiningButton(true);
+			enableMiningButton(intent.getBooleanExtra("MINER_BUTTON", false));
 		}
     };
     

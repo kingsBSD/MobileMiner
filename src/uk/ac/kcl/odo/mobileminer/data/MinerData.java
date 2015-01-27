@@ -15,7 +15,7 @@ import uk.ac.kcl.odo.mobileminer.data.MinerTables.BookKeepingTable;
 import uk.ac.kcl.odo.mobileminer.data.MinerTables.GSMCellPolygonTable;
 import uk.ac.kcl.odo.mobileminer.data.MinerTables.GSMCellTable;
 import uk.ac.kcl.odo.mobileminer.data.MinerTables.GSMLocationTable;
-import uk.ac.kcl.odo.mobileminer.data.MinerTables.GeoIpTable;
+//import uk.ac.kcl.odo.mobileminer.data.MinerTables.GeoIpTable;
 import uk.ac.kcl.odo.mobileminer.data.MinerTables.MinerLogTable;
 import uk.ac.kcl.odo.mobileminer.data.MinerTables.MobileNetworkTable;
 import uk.ac.kcl.odo.mobileminer.data.MinerTables.NetworkTrafficTable;
@@ -29,7 +29,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.wifi.WifiInfo;
-import android.provider.BaseColumns;
+//import android.provider.BaseColumns;
 import android.text.TextUtils;
 //import android.util.Log;
 
