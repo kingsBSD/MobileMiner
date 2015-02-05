@@ -14,5 +14,6 @@ public class CountedCell {
 	public String getMnc() {return mnc;}
 	public String getLac() {return lac;}
 	public String getCellId() {return cellid;}
+	public void addCount(int c) {count += c;}
 	
 }

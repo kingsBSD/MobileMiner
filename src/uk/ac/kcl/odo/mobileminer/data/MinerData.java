@@ -12,6 +12,7 @@ import java.util.Date;
 
 import uk.ac.kcl.odo.mobileminer.cells.CountedCell;
 import uk.ac.kcl.odo.mobileminer.data.MinerTables.BookKeepingTable;
+import uk.ac.kcl.odo.mobileminer.data.MinerTables.CellCountTable;
 import uk.ac.kcl.odo.mobileminer.data.MinerTables.GSMCellPolygonTable;
 import uk.ac.kcl.odo.mobileminer.data.MinerTables.GSMCellTable;
 import uk.ac.kcl.odo.mobileminer.data.MinerTables.GSMLocationTable;
@@ -149,7 +150,7 @@ public class MinerData extends SQLiteOpenHelper {
 			values.put(GSMLocationTable.COLUMN_NAME_TIME,df.format(time));
 			putRow(db,GSMLocationTable.TABLE_NAME,values);
 		}
-	
+			
 	public void putGSMCellPolygon(SQLiteDatabase db, String Mcc, String Mnc, String Lac, String Id, String Json, 
 		String Source,Date time) {
 		ContentValues values = new ContentValues();
@@ -346,28 +347,73 @@ public class MinerData extends SQLiteOpenHelper {
 		}
 	}
 	
-	public static ArrayList<CountedCell> getMyCells(SQLiteDatabase db) {
+	public void putCellCount(SQLiteDatabase db, CountedCell cell) {
+		ContentValues values = new ContentValues();
+		values.put(CellCountTable.COLUMN_NAME_MCC, cell.getMcc());
+		values.put(CellCountTable.COLUMN_NAME_MNC, cell.getMnc());
+		values.put(CellCountTable.COLUMN_NAME_LAC, cell.getLac());
+		values.put(CellCountTable.COLUMN_NAME_CELLID, cell.getCellId());
+		values.put(CellCountTable.COLUMN_NAME_COUNT, cell.getCount());
+		putRow(db,CellCountTable.TABLE_NAME,values);
+	}
+	
+	private int getPreviousCellCount(SQLiteDatabase db, CountedCell cell) {
+		String[] retColumns = {CellCountTable.COLUMN_NAME_COUNT};
+		String[] whereValues = {cell.getMcc(),cell.getMnc(),cell.getLac(),cell.getCellId()};
+		String q = TextUtils.join(" = ? AND ",new String[]{CellCountTable.COLUMN_NAME_MCC,CellCountTable.COLUMN_NAME_MNC,
+			CellCountTable.COLUMN_NAME_LAC,CellCountTable.COLUMN_NAME_CELLID})+ " = ?";
+		Cursor c = db.query(CellCountTable.TABLE_NAME,retColumns,q,whereValues,null,null,null);	
+		try {
+			return c.getInt(c.getColumnIndex(CellCountTable.COLUMN_NAME_COUNT));
+		}
+		catch (Exception e) {
+			return 0;
+		}	
+	}
+	
+	public ArrayList<CountedCell> getMyCells(SQLiteDatabase db) {
 		ArrayList<CountedCell> cells = new ArrayList<CountedCell>();
-		final String myCellLocationsQuery = "SELECT count(*) AS count,mcc, mnc, lac, cid FROM gsmcell GROUP BY lac,cid ORDER BY count DESC";
+		CountedCell thisCell;	
+		String myCellLocationsQuery;
+		String last_id_str = this.getBookKeepingKey(db,"last_counted_id");
+		
+		if (last_id_str == null) {
+			myCellLocationsQuery = "SELECT _id, count(*) AS count,mcc, mnc, lac, cid FROM gsmcell GROUP BY lac,cid ORDER BY count DESC";
+		}
+		else {
+			myCellLocationsQuery = "SELECT _id, count(*) AS count,mcc, mnc, lac, cid FROM gsmcell WHERE _id > "+last_id_str
+			+" GROUP BY lac,cid ORDER BY count DESC";
+		}
+		
 		Cursor c = db.rawQuery(myCellLocationsQuery, null);
 		c.moveToFirst();
 		boolean searching = true;
 		while (searching) {
 			searching = !c.isLast();
 			try {
-				cells.add(new CountedCell(
-					c.getInt(c.getColumnIndex("count")),
-					c.getString(c.getColumnIndex("mcc")),
-					c.getString(c.getColumnIndex("mnc")),
-					c.getString(c.getColumnIndex("lac")),
-					c.getString(c.getColumnIndex("cid"))
-				));
+				thisCell = new CountedCell(
+					c.getInt(c.getColumnIndex(CellCountTable.COLUMN_NAME_COUNT)),
+					c.getString(c.getColumnIndex(CellCountTable.COLUMN_NAME_MCC)),
+					c.getString(c.getColumnIndex(CellCountTable.COLUMN_NAME_MNC)),
+					c.getString(c.getColumnIndex(CellCountTable.COLUMN_NAME_LAC)),
+					c.getString(c.getColumnIndex(CellCountTable.COLUMN_NAME_CELLID))
+				);
+				thisCell.addCount(this.getPreviousCellCount(db,thisCell));
+				cells.add(thisCell);
 			}
 			catch (Exception e) {
 				
 			}
 			c.moveToNext();
 		}
+		
+		try {
+			this.setBookKeepingKey(db,"last_counted_id",Integer.toString(c.getInt(c.getColumnIndex("_id"))));
+		}
+		catch (Exception e) {
+			
+		}
+		
 		
 		return cells;
 	}

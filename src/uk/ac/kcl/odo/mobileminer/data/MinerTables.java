@@ -80,6 +80,23 @@ public final class MinerTables {
 		GSMCellTable.COLUMN_NAME_DAY + " TEXT );";
 	
 	static final String GSMCELL_TABLE_TIMESTAMP = GSMCellTable.COLUMN_NAME_TIME;
+
+	public static abstract class CellCountTable implements BaseColumns {
+		public static final String TABLE_NAME = "cellcount";
+		public static final String COLUMN_NAME_MCC = "mcc";
+		public static final String COLUMN_NAME_MNC = "mnc";
+		public static final String COLUMN_NAME_LAC = "lac";
+		public static final String COLUMN_NAME_CELLID = "cid";
+		public static final String COLUMN_NAME_COUNT = "count";
+	}
+	
+	public static final String CREATE_CELLCOUNT_TABLE =
+		"CREATE TABLE " + CellCountTable.TABLE_NAME + " (" +
+		INTEGER_PRIMARY_KEY +
+		CellCountTable.COLUMN_NAME_MCC + " TEXT, " +
+		CellCountTable.COLUMN_NAME_MNC + " TEXT, " +
+		CellCountTable.COLUMN_NAME_LAC + " TEXT, " +
+		CellCountTable.COLUMN_NAME_COUNT + " INTEGER );";
 	
 	public static abstract class GSMLocationTable implements BaseColumns {
 		public static final String TABLE_NAME = "gsmlocation";
@@ -258,6 +275,7 @@ public final class MinerTables {
 		CREATE_SOCKET_TABLE,
 		CREATE_GEOIP_TABLE,
 		CREATE_GSMCELL_TABLE,
+		CREATE_CELLCOUNT_TABLE,
 		CREATE_GSMLOCATION_TABLE,
 		CREATE_GSMCELLPOLYGON_TABLE,
 		CREATE_MOBILENETWORK_TABLE,

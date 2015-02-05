@@ -226,7 +226,7 @@ public class DataActivity extends BaseActivity {
 		@Override
 		protected Integer doInBackground(Integer... params) {
 			MinerData helper = new MinerData(context);
-			ArrayList<CountedCell> cells = MinerData.getMyCells(helper.getReadableDatabase());
+			ArrayList<CountedCell> cells = helper.getMyCells(helper.getReadableDatabase());
 			int cellCount = cells.size();
 			CellLocationGetter cellGetter = new CellLocationGetter(context);
 			ArrayList<String[]> locations = new ArrayList<String[]>();
