@@ -163,8 +163,8 @@ public class MinerService extends Service {
 				intent.putExtra(WriteCache.GSMCELL_LAC, loc.getLac());
 				intent.putExtra(WriteCache.GSMCELL_CELLID, loc.getId());
 				intent.putExtra(WriteCache.GSMCELL_STRENGTH, loc.getStrength());
-				intent.putExtra(WriteCache.GSMCELL_STRENGTH, MinerData.df.format(rightNow));
-				intent.putExtra(WriteCache.GSMCELL_STRENGTH, MinerData.dayGetter.format(rightNow));
+				intent.putExtra(WriteCache.GSMCELL_TIME, MinerData.df.format(rightNow));
+				intent.putExtra(WriteCache.GSMCELL_DAY, MinerData.dayGetter.format(rightNow));
 				LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 				
 			}
