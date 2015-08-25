@@ -1,10 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-      <CheckBoxPreference
+	<CheckBoxPreference
         android:key="mobileminer_mine_on_boot"
         android:title="@string/activity_settings_mine_on_boot"
         android:summary="@string/activity_settings_mine_on_boot_summary"
         android:defaultValue="false" />
-    
+      
+	<CheckBoxPreference
+        android:key="mobileminer_use_openpds"
+        android:title="@string/activity_settings_use_openpds"
+        android:summary="@string/activity_settings_use_openpds_summary"
+        android:defaultValue="false" />
+	
+	<EditTextPreference
+    	android:key="mobileminer_openpds_registry"
+      	android:title="@string/activity_settings_openpds_registry"
+      	android:summary="@string/activity_settings_openpds_registry_summary"
+      	android:dialogTitle="@string/activity_settings_openpds_registry_title"
+    	android:dialogMessage="@string/activity_settings_openpds_registry_message"   
+      	android:defaultValue="@string/activity_settings_openpds_registry_url" />
+	
+	<EditTextPreference
+    	android:key="mobileminer_openpds_key"
+      	android:title="@string/activity_settings_openpds_key"
+        android:summary="@string/activity_settings_openpds_key_summary"
+        android:dialogTitle="@string/activity_settings_openpds_key_title"
+        android:dialogMessage="@string/activity_settings_openpds_key_message"   
+        android:defaultValue="@string/activity_settings_openpds_key_value" />
+	
+	<EditTextPreference
+    	android:key="mobileminer_openpds_secret"
+      	android:title="@string/activity_settings_openpds_secret"
+        android:summary="@string/activity_settings_openpds_secret_summary"
+        android:dialogTitle="@string/activity_settings_openpds_secret_title"
+        android:dialogMessage="@string/activity_settings_openpds_secret_message"   
+        android:defaultValue="@string/activity_settings_openpds_secret_value" />	
+	    
 </PreferenceScreen>

@@ -16,10 +16,13 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
     <application
         android:allowBackup="true"
@@ -49,6 +52,11 @@
             android:label="MyId" >
         </activity>
         
+        <activity
+            android:name="uk.ac.kcl.odo.mobileminer.activities.PdsRegisterActivity"
+            android:label="PdsRegister" >
+        </activity>
+        
         <service android:name="uk.ac.kcl.odo.mobileminer.miner.MinerService" />
         <service
             android:name="uk.ac.kcl.odo.mobileminer.miner.NotificationService"
@@ -61,7 +69,7 @@
                 <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
         </service>
-
+        
         <activity
             android:name="uk.ac.kcl.odo.mobileminer.activities.MapActivity"
             android:label="@string/title_activity_map" >
@@ -86,7 +94,28 @@
                 	<action android:name="android.intent.action.QUICKBOOT_POWERON" />
              </intent-filter>
          </receiver>
-        
+         
+		<service
+		    android:name="edu.mit.media.funf.FunfManager"
+		    android:enabled="true" >
+		    <meta-data 
+		        android:name="MainPipeline"
+		        android:resource="@string/main_pipeline_config" />
+		</service>
+		
+		<service
+		    android:name="edu.mit.media.openpds.client.HttpsUploadService"
+		    android:enabled="true">
+		</service>
+		
+		<receiver 
+		    android:name="edu.mit.media.openpds.client.funf.LauncherReceiver"
+		    android:enabled="true" >
+		    <intent-filter>
+		        
+		    </intent-filter>
+		</receiver>
+		
     </application>
 
 </manifest>

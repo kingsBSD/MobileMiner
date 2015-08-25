@@ -13,12 +13,17 @@ import uk.ac.kcl.odo.mobileminer.data.CellData;
 import uk.ac.kcl.odo.mobileminer.data.MinerData;
 import uk.ac.kcl.odo.mobileminer.miner.MinerService;
 import uk.ac.kcl.odo.mobileminer.R;
+import edu.mit.media.funf.FunfManager;
+import edu.mit.media.openpds.client.PersonalDataStore;
+import edu.mit.media.openpds.client.PreferencesWrapper;
+import edu.mit.media.openpds.client.RegistryClient;
+import edu.mit.media.openpds.client.UserRegistrationTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ActivityManager.RunningServiceInfo;
@@ -27,20 +32,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.support.v4.content.LocalBroadcastManager;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
 import android.widget.ExpandableListView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
-
+import android.content.SharedPreferences;
 import android.util.Log;
 
 public class MainActivity extends BaseActivity {
@@ -59,7 +62,21 @@ public class MainActivity extends BaseActivity {
 	TextView networkText;
 	Button cellButton, socketButton;
 	String Mcc,Mnc,Lac,Id;
+	PersonalDataStore pds;
 	
+	private FunfManager mFunfManager;
+	
+	private ServiceConnection mPipelineConnection = new ServiceConnection() {
+		public void onServiceConnected(android.content.ComponentName name, android.os.IBinder service) {			
+			mFunfManager = ((FunfManager.LocalBinder) service).getManager();
+		};	
+		
+		public void onServiceDisconnected(android.content.ComponentName name) {
+			mFunfManager = null;
+		};		
+	};
+	
+		
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,7 +95,7 @@ public class MainActivity extends BaseActivity {
         networkText = (TextView) findViewById(R.id.networkName);
         trafficView = (ListView) findViewById(R.id.trafficView);
         traffic = new HashMap<String,HashMap <String,String>>();
-        
+                
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 socketReceiver, new IntentFilter(MinerService.MINER_SOCKET_UPDATE_INTENT));
         
@@ -100,6 +117,8 @@ public class MainActivity extends BaseActivity {
         CellData cellHelper = new CellData(this);
         cellHelper.init();
         cellHelper.close();
+        
+        //bindService(new Intent(this, FunfManager.class), mPipelineConnection, BIND_AUTO_CREATE);
          
     }
     
@@ -146,12 +165,27 @@ public class MainActivity extends BaseActivity {
     public void startMining(View buttonView) {
     	enableMiningButton(true);
     	if (!isAccessibilityEnabled()) accessibilityNag();
-    	if (!miningActive()) {
-    		miningIntent = new Intent(this, MinerService.class);
-	    	startService(miningIntent);	
-    		getApplicationContext().sendBroadcast(new Intent(MinerService.MINER_UPDATE_QUERY_INTENT));
-    	}
+        	
+    	SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
     	
+        if (sharedPref.getBoolean("mobileminer_use_openpds", false)) {
+        	
+        	try {
+        		pds = new PersonalDataStore(this);
+  			//textView.setText("User was previously authenticated");
+        	} catch (Exception ex) {
+        		startActivity(new Intent(this, PdsRegisterActivity.class));
+        	}
+        	bindService(new Intent(this, FunfManager.class), mPipelineConnection, BIND_AUTO_CREATE);
+
+        }
+        else {
+        	if (!miningActive()) {
+        		miningIntent = new Intent(this, MinerService.class);
+        		startService(miningIntent);	
+        		getApplicationContext().sendBroadcast(new Intent(MinerService.MINER_UPDATE_QUERY_INTENT));
+        	}
+        }	
     }
     
     public void stopMining(View buttonView) {

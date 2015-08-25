@@ -305,7 +305,9 @@ public class MinerService extends Service {
 		Notification note = builder.build();
 		startForeground(23, note);
 	}
+	
 	Intent intent = new Intent(WriteCache.CACHE_GSMCELL);
+	
 	private void connectivityChanged() {
 		String name = "None";
 		ConnectivityManager manager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);

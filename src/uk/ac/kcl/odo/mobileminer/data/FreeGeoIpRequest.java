@@ -3,6 +3,7 @@ package uk.ac.kcl.odo.mobileminer.data;
 
 import java.io.IOException;
 import java.util.HashMap;
+
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -11,8 +12,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import uk.ac.kcl.odo.mobileminer.data.MinerTables.GeoIpTable;
 import android.os.AsyncTask;
+import android.util.Log;
 //import android.util.Log;
 
 public class FreeGeoIpRequest extends AsyncTask<String, Object, HashMap<String,String>> {
@@ -51,6 +54,7 @@ public class FreeGeoIpRequest extends AsyncTask<String, Object, HashMap<String,S
 				HashMap<String,String> geoData = new HashMap<String,String>();
 				jsonDump = new JSONObject(response);
 				for (int i=0;i<5;i++) {
+					Log.i("MobileMiner",jsonDump.getString(jsonKeys[i]));
 					geoData.put(mapKeys[i],jsonDump.getString(jsonKeys[i]));
 				}
 				return geoData;
