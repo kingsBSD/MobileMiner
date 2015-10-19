@@ -48,7 +48,7 @@
     <string name="activity_settings_openpds_registry_message">URL</string>
     <string name="activity_settings_openpds_registry_url">http://10.0.2.2:8000</string>
     
-    <string name="activity_settings_openpds_key">OpenPDS Client Key</string>
+    <!-- <string name="activity_settings_openpds_key">OpenPDS Client Key</string>
     <string name="activity_settings_openpds_key_summary">The Client Key for the Registry Server</string>
     <string name="activity_settings_openpds_key_title">Set the OpenPDS Registry Client Key.</string>
     <string name="activity_settings_openpds_key_message">Key</string>
@@ -58,7 +58,7 @@
     <string name="activity_settings_openpds_secret_summary">The Client Secret for the Registry Server</string>
     <string name="activity_settings_openpds_secret_title">Set the OpenPDS Registry Client Secret.</string>
     <string name="activity_settings_openpds_secret_message">Secret</string>
-    <string name="activity_settings_openpds_secret_value">c27787038b2299e692dc39c63aed05</string>    
+    <string name="activity_settings_openpds_secret_value">c27787038b2299e692dc39c63aed05</string>  -->  
     
     <string name="main_pipeline_config">
         {"@type": "edu.mit.media.openpds.client.funf.OpenPDSPipeline",
@@ -67,9 +67,12 @@
         		"@type": "uk.ac.kcl.odo.mobileminer.probes.SocketProbe",
         		"@schedule": {"interval": 1}
         	},
-        	        	{
+        	{
         		"@type": "uk.ac.kcl.odo.mobileminer.probes.TrafficProbe",
         		"@schedule": {"interval": 1}
+        	},
+        	{
+        		"@type": "uk.ac.kcl.odo.mobileminer.probes.NotificationProbe"
         	}
         ]
         }

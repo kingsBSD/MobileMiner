@@ -228,9 +228,18 @@ public class MainActivity extends BaseActivity {
     
     // http://stackoverflow.com/questions/600207/how-to-check-if-a-service-is-running-in-android
     private boolean miningActive() {
+    	SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+    	String serviceClass;
+    	if (sharedPref.getBoolean("mobileminer_use_openpds", false)) {
+    		serviceClass = FunfManager.class.getName();
+    	}
+    	else {
+    		serviceClass = MinerService.class.getName();
+    	}
+    	
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (MinerService.class.getName().equals(service.service.getClassName())) {
+            if (serviceClass.equals(service.service.getClassName())) {
                 return true;
             }
         }

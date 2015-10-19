@@ -6,7 +6,6 @@ import edu.mit.media.openpds.client.RegistryClient;
 import edu.mit.media.openpds.client.UserLoginTask;
 import edu.mit.media.openpds.client.UserRegistrationTask;
 import uk.ac.kcl.odo.mobileminer.R;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -22,9 +21,9 @@ public class PdsRegisterActivity extends BaseActivity {
 	EditText userText, emailText, pwText, pwRepText;
 	String userName, email, pw, pwRep;
 	
-	String basicAuth = "Basic ODJlNzI4MGQ0NmE1NjgyOGQzMWNlM2QwNjMxMGQwOmUyNWI0YjdiNWRmYThkOWY2NTQ5MmZhODQxYmYxOQ==";
-	String clientKey = "82e7280d46a56828d31ce3d06310d0";
-	String clientSecret = "e25b4b7b5dfa8d9f65492fa841bf19";
+	String basicAuth = "Basic NmZiYWQ2MGVmYTdiMWYyOWUyZWUyYTNiZDg2MjE2OjA1Yjg4YzlhYmVmOGNkZGUwZGM3YjdhNWJkMGY3Ng==";
+	String clientKey = "6fbad60efa7b1f29e2ee2a3bd86216";
+	String clientSecret = "05b88c9abef8cdde0dc7b7a5bd0f76";
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,16 +39,22 @@ public class PdsRegisterActivity extends BaseActivity {
         emailText = (EditText) findViewById(R.id.pdsemail);
         pwText = (EditText) findViewById(R.id.pdspassword);
         pwRepText = (EditText) findViewById(R.id.pdspasswordrep);
-                    
+                            
         registryClient = new RegistryClient(registryUrl, clientKey,clientSecret, "funf_write",basicAuth);
                
 	}
 	
 	private void getRegistrationDetails() {
-		userName = userText.getText().toString();
-		email = emailText.getText().toString();
-		pw = pwText.getText().toString();
-		pwRep = pwRepText.getText().toString();
+		//userName = userText.getText().toString();
+		//email = emailText.getText().toString();
+		//pw = pwText.getText().toString();
+		//pwRep = pwRepText.getText().toString();
+		
+		userName = "Bob Smith";
+		email = "bob@smith.org";
+		pw = "bob";
+		pwRep = "bob";
+		
 	}
 	
 	public void pdsRegister(View button) {
@@ -66,7 +71,7 @@ public class PdsRegisterActivity extends BaseActivity {
 			//textView.setText("An error occurred while registering");
 		}
 	};
-	userRegistrationTask.execute(userName, email, pw);
+	userRegistrationTask.execute("Bob Smith", "bob@smith.org", "bob");
 }
 	
 	public void pdsLogin(View button) {
@@ -91,7 +96,7 @@ public class PdsRegisterActivity extends BaseActivity {
 				// For cases where auto-registration is desired, call UserRegistrationTask here
 			}
 		};
-		userLoginTask.execute(email, pw);
+		userLoginTask.execute("bob@smith.org", "bob");
 	}
 	
 	

@@ -12,6 +12,7 @@ import edu.mit.media.funf.probe.Probe.Base;
 import edu.mit.media.funf.probe.Probe.DisplayName;
 import edu.mit.media.funf.probe.Probe.RequiredFeatures;
 import edu.mit.media.funf.probe.Probe.RequiredPermissions;
+import com.google.gson.JsonObject;
 
 @Schedule.DefaultSchedule(interval=2)
 @DisplayName("Network Sockets Probe")
@@ -24,27 +25,29 @@ public class SocketProbe extends Base {
 	private BroadcastReceiver  socketProbeReciever = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-       	Log.w("MobileMiner","Socket Ping!");			
-		}
-	
+			Log.w("MobileMiner","Socket Ping!");
+			String[] socketKeys = new String[]{WriteCache.SOCKET_PROTOCOL,WriteCache.SOCKET_ADDRESS,
+       			WriteCache.SOCKET_OPENED,WriteCache.SOCKET_CLOSED,WriteCache.SOCKET_DAY};
+			JsonObject data = new JsonObject();
+			for(String key : socketKeys) {
+				data.addProperty(key, intent.getStringExtra(key));
+			}
+			sendData(data);       	
+		}	
 	};	
 		
 	@Override
 	protected void onEnable() {
 		super.onEnable();
 		getContext().registerReceiver(socketProbeReciever, new IntentFilter(WriteCache.CACHE_SOCKET));
-		//socketSet = new ProcSocketSet(getContext());
 		socketSet = new ProcSocketSet(getContext());
 		Log.w("MobileMiner","Enable");
-		
 	}	
 	
 	@Override
 	protected void onStart() {
 		super.onStart();
-		
 		Log.w("MobileMiner","Start");
-
 	}
 
 	@Override
@@ -56,16 +59,9 @@ public class SocketProbe extends Base {
 	@Override
 	public void registerListener(DataListener... listener) {
 		super.registerListener(listener);
-		//int i = 1/0;
 		if (socketSet != null) {
-			//Log.w("MobileMiner","Hello!");
 			socketSet.scan();
-		}
-		else {
-			Log.w("MobileMiner","Ouch!");
-		}
-		// TODO Auto-generated method stub
-		
+		}		
 	}
 //
 //	@Override

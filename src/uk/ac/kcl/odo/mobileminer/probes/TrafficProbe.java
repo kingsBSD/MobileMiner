@@ -1,5 +1,7 @@
 package uk.ac.kcl.odo.mobileminer.probes;
 
+import com.google.gson.JsonObject;
+
 import uk.ac.kcl.odo.mobileminer.data.WriteCache;
 import uk.ac.kcl.odo.mobileminer.miner.TrafficWatcher;
 import android.content.BroadcastReceiver;
@@ -9,7 +11,6 @@ import android.content.IntentFilter;
 import android.util.Log;
 import edu.mit.media.funf.Schedule;
 import edu.mit.media.funf.probe.Probe.Base;
-import edu.mit.media.funf.probe.Probe.DataListener;
 import edu.mit.media.funf.probe.Probe.DisplayName;
 import edu.mit.media.funf.probe.Probe.RequiredFeatures;
 import edu.mit.media.funf.probe.Probe.RequiredPermissions;
@@ -21,11 +22,18 @@ import edu.mit.media.funf.probe.Probe.RequiredPermissions;
 public class TrafficProbe extends Base {
 	
 	private TrafficWatcher watcher;
-	
+		
 	private BroadcastReceiver trafficReciever = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			Log.w("MobileMiner","Traffic Ping!");
+			String[] trafficKeys = new String[]{WriteCache.TRAFFIC_TX,WriteCache.TRAFFIC_START,
+      			WriteCache.TRAFFIC_STOP,WriteCache.TRAFFIC_STOP,WriteCache.TRAFFIC_BYTES};
+			JsonObject data = new JsonObject();
+			for(String key : trafficKeys) {
+				data.addProperty(key, intent.getStringExtra(key));
+			}
+			sendData(data);  
 		}
 	
 	};
@@ -52,10 +60,7 @@ public class TrafficProbe extends Base {
 		if (watcher != null) {
 			//Log.w("MobileMiner","Hello!");
 			watcher.scan();
-		}
-		else {
-			Log.w("MobileMiner","Ouch!");
-		}
-		
+		}		
 	}
+	
 }
