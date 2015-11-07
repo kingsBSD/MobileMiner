@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import edu.mit.media.funf.Schedule;
 import edu.mit.media.funf.probe.Probe.Base;
@@ -22,7 +23,9 @@ import edu.mit.media.funf.probe.Probe.RequiredPermissions;
 public class TrafficProbe extends Base {
 	
 	private TrafficWatcher watcher;
-		
+
+	private LocalBroadcastManager manager;
+	
 	private BroadcastReceiver trafficReciever = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -41,10 +44,12 @@ public class TrafficProbe extends Base {
 	@Override
 	protected void onEnable() {
 		super.onEnable();
-		getContext().registerReceiver(trafficReciever, new IntentFilter(WriteCache.CACHE_TRAFFIC));
-		watcher = new TrafficWatcher(getContext());
-		Log.w("MobileMiner","Enable");
 		
+		manager = LocalBroadcastManager.getInstance(getContext());
+		
+		manager.registerReceiver(trafficReciever,new IntentFilter(WriteCache.CACHE_TRAFFIC));
+		
+		watcher = new TrafficWatcher(getContext());
 	}
 
 	@Override

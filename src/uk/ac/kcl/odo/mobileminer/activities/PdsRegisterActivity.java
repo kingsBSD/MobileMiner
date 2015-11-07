@@ -6,6 +6,9 @@ import edu.mit.media.openpds.client.RegistryClient;
 import edu.mit.media.openpds.client.UserLoginTask;
 import edu.mit.media.openpds.client.UserRegistrationTask;
 import uk.ac.kcl.odo.mobileminer.R;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -19,11 +22,11 @@ public class PdsRegisterActivity extends BaseActivity {
 	RegistryClient registryClient;
 	
 	EditText userText, emailText, pwText, pwRepText;
-	String userName, email, pw, pwRep;
+	String userName, uid, email, pw, pwRep;
 	
-	String basicAuth = "Basic NmZiYWQ2MGVmYTdiMWYyOWUyZWUyYTNiZDg2MjE2OjA1Yjg4YzlhYmVmOGNkZGUwZGM3YjdhNWJkMGY3Ng==";
-	String clientKey = "6fbad60efa7b1f29e2ee2a3bd86216";
-	String clientSecret = "05b88c9abef8cdde0dc7b7a5bd0f76";
+	String basicAuth = "Basic ODZhY2FiYmQ0MTc3ZjdiZGExNjU2NzI1ZGFjYmMzOmQ2ZTBlYjZmYTZiNTMzMjZkM2FmMWExYzAyMjUzYw==";
+	String clientKey = "86acabbd4177f7bda1656725dacbc3";
+	String clientSecret = "d6e0eb6fa6b53326d3af1a1c02253c";
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,15 +48,24 @@ public class PdsRegisterActivity extends BaseActivity {
 	}
 	
 	private void getRegistrationDetails() {
-		//userName = userText.getText().toString();
-		//email = emailText.getText().toString();
-		//pw = pwText.getText().toString();
-		//pwRep = pwRepText.getText().toString();
+		userName = userText.getText().toString();
+		email = emailText.getText().toString();
+		pw = pwText.getText().toString();
+		pwRep = pwRepText.getText().toString();
 		
-		userName = "Bob Smith";
-		email = "bob@smith.org";
-		pw = "bob";
-		pwRep = "bob";
+		String[] nameParts = userName.split(" ");
+		
+		try {
+			uid = nameParts[0] + nameParts[1];
+		} catch (Exception e) {
+			uid = nameParts[0];
+		}	
+	
+//		userName = "Bob Smith";
+//		email = "bob@smith.org";
+//		pw = "bob";
+//      uid = BobSmith		
+//		pwRep = "bob";
 		
 	}
 	
@@ -63,7 +75,7 @@ public class PdsRegisterActivity extends BaseActivity {
 		UserRegistrationTask userRegistrationTask = new UserRegistrationTask(this, prefs, registryClient) {
 		@Override
 		protected void onComplete() {
-			//textView.setText("Registration Succeeded");
+			PdsRegisterActivity.this.startActivity(new Intent(PdsRegisterActivity.this, MainActivity.class));
 		}
 		
 		@Override
@@ -71,7 +83,8 @@ public class PdsRegisterActivity extends BaseActivity {
 			//textView.setText("An error occurred while registering");
 		}
 	};
-	userRegistrationTask.execute("Bob Smith", "bob@smith.org", "bob");
+	userRegistrationTask.execute(userName, email, pw, uid);
+	
 }
 	
 	public void pdsLogin(View button) {
@@ -82,7 +95,7 @@ public class PdsRegisterActivity extends BaseActivity {
 				//textView.setText("Login Succeeded");
 				try {
 					pds = new PersonalDataStore(PdsRegisterActivity.this);
-
+					PdsRegisterActivity.this.startActivity(new Intent(PdsRegisterActivity.this, MainActivity.class));
 				} catch (Exception e) {
 					Log.w("HelloPDS", "Unable to construct PDS after login");
 				}
@@ -96,9 +109,15 @@ public class PdsRegisterActivity extends BaseActivity {
 				// For cases where auto-registration is desired, call UserRegistrationTask here
 			}
 		};
-		userLoginTask.execute("bob@smith.org", "bob");
+		userLoginTask.execute(uid, pw);
 	}
 	
-	
+	public void pdsReset(View button) {
+		SharedPreferences pref;
+		pref = this.getSharedPreferences("TokenPrefs", Context.MODE_PRIVATE);
+		pref.edit().remove("accessToken").commit();
+		pref.edit().remove("pds_location").commit();
+		pref.edit().remove("uuid").commit();		
+	}
 
 }

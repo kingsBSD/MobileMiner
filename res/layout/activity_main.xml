@@ -70,7 +70,7 @@
 		
 			<LinearLayout
 			    android:id="@+id/socketFlip"
-			    android:layout_width="match_parent"
+			    android:layout_width="288dp"
 			    android:layout_height="wrap_content"
 			    android:orientation="vertical" >
 			
@@ -93,6 +93,7 @@
    				        android:layout_width="wrap_content"
    				        android:layout_height="wrap_content"
    				        android:layout_marginLeft="20dp"
+   				        android:layout_weight="0.46"
    				        android:text="@string/open_text"
    				        android:textAppearance="?android:attr/textAppearanceSmall"
    				        android:textColor="#00FF00" />
@@ -102,6 +103,7 @@
    				        android:layout_width="wrap_content"
    				        android:layout_height="wrap_content"
    				        android:layout_marginLeft="20dp"
+   				        android:layout_weight="0.90"
    				        android:text="@string/closed_text"
    				        android:textAppearance="?android:attr/textAppearanceSmall"
    				        android:textColor="#FF0000" />

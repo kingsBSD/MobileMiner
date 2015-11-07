@@ -21,7 +21,7 @@
     	android:dialogMessage="@string/activity_settings_openpds_registry_message"   
       	android:defaultValue="@string/activity_settings_openpds_registry_url" />
 	
-	<EditTextPreference
+	<!-- <EditTextPreference
     	android:key="mobileminer_openpds_key"
       	android:title="@string/activity_settings_openpds_key"
         android:summary="@string/activity_settings_openpds_key_summary"
@@ -35,6 +35,6 @@
         android:summary="@string/activity_settings_openpds_secret_summary"
         android:dialogTitle="@string/activity_settings_openpds_secret_title"
         android:dialogMessage="@string/activity_settings_openpds_secret_message"   
-        android:defaultValue="@string/activity_settings_openpds_secret_value" />	
+        android:defaultValue="@string/activity_settings_openpds_secret_value" /> -->	
 	    
 </PreferenceScreen>

@@ -30,6 +30,8 @@ public class BaseActivity extends Activity {
             case R.id.action_my_id:
             	this.startActivity(new Intent(this, IdActivity.class));
             	return true;
+            case R.id.action_pds:
+            	this.startActivity(new Intent(this, PdsRegisterActivity.class));
             default:
                 return super.onOptionsItemSelected(item);
         }

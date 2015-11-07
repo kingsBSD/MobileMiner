@@ -6,12 +6,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import edu.mit.media.funf.Schedule;
 import edu.mit.media.funf.probe.Probe.Base;
 import edu.mit.media.funf.probe.Probe.DisplayName;
 import edu.mit.media.funf.probe.Probe.RequiredFeatures;
 import edu.mit.media.funf.probe.Probe.RequiredPermissions;
+
 import com.google.gson.JsonObject;
 
 @Schedule.DefaultSchedule(interval=2)
@@ -21,6 +23,8 @@ import com.google.gson.JsonObject;
 public class SocketProbe extends Base {
 
 	private ProcSocketSet socketSet;
+	
+	private LocalBroadcastManager manager;
 	
 	private BroadcastReceiver  socketProbeReciever = new BroadcastReceiver() {
 		@Override
@@ -39,9 +43,13 @@ public class SocketProbe extends Base {
 	@Override
 	protected void onEnable() {
 		super.onEnable();
-		getContext().registerReceiver(socketProbeReciever, new IntentFilter(WriteCache.CACHE_SOCKET));
+		
+		manager = LocalBroadcastManager.getInstance(getContext());
+		
+		manager.registerReceiver(socketProbeReciever,new IntentFilter(WriteCache.CACHE_SOCKET));
+
 		socketSet = new ProcSocketSet(getContext());
-		Log.w("MobileMiner","Enable");
+
 	}	
 	
 	@Override
